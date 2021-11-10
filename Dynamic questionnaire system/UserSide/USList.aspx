@@ -12,12 +12,13 @@
             <asp:TextBox ID="txtStart" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;
             <asp:Label ID="lblEnd" runat="server" Text="結束時間："></asp:Label>
             <asp:TextBox ID="txtEnd" runat="server" TextMode="Date"></asp:TextBox>&nbsp;&nbsp;&nbsp;&nbsp;
-            <asp:Button ID="btnFind" runat="server" Text="搜尋" />
+            <asp:Button ID="btnFind" runat="server" Text="搜尋" OnClick="btnFind_Click" />
         </div>
     <br />
         <div>
             <asp:ImageButton ID="ImgbtnBin" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" OnClick="ImgbtnBin_Click" />&nbsp;&nbsp;&nbsp;&nbsp;
             <asp:ImageButton ID="ImgbtnAdd" runat="server" ImageUrl="~/Images/add.png" Height="29px" Width="34px" OnClick="ImgbtnAdd_Click" />
+            <asp:Label ID="lblMessage" runat="server" Visible="false"></asp:Label>
         </div>
     <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False">
         <Columns>
