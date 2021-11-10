@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31410.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dynamic questionnaire system", "Dynamic questionnaire system\Dynamic questionnaire system.csproj", "{1F8AF0CB-2BCD-4018-912A-70D4928F5B1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBSource", "DBSource\DBSource.csproj", "{8D7C7CF6-639A-4BAB-BF53-E53A00DEEBFA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1F8AF0CB-2BCD-4018-912A-70D4928F5B1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F8AF0CB-2BCD-4018-912A-70D4928F5B1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F8AF0CB-2BCD-4018-912A-70D4928F5B1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F8AF0CB-2BCD-4018-912A-70D4928F5B1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D7C7CF6-639A-4BAB-BF53-E53A00DEEBFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D7C7CF6-639A-4BAB-BF53-E53A00DEEBFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D7C7CF6-639A-4BAB-BF53-E53A00DEEBFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D7C7CF6-639A-4BAB-BF53-E53A00DEEBFA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C535672D-FC4F-414C-981E-75729F9EF833}
+	EndGlobalSection
+EndGlobal
