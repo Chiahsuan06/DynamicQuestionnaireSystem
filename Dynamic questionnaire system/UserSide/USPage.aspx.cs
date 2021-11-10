@@ -24,7 +24,7 @@ namespace Dynamic_questionnaire_system.UserSide
             givQuestion.DataBind();
 
             //問題部分
-            if (ddlType.SelectedIndex == 1)   //常用問題1 =>常用問題設定要去常用問題管理
+            if (ddlType.SelectedIndex == 1)   //常用問題1 =>常用問題設定要去常用問題管理，要記得處理
             {
                 this.txtQuestion.Text = "";
                 this.txtOptions.Text = "";
@@ -199,10 +199,10 @@ namespace Dynamic_questionnaire_system.UserSide
 
         class QuestionColumns
         {
-            public int TopicNum { get; set; }
-            public string Question { get; set; }
-            public string Options { get; set; }
-            public string OptionsType { get; set; }
+            public int TopicNum { get; set; } //序號
+            public string Question { get; set; } //問題
+            public string Options { get; set; } //回答
+            public string OptionsType { get; set; } //種類
             public int Required { get; set; }  //必填
 
         }
