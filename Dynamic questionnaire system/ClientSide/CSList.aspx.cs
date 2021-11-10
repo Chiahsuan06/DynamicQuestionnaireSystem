@@ -23,11 +23,11 @@ namespace Dynamic_questionnaire_system.ClientSide
         {
             if (string.IsNullOrEmpty(this.txtStart.Text))
             {
-                this.txtStart.Text = DateTime.Today.ToString("yyyy/MM/dd");
+                this.txtStart.Text = "1911/01/01";
             }
             if (string.IsNullOrEmpty(this.txtEnd.Text))
             {
-                this.txtEnd.Text = DateTime.Today.ToString("yyyy/MM/dd");
+                this.txtEnd.Text = "1911/12/31";
             }
 
             string findTitle = this.txtTitle.Text;
@@ -146,8 +146,8 @@ namespace Dynamic_questionnaire_system.ClientSide
                 $@" SELECT [QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
                     FROM [Outline]
                     WHERE [Heading] LIKE (@Title + '%')
-                    OR [StartTime] >= @Start
-                    OR [EndTime] <= @End
+                    OR [StartTime] = @Start
+                    OR [EndTime] = @End
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
