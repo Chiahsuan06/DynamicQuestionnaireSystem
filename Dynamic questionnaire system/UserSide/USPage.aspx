@@ -3,7 +3,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
+<%--        <style>
             body {font-family: Arial;}
 
             .tab {
@@ -65,7 +65,7 @@
           <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'Question')">問題</button>
           <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'WriteInformation')">填寫資料</button>
           <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'Statistics')">統計</button>
-        </div>
+        </div>--%>
 
         <div id="Questionnaire" class="tabcontent">  <%--問卷--%>
             <asp:Label ID="lblQuestaireName" runat="server" Text="問卷名稱"></asp:Label>&nbsp;&nbsp;
@@ -130,8 +130,23 @@
         </div>
 
         <div id="WriteInformation" class="tabcontent">  <%--填寫資料--%>
-            <asp:Button ID="btnExport" runat="server" Text="匯出" />
-            <asp:GridView ID="givExport" runat="server"></asp:GridView>
+            <asp:Button ID="btnExport" runat="server" Text="匯出" OnClick="btnExport_Click" />
+            <asp:GridView ID="givExport" runat="server" AutoGenerateColumns="False">
+                <Columns>
+                    <asp:BoundField HeaderText="#" DataField="RecordNum"/>
+                    <asp:BoundField HeaderText="姓名" DataField="AnsName" />
+                    <asp:BoundField HeaderText="填寫時間" DataField="AnsTime"/>
+                    <asp:TemplateField HeaderText="觀看細節">
+                        <EditItemTemplate>
+                            <asp:TextBox ID="TextBox1" runat="server"></asp:TextBox>
+                        </EditItemTemplate>
+                        <ItemTemplate>
+                            <asp:Label ID="Label1" runat="server"></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+
+            </asp:GridView>
             <%--分頁--%>
 
             <asp:PlaceHolder ID="PlaceHolderDetail" runat="server">

@@ -29,6 +29,8 @@ namespace Dynamic_questionnaire_system.UserSide
                 this.txtQuestion.Text = "";
                 this.txtOptions.Text = "";
             }
+            this.givExport.DataSource = GetRecordData();  //做方法
+            this.givExport.DataBind();
         }
 
         #region 問卷
@@ -239,6 +241,46 @@ namespace Dynamic_questionnaire_system.UserSide
         protected void btngivSent_Click(object sender, EventArgs e)
         {
 
+        }
+        /// <summary>
+        /// 填寫資料 - 匯出紐
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void btnExport_Click(object sender, EventArgs e)
+        {
+
+        }
+        /// <summary>
+        /// 顯示givExport資料
+        /// </summary>
+        /// <param name="Title"></param>
+        /// <param name="Start"></param>
+        /// <param name="End"></param>
+        /// <returns></returns>
+        public static DataTable GetRecordData()
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@" SELECT [RecordNum]
+                          ,[QuestionnaireID]
+                          ,[AnsName]
+                          ,[AnsTime]
+                      FROM [Questionnaire].[dbo].[Record]
+                      ORDER BY [AnsTime] DESC
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+
+            try
+            {
+                return DBHelper.ReadDataTable(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
         }
     }
 }

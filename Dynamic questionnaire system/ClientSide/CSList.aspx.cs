@@ -146,8 +146,8 @@ namespace Dynamic_questionnaire_system.ClientSide
                 $@" SELECT [QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
                     FROM [Outline]
                     WHERE [Heading] LIKE (@Title + '%')
-                    OR [StartTime] = @Start
-                    OR [EndTime] = @End
+                    OR [StartTime] >= @Start
+                    OR [EndTime] <= @End
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();

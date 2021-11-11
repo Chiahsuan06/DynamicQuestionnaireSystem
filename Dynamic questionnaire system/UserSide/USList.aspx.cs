@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Windows.Forms;
+using CheckBox = System.Web.UI.WebControls.CheckBox;
 
 namespace Dynamic_questionnaire_system.UserSide
 {
@@ -151,8 +152,8 @@ namespace Dynamic_questionnaire_system.UserSide
                 $@" SELECT [QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
                     FROM [Outline]
                     WHERE [Heading] LIKE (@Title + '%')
-                    OR [StartTime] = @Start
-                    OR [EndTime] = @End
+                    OR [StartTime] >= @Start
+                    OR [EndTime] <= @End
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
@@ -223,14 +224,6 @@ namespace Dynamic_questionnaire_system.UserSide
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
                 $@"  DELETE FROM [Outline] WHERE [QuestionnaireID]= @QuestionnaireID
-                     SELECT [QuestionnaireID]
-                          ,[QuestionnaireNum]
-                          ,[Heading]
-                          ,[Vote]
-                          ,[StartTime]
-                          ,[EndTime]
-                          ,[Content]
-                      FROM [Questionnaire].[dbo].[Outline]
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
