@@ -266,28 +266,28 @@ namespace Dynamic_questionnaire_system.UserSide
              HttpContext.Current.Response.Clear();
              System.IO.StringWriter sw = new System.IO.StringWriter();
              int iColCount = dt.Columns.Count;
-             for (int i = 0; i<iColCount; i++)//表頭
+             for (int i = 0; i < iColCount; i++)//表頭
              {
-             sw.Write("\"" + dt.Columns[i] + "\"");
-             if (i<iColCount - 1)
-             {
-                 sw.Write(",");
-             }
+                 sw.Write("\"" + dt.Columns[i] + "\"");
+                 if (i < iColCount - 1)
+                 {
+                     sw.Write(",");
+                 }
              }
              sw.Write(sw.NewLine);
              foreach (DataRow dr in dt.Rows)//行內資料
              {
                  for (int i = 0; i < iColCount; i++)
-                     {
-                         if (!Convert.IsDBNull(dr[i]))
-                                 sw.Write("\"" + dr[i].ToString() + "\"");
-                         else
-                                 sw.Write("\"\"");
-                         if (i < iColCount - 1)
-                             {
-                                 sw.Write(",");
-                             }
-                     }
+                 {
+                    if (!Convert.IsDBNull(dr[i]))
+                            sw.Write("\"" + dr[i].ToString() + "\"");
+                    else
+                            sw.Write("\"\"");
+                    if (i < iColCount - 1)
+                    {
+                        sw.Write(",");
+                    }
+                 }
                  sw.Write(sw.NewLine);
              }
              sw.Close();
