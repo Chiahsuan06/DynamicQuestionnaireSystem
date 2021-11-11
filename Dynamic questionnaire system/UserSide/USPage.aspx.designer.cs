@@ -303,13 +303,13 @@ namespace Dynamic_questionnaire_system.UserSide
         protected global::System.Web.UI.WebControls.Label plblName;
 
         /// <summary>
-        /// pltlName 控制項。
+        /// txtName 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal pltlName;
+        protected global::System.Web.UI.WebControls.TextBox txtName;
 
         /// <summary>
         /// plblPhone 控制項。
@@ -321,13 +321,13 @@ namespace Dynamic_questionnaire_system.UserSide
         protected global::System.Web.UI.WebControls.Label plblPhone;
 
         /// <summary>
-        /// pltlPhone 控制項。
+        /// txtPhone 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal pltlPhone;
+        protected global::System.Web.UI.WebControls.TextBox txtPhone;
 
         /// <summary>
         /// plblEmail 控制項。
@@ -339,13 +339,13 @@ namespace Dynamic_questionnaire_system.UserSide
         protected global::System.Web.UI.WebControls.Label plblEmail;
 
         /// <summary>
-        /// pltlEmail 控制項。
+        /// txtEmail 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal pltlEmail;
+        protected global::System.Web.UI.WebControls.TextBox txtEmail;
 
         /// <summary>
         /// plblAge 控制項。
@@ -357,13 +357,13 @@ namespace Dynamic_questionnaire_system.UserSide
         protected global::System.Web.UI.WebControls.Label plblAge;
 
         /// <summary>
-        /// pltlAge 控制項。
+        /// txtAge 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal pltlAge;
+        protected global::System.Web.UI.WebControls.TextBox txtAge;
 
         /// <summary>
         /// lblWriteT 控制項。

@@ -8,6 +8,10 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Windows.Forms;
+using NPOI.XSSF.UserModel;
+using NPOI.SS.UserModel;
+using System.IO;
+using System.Text;
 
 namespace Dynamic_questionnaire_system.UserSide
 {
@@ -158,7 +162,7 @@ namespace Dynamic_questionnaire_system.UserSide
         }
         #endregion
 
-
+        #region 問題
         /// <summary>
         /// 問題 - 加入到表裡
         /// </summary>
@@ -242,15 +246,58 @@ namespace Dynamic_questionnaire_system.UserSide
         {
 
         }
+        #endregion
+
         /// <summary>
         /// 填寫資料 - 匯出紐
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="e"></param>   
+        //中文產生亂碼
         protected void btnExport_Click(object sender, EventArgs e)
         {
+            DataTable dt = GetAnsRecordDetailsData();//獲取datatable資料源
+            string title = "問卷資料" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".CSV";//匯出的檔案名
+            EstablishCSV(dt, title);//將dt資料源和檔案名title代入匯出方法中
 
         }
+        private void EstablishCSV(DataTable dt, string fileName)
+        {
+             HttpContext.Current.Response.Clear();
+             System.IO.StringWriter sw = new System.IO.StringWriter();
+             int iColCount = dt.Columns.Count;
+             for (int i = 0; i<iColCount; i++)//表頭
+             {
+             sw.Write("\"" + dt.Columns[i] + "\"");
+             if (i<iColCount - 1)
+             {
+                 sw.Write(",");
+             }
+             }
+             sw.Write(sw.NewLine);
+             foreach (DataRow dr in dt.Rows)//行內資料
+             {
+                 for (int i = 0; i < iColCount; i++)
+                     {
+                         if (!Convert.IsDBNull(dr[i]))
+                                 sw.Write("\"" + dr[i].ToString() + "\"");
+                         else
+                                 sw.Write("\"\"");
+                         if (i < iColCount - 1)
+                             {
+                                 sw.Write(",");
+                             }
+                     }
+                 sw.Write(sw.NewLine);
+             }
+             sw.Close();
+             HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + fileName);
+             HttpContext.Current.Response.ContentType = "application/vnd.ms-excel";
+             HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.GetEncoding("GB2312");
+             HttpContext.Current.Response.Write(sw);
+             HttpContext.Current.Response.End();
+         }
+
         /// <summary>
         /// 顯示givExport資料
         /// </summary>
@@ -268,6 +315,95 @@ namespace Dynamic_questionnaire_system.UserSide
                           ,[AnsTime]
                       FROM [Questionnaire].[dbo].[Record]
                       ORDER BY [AnsTime] DESC
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+
+            try
+            {
+                return DBHelper.ReadDataTable(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
+        }
+        /// <summary>
+        /// 取得問卷填寫的細節
+        /// </summary>
+        /// <returns></returns>
+        public static DataTable GetRecordDetailsData(int RecordNum)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@" SELECT [Record].[RecordNum]
+                          ,[Record].[QuestionnaireID]
+                          ,[AnswererID]
+                          ,[AnsName]
+                          ,[AnsPhone]
+                          ,[AnsEmail]
+                          ,[AnsAge]
+                          ,[AnsTime]
+	                      ,[ReplicationNum]
+                          ,[Record Details].[TopicNum]
+	                      ,[TopicDescription]
+                          ,[Record Details].[OptionsNum]
+	                      ,[OptionsDescription]
+                      FROM [Questionnaire].[dbo].[Record]
+                      JOIN [Questionnaire].[dbo].[Record Details]
+                      ON [Record].RecordNum = [Record Details].RecordNum
+                      JOIN[Questionnaire].[dbo].[Questionnaires]
+                      ON [Record Details].[TopicNum] = [Questionnaires].[TopicNum]  
+                      JOIN[Questionnaire].[dbo].[Question]
+                      ON [Question].[OptionsNum] = [Record Details].[OptionsNum]
+                      WHERE [Record].[RecordNum] = @RecordNum
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@RecordNum", RecordNum));;
+
+            try
+            {
+                return DBHelper.ReadDataTable(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
+        }
+        /// <summary>
+        /// 取得使用者資訊、每個問題、每個問題的答案
+        /// </summary>
+        /// <param name="RecordNum"></param>
+        /// <returns></returns>
+        public static DataTable GetAnsRecordDetailsData()
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@" SELECT [Record].[RecordNum]
+	　                    ,[AnswererID]
+                          ,[AnsName]
+                          ,[AnsPhone]
+                          ,[AnsEmail]
+                          ,[AnsAge]
+                          ,[AnsTime]
+                          ,[Record].[QuestionnaireID]
+	                      ,[Outline].[Heading]
+                          ,[Record Details].[TopicNum]
+	                      ,[TopicDescription]
+                          ,[Record Details].[OptionsNum]
+	                      ,[OptionsDescription]
+                      FROM [Questionnaire].[dbo].[Record]
+                      JOIN [Questionnaire].[dbo].[Outline]
+                      ON [Record].[QuestionnaireID] = [Outline].[QuestionnaireID]
+                      JOIN [Questionnaire].[dbo].[Record Details]
+                      ON [Record].RecordNum = [Record Details].RecordNum
+                      JOIN[Questionnaire].[dbo].[Questionnaires]
+                      ON [Record Details].[TopicNum] = [Questionnaires].[TopicNum]  
+                      JOIN[Questionnaire].[dbo].[Question]
+                      ON [Question].[OptionsNum] = [Record Details].[OptionsNum]
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();

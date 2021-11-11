@@ -137,11 +137,8 @@
                     <asp:BoundField HeaderText="姓名" DataField="AnsName" />
                     <asp:BoundField HeaderText="填寫時間" DataField="AnsTime"/>
                     <asp:TemplateField HeaderText="觀看細節">
-                        <EditItemTemplate>
-                            <asp:TextBox ID="TextBox1" runat="server"></asp:TextBox>
-                        </EditItemTemplate>
                         <ItemTemplate>
-                            <asp:Label ID="Label1" runat="server"></asp:Label>
+                            <a href="USPage.aspxID=<%#Eval("RecordNum") %>">前往</a>
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -151,12 +148,15 @@
 
             <asp:PlaceHolder ID="PlaceHolderDetail" runat="server">
                 <div>
-                    <asp:Label ID="plblName" runat="server" Text="姓名"></asp:Label><asp:Literal ID="pltlName" runat="server"></asp:Literal>
-                    <asp:Label ID="plblPhone" runat="server" Text="手機"></asp:Label><asp:Literal ID="pltlPhone" runat="server"></asp:Literal>
-                    <asp:Label ID="plblEmail" runat="server" Text="Email"></asp:Label><asp:Literal ID="pltlEmail" runat="server"></asp:Literal>
-                    <asp:Label ID="plblAge" runat="server" Text="年齡"></asp:Label><asp:Literal ID="pltlAge" runat="server"></asp:Literal>
-
-                    <asp:Label ID="lblWriteT" runat="server" Text="填寫時間：<%# %>"></asp:Label>  <%--連結時間--%>
+                    <asp:Label ID="plblName" runat="server" Text="姓名"></asp:Label>
+                    <asp:TextBox ID="txtName" runat="server" ReadOnly="True"></asp:TextBox>
+                    <asp:Label ID="plblPhone" runat="server" Text="手機"></asp:Label>
+                    <asp:TextBox ID="txtPhone" runat="server" ReadOnly="True"></asp:TextBox>
+                    <asp:Label ID="plblEmail" runat="server" Text="Email"></asp:Label>
+                    <asp:TextBox ID="txtEmail" runat="server" ReadOnly="True"></asp:TextBox>
+                    <asp:Label ID="plblAge" runat="server" Text="年齡"></asp:Label>
+                    <asp:TextBox ID="txtAge" runat="server" ReadOnly="True"></asp:TextBox>
+                    <asp:Label ID="lblWriteT" runat="server" Text=""></asp:Label>  <%--連結時間--%>
                 </div>
                 <div>
                     <%--跳出填答問卷--%>
