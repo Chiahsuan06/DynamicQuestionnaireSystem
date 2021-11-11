@@ -252,8 +252,7 @@ namespace Dynamic_questionnaire_system.UserSide
         /// 填寫資料 - 匯出紐
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>   
-        //中文產生亂碼
+        /// <param name="e"></param>
         protected void btnExport_Click(object sender, EventArgs e)
         {
             DataTable dt = GetAnsRecordDetailsData();//獲取datatable資料源
@@ -264,7 +263,7 @@ namespace Dynamic_questionnaire_system.UserSide
         private void EstablishCSV(DataTable dt, string fileName)
         {
              HttpContext.Current.Response.Clear();
-             System.IO.StringWriter sw = new System.IO.StringWriter();
+             StreamWriter sw = new StreamWriter(Response.OutputStream, Encoding.UTF8);
              int iColCount = dt.Columns.Count;
              for (int i = 0; i < iColCount; i++)//表頭
              {
@@ -290,12 +289,16 @@ namespace Dynamic_questionnaire_system.UserSide
                  }
                  sw.Write(sw.NewLine);
              }
+
+
              sw.Close();
              HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + fileName);
-             HttpContext.Current.Response.ContentType = "application/vnd.ms-excel";
-             HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.GetEncoding("GB2312");
+             HttpContext.Current.Response.ContentType = "text/csv";
+             HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.UTF8;
+
              HttpContext.Current.Response.Write(sw);
              HttpContext.Current.Response.End();
+
          }
 
         /// <summary>
