@@ -26,7 +26,7 @@ namespace Dynamic_questionnaire_system.ClientSide
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
 
-            if (e.Row.RowType == DataControlRowType.DataRow) 
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 string vt = (string)DataBinder.Eval(e.Row.DataItem, "Vote");
                 if (vt == "尚未開始")

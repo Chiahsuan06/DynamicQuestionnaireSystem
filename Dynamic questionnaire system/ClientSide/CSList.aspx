@@ -29,7 +29,7 @@
                     <asp:BoundField HeaderText="#" DataField="QuestionnaireID" />
                     <asp:TemplateField HeaderText="問卷" >
                         <ItemTemplate>
-                            <a id="goPage" href="CSPage.aspx?ID=<%# Eval("QuestionnaireID") %>"><%# Eval("Heading") %></a>
+                            <a href="CSPage.aspx?ID=<%# Eval("QuestionnaireID") %>" id="goPage"><%# Eval("Heading") %></a>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="問卷">

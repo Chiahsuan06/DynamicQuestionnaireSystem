@@ -41,7 +41,7 @@ namespace Dynamic_questionnaire_system.ClientSide
             string dbcommand =
                 $@"SELECT [Heading],[Vote],[StartTime],[EndTime]
                     FROM [Outline]
-                    WHERE QuestionnaireID = @QuestionnaireID
+                    WHERE [Outline].[QuestionnaireID] = @QuestionnaireID
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
@@ -65,7 +65,7 @@ namespace Dynamic_questionnaire_system.ClientSide
             string dbcommand =
                 $@"SELECT [Content]
                     FROM [Outline]
-                    WHERE QuestionnaireID = @QuestionnaireID
+                    WHERE [Outline].[QuestionnaireID] = @QuestionnaireID
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
@@ -88,7 +88,7 @@ namespace Dynamic_questionnaire_system.ClientSide
             string dbcommand =
                 $@"SELECT [Questionnaires].[TopicNum], [TopicDescription]
                     FROM [Questionnaires]
-                    WHERE QuestionnaireID = @QuestionnaireID
+                    WHERE [Questionnaires].[QuestionnaireID] = @QuestionnaireID
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
@@ -111,8 +111,8 @@ namespace Dynamic_questionnaire_system.ClientSide
             string dbcommand =
                 $@"SELECT [Questionnaires].[TopicNum], [TopicDescription],[OptionsNum],[OptionsDescription]
                     FROM [Questionnaires]
-                    JOIN Question ON [Question].TopicNum = [Questionnaires].[TopicNum]
-                    WHERE QuestionnaireID = @QuestionnaireID
+                    JOIN Question ON [Question].[TopicNum] = [Questionnaires].[TopicNum]
+                    WHERE [Questionnaires].[QuestionnaireID] = @QuestionnaireID
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
