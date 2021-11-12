@@ -109,7 +109,7 @@
             <br />
             <asp:ImageButton ID="ImgbtnBin" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" OnClick="ImgbtnBin_Click"/>&nbsp;&nbsp;<asp:Label ID="lblAddMessage" runat="server" ForeColor="Red"></asp:Label>
             <asp:GridView ID="givQuestion" runat="server" AutoGenerateColumns="False" OnRowCommand="givQuestion_RowCommand">
-                <Columns>
+ <%--               <Columns>
                     <asp:CheckBoxField />
                     <asp:BoundField HeaderText="#"  />
                     <asp:BoundField HeaderText="問題"  />
@@ -120,7 +120,7 @@
                             <a>編輯</a>
                         </ItemTemplate>
                     </asp:TemplateField>
-                </Columns>
+                </Columns>--%>
             </asp:GridView>
             <div>
                 <asp:Button ID="btngivCancel" runat="server" Text="取消" OnClick="btngivCancel_Click"/>&nbsp;&nbsp;&nbsp;&nbsp;

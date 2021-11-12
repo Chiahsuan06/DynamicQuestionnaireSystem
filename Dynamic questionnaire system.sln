@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dynamic questionnaire syste
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBSource", "DBSource\DBSource.csproj", "{8D7C7CF6-639A-4BAB-BF53-E53A00DEEBFA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DQS_ORM", "DQS_ORM\DQS_ORM.csproj", "{A191FC12-4186-4F22-BC34-FEAE45A990EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DQS_Models", "DQS_Models\DQS_Models.csproj", "{52B96DE3-0415-4B62-A757-CD6BC53C6628}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{8D7C7CF6-639A-4BAB-BF53-E53A00DEEBFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D7C7CF6-639A-4BAB-BF53-E53A00DEEBFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D7C7CF6-639A-4BAB-BF53-E53A00DEEBFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A191FC12-4186-4F22-BC34-FEAE45A990EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A191FC12-4186-4F22-BC34-FEAE45A990EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A191FC12-4186-4F22-BC34-FEAE45A990EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A191FC12-4186-4F22-BC34-FEAE45A990EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52B96DE3-0415-4B62-A757-CD6BC53C6628}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52B96DE3-0415-4B62-A757-CD6BC53C6628}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52B96DE3-0415-4B62-A757-CD6BC53C6628}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52B96DE3-0415-4B62-A757-CD6BC53C6628}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

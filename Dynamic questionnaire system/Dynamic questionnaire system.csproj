@@ -187,6 +187,10 @@
       <Project>{8d7c7cf6-639a-4bab-bf53-e53a00deebfa}</Project>
       <Name>DBSource</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DQS_Models\DQS_Models.csproj">
+      <Project>{52B96DE3-0415-4B62-A757-CD6BC53C6628}</Project>
+      <Name>DQS_Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

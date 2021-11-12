@@ -12,6 +12,7 @@ using NPOI.XSSF.UserModel;
 using NPOI.SS.UserModel;
 using System.IO;
 using System.Text;
+using DQS_Models;
 
 namespace Dynamic_questionnaire_system.UserSide
 {
@@ -35,6 +36,7 @@ namespace Dynamic_questionnaire_system.UserSide
             }
             this.givExport.DataSource = GetRecordData();  //做方法
             this.givExport.DataBind();
+    
         }
 
         #region 問卷
@@ -168,49 +170,75 @@ namespace Dynamic_questionnaire_system.UserSide
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
+        //沒有顯示
         protected void btnAddIn_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtQuestion.Text) || string.IsNullOrEmpty(txtOptions.Text))
             {
                 this.lblAddMessage.Text = "問題 和 回答 不得空白";
             }
-
-            QuestionColumns qc = new QuestionColumns();
-            if (qc.TopicNum == 0)
+            if (this.Session["GivQuestion"] == null)
             {
-                qc.TopicNum += 1;
+                this.Session["GivQuestion"] = new List<AddInGivQuestionList>();
             }
-            qc.TopicNum += 1;
-            qc.Question = this.txtQuestion.Text;
-            qc.Options = this.txtQuestion.Text;
+            int Num = 1;
+            if (Num != 1)
+            {
+                Num += 1;
+            }
 
-            if (this.ddlChoose.SelectedIndex == 0)
-            { qc.OptionsType = "單選方塊"; }
-            if (this.ddlChoose.SelectedIndex == 1)
-            { qc.OptionsType = "複選方塊"; }
-            if (this.ddlChoose.SelectedIndex == 2)
-            { qc.OptionsType = "文字"; }
-
-            if (ckbRequired.Checked == true)
-            { qc.Required = 0; }
+            string QuestionType;
+            if (ddlType.SelectedIndex == 0)
+            {
+               QuestionType = "自訂問題";
+            }
             else
-            { qc.Required = -1; }
+            {
+               QuestionType = "常用問題1";
+            }
 
+            string Question = this.txtQuestion.Text;
 
-            this.Session["GivQuestionList"] = qc;
-            givQuestion.DataSource = this.Session["GivQuestionList"] as DataTable;
-            givQuestion.DataBind();
+            string QuestChoose;
+            if (ddlChoose.SelectedIndex == 0)
+            {
+                QuestChoose = "單選方塊";
+            }
+            else if (ddlChoose.SelectedIndex == 1)
+            {
+                QuestChoose = "複選方塊";
+            }
+            else
+            {
+                QuestChoose = "文字";
+            }
 
-        }
+            bool ckbRe;
+            if (ckbRequired.Checked)
+            {
+                ckbRe = true;
+            }
+            else 
+            {
+                ckbRe = false;
+            }
 
-        class QuestionColumns
-        {
-            public int TopicNum { get; set; } //序號
-            public string Question { get; set; } //問題
-            public string Options { get; set; } //回答
-            public string OptionsType { get; set; } //種類
-            public int Required { get; set; }  //必填
+            string Options = this.txtOptions.Text;
 
+            var gqList = new AddInGivQuestionList()
+            {
+                Number = Num,
+                QuestionType = QuestionType,
+                Question = Question,
+                Choose = QuestChoose,
+                Required = ckbRe,
+                Options = Options
+            };
+
+            this.Session["GivQuestion"] = gqList;
+
+            this.givQuestion.DataSource = this.Session["GivQuestion"] as DataTable;
+            this.givQuestion.DataBind();
         }
 
         protected void givQuestion_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -256,7 +284,7 @@ namespace Dynamic_questionnaire_system.UserSide
         protected void btnExport_Click(object sender, EventArgs e)
         {
             DataTable dt = GetAnsRecordDetailsData();//獲取datatable資料源
-            string title = "問卷資料" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".CSV";//匯出的檔案名
+            string title = "問卷資料" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";//匯出的檔案名
             EstablishCSV(dt, title);//將dt資料源和檔案名title代入匯出方法中
 
         }

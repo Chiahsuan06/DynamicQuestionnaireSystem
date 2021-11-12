@@ -48,7 +48,7 @@
             <asp:Label ID="lblEmail" runat="server" Text="Email："></asp:Label>
             <asp:TextBox ID="txtbEmail" runat="server" TextMode="Email"></asp:TextBox><br /><br />
             <asp:Label ID="lblAge" runat="server" Text="年齡："></asp:Label>
-            <asp:TextBox ID="txtbAge" runat="server" TextMode="Number"></asp:TextBox>
+            <asp:TextBox ID="txtbAge" runat="server" TextMode="SingleLine"></asp:TextBox>
         </div>
         
         <asp:PlaceHolder ID="plcNoWriteData" runat="server" Visible="false">
