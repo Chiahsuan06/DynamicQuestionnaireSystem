@@ -85,7 +85,8 @@ namespace Dynamic_questionnaire_system.ClientSide
             {
                 sentUserInformation(Name, Phone, Email, Age);
             }
-            MessageBox.Show($"資料送出成功，即將返回列表頁", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            HttpContext.Current.Response.Write("<script> alert('資料送出成功，即將返回列表頁') </script>");
+            //MessageBox.Show($"資料送出成功，即將返回列表頁", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Response.Redirect("/ClientSide/CSList.aspx");
         }
 

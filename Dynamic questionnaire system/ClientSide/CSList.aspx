@@ -24,12 +24,17 @@
             <asp:Button ID="btnFind" runat="server" Text="搜尋" OnClick="btnFind_Click" />
         </div>
         <div>
-            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False">
+            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" OnRowDataBound="GridView1_RowDataBound" >
                 <Columns>
                     <asp:BoundField HeaderText="#" DataField="QuestionnaireID" />
                     <asp:TemplateField HeaderText="問卷" >
                         <ItemTemplate>
-                            <a href="CSPage.aspx?ID=<%# Eval("QuestionnaireID") %>" id="goPage"><%# Eval("Heading") %></a>
+                            <a id="goPage" href="CSPage.aspx?ID=<%# Eval("QuestionnaireID") %>"><%# Eval("Heading") %></a>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="問卷">
+                        <ItemTemplate>
+                            <a id="TextTitle"><%# Eval("Heading") %></a>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:BoundField HeaderText="狀態" DataField="Vote" />

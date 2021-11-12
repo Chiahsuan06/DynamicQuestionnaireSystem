@@ -18,7 +18,35 @@ namespace Dynamic_questionnaire_system.ClientSide
             this.GridView1.DataSource = GetDBData();  ///讓GridView1顯示DB的資料
             this.GridView1.DataBind();
         }
+        /// <summary>
+        /// 隱藏顯示超連結
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
 
+            if (e.Row.RowType == DataControlRowType.DataRow) 
+            {
+                string vt = (string)DataBinder.Eval(e.Row.DataItem, "Vote");
+                if (vt == "尚未開始")
+                {
+                    e.Row.Cells[1].Visible = false;
+                    e.Row.Cells[2].Visible = true;   //讓文字出現
+                }
+                else if (vt == "已完結")
+                {
+                    e.Row.Cells[1].Visible = false;
+                    e.Row.Cells[2].Visible = true;  //讓文字出現
+                }
+                else //投票中
+                {
+                    e.Row.Cells[1].Visible = true;
+                    e.Row.Cells[2].Visible = false;
+                }
+                GridView1.HeaderRow.Cells[2].Visible = false;
+            }
+        }
         protected void btnFind_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(this.txtStart.Text))
@@ -36,12 +64,12 @@ namespace Dynamic_questionnaire_system.ClientSide
 
             if (findStart > findEnd)   //日期檢查
             {
-                MessageBox.Show($"開始時間大於結束時間，請重新填寫", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                HttpContext.Current.Response.Write("<script> alert('開始時間大於結束時間，請重新填寫') </script>");
             }
 
             this.GridView1.DataSource = findData(findTitle, findStart, findEnd);
             this.GridView1.DataBind();
-            var dt = findData(findTitle, findStart, findEnd);  //這個部分是否有缺??....
+            var dt = findData(findTitle, findStart, findEnd);
             DataSearch(dt);
         }
         private void DataSearch(DataTable dt)
@@ -112,14 +140,19 @@ namespace Dynamic_questionnaire_system.ClientSide
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
                 $@"UPDATE [Outline]
-	                SET [Vote] = '已完結'
-	                WHERE [EndTime] < GETDATE()
-
-                  UPDATE [Outline]
-	                SET [Vote] = '尚未開始'
-	                WHERE [StartTime] > GETDATE()
-                  SELECT [QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
-                  FROM [Outline]
+                      SET [Vote] = '已完結'
+                      WHERE [EndTime] < GETDATE()
+                   
+                   UPDATE [Outline]
+                      SET [Vote] = '尚未開始'
+                      WHERE [StartTime] > GETDATE()
+                   
+                   UPDATE [Outline]
+                      SET [Vote] = '投票中'
+                      WHERE [StartTime] < GETDATE() AND [EndTime] > GETDATE()
+                   
+                    SELECT [Outline].[QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
+                    FROM [Outline]
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
@@ -139,11 +172,11 @@ namespace Dynamic_questionnaire_system.ClientSide
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public static DataTable findData(string Title, DateTime Start, DateTime End)   //SQL找得到，為什麼搜尋不到??
+        public static DataTable findData(string Title, DateTime Start, DateTime End)   //OK
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
-                $@" SELECT [QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
+                $@" SELECT [Outline].[QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
                     FROM [Outline]
                     WHERE [Heading] LIKE (@Title + '%')
                     OR [StartTime] >= @Start
@@ -166,15 +199,6 @@ namespace Dynamic_questionnaire_system.ClientSide
             }
         }
 
-        protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)  //如何寫入Session or 其他方式  還有問卷的狀態  投票中有超連結 其餘沒有
-        {
-            var item = e.CommandSource as System.Web.UI.WebControls.Button;
-            var container = item.NamingContainer;
 
-            if (string.Compare("goPage", item.ID, true) == 0)
-            {
-                this.Session["QuestionnaireNum"] = container;
-            }
-        }
     }
 }

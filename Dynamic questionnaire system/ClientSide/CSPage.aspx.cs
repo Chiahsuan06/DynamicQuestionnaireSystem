@@ -111,7 +111,7 @@ namespace Dynamic_questionnaire_system.ClientSide
             string dbcommand =
                 $@"SELECT [Questionnaires].[TopicNum], [TopicDescription],[OptionsNum],[OptionsDescription]
                     FROM [Questionnaires]
-                    JOIN Question ON [Question].TopicNum=[Questionnaires].[TopicNum]
+                    JOIN Question ON [Question].TopicNum = [Questionnaires].[TopicNum]
                     WHERE QuestionnaireID = @QuestionnaireID
                 ";
 
@@ -136,7 +136,8 @@ namespace Dynamic_questionnaire_system.ClientSide
         /// <param name="e"></param>
         protected void btnCancel_Click(object sender, EventArgs e)
         {
-            MessageBox.Show($"將返回列表頁", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            HttpContext.Current.Response.Write("<script> alert('將返回列表頁') </script>");
+            //MessageBox.Show($"將返回列表頁", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Response.Redirect("/ClientSide/CSList.aspx");
         }
 
