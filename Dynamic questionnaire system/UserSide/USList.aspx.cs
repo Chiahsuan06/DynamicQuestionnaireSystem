@@ -219,11 +219,18 @@ namespace Dynamic_questionnaire_system.UserSide
         /// </summary>
         /// <param name="QuestionnaireID"></param>
         /// <returns></returns>
+        
+        //要刪除整份問卷 =>SQL 成功
         public static DataTable DelQuestionnaireID(int QuestionnaireID)
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
-                $@"  DELETE FROM [Outline] WHERE [QuestionnaireID]= @QuestionnaireID
+                $@"  DELETE FROM [Outline]
+                      WHERE QuestionnaireID = @QuestionnaireID
+                     DELETE FROM [Questionnaires]
+                      WHERE QuestionnaireID = @QuestionnaireID
+                     DELETE FROM [Question]
+                     WHERE [Question].QuestionnaireID = @QuestionnaireID
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
