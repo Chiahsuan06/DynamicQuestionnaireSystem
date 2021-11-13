@@ -20,7 +20,7 @@
             <asp:ImageButton ID="ImgbtnAdd" runat="server" ImageUrl="~/Images/add.png" Height="29px" Width="34px" OnClick="ImgbtnAdd_Click" />
             <asp:Label ID="lblMessage" runat="server" Visible="false"></asp:Label>
         </div>
-    <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False">
+    <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" OnRowDataBound="GridView1_RowDataBound">
         <Columns>
             <asp:TemplateField>
                 <ItemTemplate>

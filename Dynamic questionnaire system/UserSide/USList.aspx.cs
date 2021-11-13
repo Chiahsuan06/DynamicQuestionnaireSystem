@@ -108,9 +108,32 @@ namespace Dynamic_questionnaire_system.UserSide
             }
             return dtPaged;
         }
-
         /// <summary>
-        /// 顯示資料、判斷投票狀態(成功)
+        /// 修改狀態
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                string vt = (string)DataBinder.Eval(e.Row.DataItem, "Vote");
+                if (vt == "尚未開始")
+                {
+                    e.Row.Cells[3].Text = "已關閉";
+                }
+                else if (vt == "已完結")
+                {
+                    e.Row.Cells[3].Text = "已關閉";
+                }
+                else //投票中
+                {
+                    e.Row.Cells[3].Text = "開放中";
+                }
+            }
+        }
+        /// <summary>
+        /// 顯示資料、判斷投票狀態(已完結、尚未開始、投票中)
         /// </summary>
         /// <returns></returns>
         public static DataTable GetDBData()
@@ -118,14 +141,19 @@ namespace Dynamic_questionnaire_system.UserSide
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
                 $@"UPDATE [Outline]
-	                SET [Vote] = '已完結'
-	                WHERE [EndTime] < GETDATE()
-
-                  UPDATE [Outline]
-	                SET [Vote] = '尚未開始'
-	                WHERE [StartTime] > GETDATE()
-                  SELECT [QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
-                  FROM [Outline]
+                      SET [Vote] = '已完結'
+                      WHERE [EndTime] < GETDATE()
+                   
+                   UPDATE [Outline]
+                      SET [Vote] = '尚未開始'
+                      WHERE [StartTime] > GETDATE()
+                   
+                   UPDATE [Outline]
+                      SET [Vote] = '投票中'
+                      WHERE [StartTime] < GETDATE() AND [EndTime] > GETDATE()
+                   
+                    SELECT [Outline].[QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
+                    FROM [Outline]
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();

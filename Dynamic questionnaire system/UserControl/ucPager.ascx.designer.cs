@@ -51,15 +51,6 @@ namespace Dynamic_questionnaire_system.UserControl
         protected global::System.Web.UI.WebControls.Literal ltlCurrentPage;
 
         /// <summary>
-        /// aLink3 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAnchor aLink3;
-
-        /// <summary>
         /// aLink4 控制項。
         /// </summary>
         /// <remarks>
@@ -67,6 +58,15 @@ namespace Dynamic_questionnaire_system.UserControl
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlAnchor aLink4;
+
+        /// <summary>
+        /// aLink5 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor aLink5;
 
         /// <summary>
         /// aLinkLast 控制項。
@@ -78,12 +78,12 @@ namespace Dynamic_questionnaire_system.UserControl
         protected global::System.Web.UI.HtmlControls.HtmlAnchor aLinkLast;
 
         /// <summary>
-        /// ltPager 控制項。
+        /// ltPage 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal ltPager;
+        protected global::System.Web.UI.WebControls.Literal ltPage;
     }
 }
