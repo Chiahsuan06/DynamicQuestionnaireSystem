@@ -56,7 +56,7 @@
         </asp:PlaceHolder>
 
         <div>  <%--題目、選項--%>
-            <asp:Repeater ID="reTopic" runat="server">
+            <%--<asp:Repeater ID="reTopic" runat="server">
                 <ItemTemplate>
                     <p>
                         <%#Eval("TopicDescription") %>
@@ -69,7 +69,10 @@
                         <%#Eval("OptionsDescription") %>
                     </p>
                 </ItemTemplate>
-            </asp:Repeater>
+            </asp:Repeater>--%>
+            <asp:PlaceHolder ID="PlaceHolder1" runat="server">
+
+            </asp:PlaceHolder>
         </div>
         <div>
             <asp:Button ID="btnCancel" runat="server" Text="取消" OnClick="btnCancel_Click" />

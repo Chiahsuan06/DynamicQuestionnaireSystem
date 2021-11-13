@@ -23,11 +23,11 @@ namespace Dynamic_questionnaire_system.ClientSide
             this.reContent.DataSource = GetContent(IDNumber);
             this.reContent.DataBind();
 
-            this.reTopic.DataSource = GetTopic(IDNumber);
-            this.reTopic.DataBind();
+            //this.reTopic.DataSource = GetTopic(IDNumber);
+            //this.reTopic.DataBind();
 
-            this.reOptions.DataSource = GetOptions(IDNumber);
-            this.reOptions.DataBind();
+            //this.reOptions.DataSource = GetOptions(IDNumber);
+            //this.reOptions.DataBind();
         }
 
         /// <summary>
@@ -86,8 +86,8 @@ namespace Dynamic_questionnaire_system.ClientSide
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
-                $@"SELECT [Questionnaires].[TopicNum], [TopicDescription]
-                    FROM [Questionnaires]
+                $@"SELECT [TopicNum],[TopicDescription],[TopicSummary],[TopicType],[TopicMustKeyIn]
+                     FROM [Questionnaires]
                     WHERE [Questionnaires].[QuestionnaireID] = @QuestionnaireID
                 ";
 
@@ -165,6 +165,45 @@ namespace Dynamic_questionnaire_system.ClientSide
 
                 MessageBox.Show($"即將前往確認頁面，請確認填寫的資訊是否正確", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Response.Redirect("/ClientSide/CSConfirmation.aspx");
+            }
+        }
+
+        protected void Generate_Page()
+        {
+            string IDNumber = this.Request.QueryString["ID"];
+
+            string connStr = DBHelper.GetConnectionString();
+            SqlConnection Conn = new SqlConnection(connStr);
+            Conn.Open();
+
+            SqlCommand cmd1 = new SqlCommand("SELECT * FROM[Questionnaires] WHERE[Questionnaires].[QuestionnaireID] = @QuestionnaireID", Conn);
+            cmd1.Parameters.AddWithValue("@QuestionnaireID", IDNumber);
+            SqlDataReader dr1 = cmd1.ExecuteReader();
+
+            if (dr1.HasRows) 
+            {
+                System.Web.UI.WebControls.Label Lable_table_start = new System.Web.UI.WebControls.Label();
+                Lable_table_start.Text = "";
+                PlaceHolder1.Controls.Add(Lable_table_start);
+
+                int table_i = 0;
+
+                while (dr1.Read())
+                {
+                    int D1_ID = (int)dr1["TopicNum"];
+                    string D1_TITLE = dr1["TopicDescription"].ToString();
+                    string D1_MustKetIn = dr1["TopicMustKeyIn"].ToString();
+
+                    if (DBNull.Value.Equals(dr1["TopicSummary"]))
+                    {
+                        string D1_SUMMARY = dr1["TopicSummary"].ToString();
+                    }
+                    else 
+                    {
+                        string D1_SUMMARY = "";
+                    }
+                    String D1_TYPE = dr1["TopicType"].ToString();
+                }
             }
         }
     }
