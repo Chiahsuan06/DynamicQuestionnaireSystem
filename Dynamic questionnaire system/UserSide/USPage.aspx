@@ -1,4 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Models/Main.Master" AutoEventWireup="true" CodeBehind="USPage.aspx.cs" Inherits="Dynamic_questionnaire_system.UserSide.USPage" %>
+
+<%@ Register Src="~/UserControl/ucPager.ascx" TagPrefix="uc1" TagName="ucPager" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
@@ -142,8 +145,9 @@
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
-
             </asp:GridView>
+            <uc1:ucPager runat="server" ID="ucPager" PageSize ="10" Url="/UserSide/USPage.aspx"/>
+
             <%--分頁--%>
 
             <asp:PlaceHolder ID="PlaceHolderDetail" runat="server">

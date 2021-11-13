@@ -34,9 +34,81 @@ namespace Dynamic_questionnaire_system.UserSide
                 this.txtQuestion.Text = "";
                 this.txtOptions.Text = "";
             }
+
+
+            //後台內頁3-填寫資料
             this.givExport.DataSource = GetRecordData();  //做方法
             this.givExport.DataBind();
-    
+            var dt = GetRecordData();
+            DataSearch(dt);
+
+        }
+        
+        /// <summary>
+        /// 分頁控制
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        private void DataSearch(DataTable dt)
+        {
+            if (dt.Rows.Count > 0)
+            {
+                var dtPaged = this.GetPagedDataTable(dt);
+
+                this.ucPager.TotalSize = dt.Rows.Count;
+                this.ucPager.Bind();
+
+                this.givExport.DataSource = dtPaged;
+                this.givExport.DataBind();
+                this.ucPager.Visible = true;
+            }
+            else
+            {
+                this.givExport.Visible = false;
+                this.lblMessage.Visible = true;
+                this.lblMessage.Text = "請重新搜尋";
+            }
+        }
+        private DataTable GetPagedDataTable(DataTable dt)
+        {
+            DataTable dtPaged = dt.Clone();
+            int pageSize = this.ucPager.PageSize;
+
+            int startIndex = (this.GetCurrentPage() - 1) * pageSize;
+            int endIndex = (this.GetCurrentPage()) * pageSize;
+
+            if (endIndex > dt.Rows.Count)
+                endIndex = dt.Rows.Count;
+
+            for (var i = startIndex; i < endIndex; i++)
+            {
+                DataRow dr = dt.Rows[i];
+                var drNew = dtPaged.NewRow();
+
+                foreach (DataColumn dc in dt.Columns)
+                {
+                    drNew[dc.ColumnName] = dr[dc];
+                }
+
+                dtPaged.Rows.Add(drNew);
+            }
+            return dtPaged;
+        }
+        private int GetCurrentPage()
+        {
+            string pageText = Request.QueryString["Page"];
+
+            if (string.IsNullOrWhiteSpace(pageText))
+                return 1;
+
+            int intPage;
+            if (!int.TryParse(pageText, out intPage))
+                return 1;
+
+            if (intPage <= 0)
+                return 1;
+
+            return intPage;
         }
 
         #region 問卷

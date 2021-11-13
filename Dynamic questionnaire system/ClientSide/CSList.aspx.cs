@@ -79,6 +79,11 @@ namespace Dynamic_questionnaire_system.ClientSide
             var dtFD = findData(findTitle, findStart, findEnd);
             DataSearch(dtFD);
         }
+        /// <summary>
+        /// 分頁控制
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
         private void DataSearch(DataTable dt)
         {
             if (dt.Rows.Count > 0)
@@ -99,12 +104,6 @@ namespace Dynamic_questionnaire_system.ClientSide
                 this.lblMessage.Text = "請重新搜尋";
             }
         }
-
-        /// <summary>
-        /// 分頁控制
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
         private DataTable GetPagedDataTable(DataTable dt)
         { 
             DataTable dtPaged = dt.Clone();
