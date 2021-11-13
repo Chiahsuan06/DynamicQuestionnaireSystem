@@ -18,6 +18,8 @@ namespace Dynamic_questionnaire_system.UserSide
         {
             this.GridView1.DataSource = GetDBData();  ///讓GridView1顯示DB的資料
             this.GridView1.DataBind();
+            var dt = GetDBData();
+            DataSearch(dt);
         }
         /// <summary>
         /// 搜尋區
@@ -41,13 +43,13 @@ namespace Dynamic_questionnaire_system.UserSide
 
             if (findStart > findEnd)   //日期檢查
             {
-                MessageBox.Show($"開始時間大於結束時間，請重新填寫", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                HttpContext.Current.Response.Write("<script> alert('開始時間大於結束時間，請重新填寫') </script>");
             }
 
             this.GridView1.DataSource = findData(findTitle, findStart, findEnd);
             this.GridView1.DataBind();
-            var dt = findData(findTitle, findStart, findEnd);  //這個部分是否有缺??....
-            DataSearch(dt);
+            var dtFD = findData(findTitle, findStart, findEnd);
+            DataSearch(dtFD);
         }
 
         private void DataSearch(DataTable dt)
@@ -56,40 +58,32 @@ namespace Dynamic_questionnaire_system.UserSide
             {
                 var dtPaged = this.GetPagedDataTable(dt);
 
+                this.ucPager.TotalSize = dt.Rows.Count;
+                this.ucPager.Bind();
+
                 this.GridView1.DataSource = dtPaged;
                 this.GridView1.DataBind();
-                //this.ucPager.Visible = true;
+                this.ucPager.Visible = true;
             }
             else
             {
                 this.GridView1.Visible = false;
                 this.lblMessage.Visible = true;
-                this.lblMessage.Text = "請重新搜尋";   //按搜尋，一直跳到這裡....
+                this.lblMessage.Text = "請重新搜尋";
             }
         }
-        private int GetCurrentPage()
-        {
-            string pageText = Request.QueryString["Page"];
-
-            if (string.IsNullOrWhiteSpace(pageText))
-                return 1;
-
-            int intPage;
-            if (!int.TryParse(pageText, out intPage))
-                return 1;
-
-            if (intPage <= 0)
-                return 1;
-
-            return intPage;
-        }
+        /// <summary>
+        /// 分頁控制
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
         private DataTable GetPagedDataTable(DataTable dt)
         {
             DataTable dtPaged = dt.Clone();
-            //int pageSize = this.ucPager.PageSize;
+            int pageSize = this.ucPager.PageSize;
 
-            int startIndex = (this.GetCurrentPage() - 1) * 10;
-            int endIndex = (this.GetCurrentPage()) * 10;
+            int startIndex = (this.GetCurrentPage() - 1) * pageSize;
+            int endIndex = (this.GetCurrentPage()) * pageSize;
 
             if (endIndex > dt.Rows.Count)
                 endIndex = dt.Rows.Count;
@@ -108,8 +102,25 @@ namespace Dynamic_questionnaire_system.UserSide
             }
             return dtPaged;
         }
+        private int GetCurrentPage()
+        {
+            string pageText = Request.QueryString["Page"];
+
+            if (string.IsNullOrWhiteSpace(pageText))
+                return 1;
+
+            int intPage;
+            if (!int.TryParse(pageText, out intPage))
+                return 1;
+
+            if (intPage <= 0)
+                return 1;
+
+            return intPage;
+        }
+
         /// <summary>
-        /// 修改狀態
+        /// 修改狀態 =>已關閉/開放中
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -169,7 +180,7 @@ namespace Dynamic_questionnaire_system.UserSide
         }
 
         /// <summary>
-        /// 搜尋
+        /// 搜尋 包含指定文字、包含在開始、結束指定時間區間
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -177,11 +188,11 @@ namespace Dynamic_questionnaire_system.UserSide
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
-                $@" SELECT [QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
+                $@" SELECT [Outline].[QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
                     FROM [Outline]
                     WHERE [Heading] LIKE (@Title + '%')
                     OR [StartTime] >= @Start
-                    OR [EndTime] <= @End
+                    AND [EndTime] <= @End
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();

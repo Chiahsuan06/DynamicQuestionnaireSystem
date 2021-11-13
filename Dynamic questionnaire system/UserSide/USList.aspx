@@ -40,5 +40,5 @@
         </Columns>
     </asp:GridView>
     <asp:SqlDataSource ID="SqlDataSource1" runat="server"></asp:SqlDataSource>
-    <uc1:ucPager runat="server" ID="ucPager" />
+    <uc1:ucPager runat="server" ID="ucPager" PageSize ="10" Url="/UserSide/USList.aspx"/>
 </asp:Content>

@@ -49,6 +49,11 @@ namespace Dynamic_questionnaire_system.ClientSide
                 GridView1.HeaderRow.Cells[2].Visible = false;
             }
         }
+        /// <summary>
+        /// 搜尋區
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void btnFind_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(this.txtStart.Text))
@@ -91,7 +96,7 @@ namespace Dynamic_questionnaire_system.ClientSide
             {
                 this.GridView1.Visible = false;
                 this.lblMessage.Visible = true;
-                this.lblMessage.Text = "請重新搜尋";   //按搜尋，一直跳到這裡....
+                this.lblMessage.Text = "請重新搜尋";
             }
         }
 
