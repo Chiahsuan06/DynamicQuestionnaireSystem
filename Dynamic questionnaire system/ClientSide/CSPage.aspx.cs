@@ -55,6 +55,7 @@ namespace Dynamic_questionnaire_system.ClientSide
         {
             HttpContext.Current.Response.Write("<script> alert('將返回列表頁') </script>");
             //MessageBox.Show($"將返回列表頁", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Session.Clear();
             Response.Redirect("/ClientSide/CSList.aspx");
         }
 

@@ -61,7 +61,7 @@ namespace Dynamic_questionnaire_system.ClientSide
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>  
-        //跳得回去但沒有帶Session
+        //OK
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             this.Session["CSCFIName"] = this.ltlName.Text;
@@ -88,9 +88,12 @@ namespace Dynamic_questionnaire_system.ClientSide
             if (result == DialogResult.OK)
             {
                 sentUserInformation(Name, Phone, Email, Age);
+
+                Session.Clear();
             }
             HttpContext.Current.Response.Write("<script> alert('資料送出成功，即將返回列表頁') </script>");
             //MessageBox.Show($"資料送出成功，即將返回列表頁", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
             Response.Redirect("/ClientSide/CSList.aspx");
         }
 
