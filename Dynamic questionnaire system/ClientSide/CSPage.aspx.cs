@@ -50,18 +50,11 @@ namespace Dynamic_questionnaire_system.ClientSide
 
         protected void btnSent_Click(object sender, EventArgs e)
         {
-            if (this.Session["Name"] != null || this.Session["Phone"] != null || this.Session["Email"] != null || this.Session["Age"] != null)
-            {
-                this.txtbName.Text = this.Session["Name"] as string;
-                this.txtbPhone.Text = this.Session["Phone"] as string;
-                this.txtbEmail.Text = this.Session["Email"] as string;
-                this.txtbAge.Text = this.Session["Age"] as string;
-            }
-            if (string.IsNullOrEmpty(this.txtbName.Text) || string.IsNullOrEmpty(this.txtbPhone.Text) || string.IsNullOrEmpty(this.txtbEmail.Text) || string.IsNullOrEmpty(this.txtbAge.Text))
+            if (this.txtbName.Text == null || this.txtbPhone.Text == null || this.txtbEmail.Text == null || this.txtbAge.Text == null)
             {
                 this.plcNoWriteData.Visible = true;
             }
-            else
+            else 
             {
                 this.plcNoWriteData.Visible = false;
 
@@ -69,6 +62,7 @@ namespace Dynamic_questionnaire_system.ClientSide
                 this.Session["Phone"] = this.txtbPhone.Text;
                 this.Session["Email"] = this.txtbEmail.Text;
                 this.Session["Age"] = this.txtbAge.Text;
+                this.Session["ID"] = Request.QueryString["ID"];
 
                 MessageBox.Show($"即將前往確認頁面，請確認填寫的資訊是否正確", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Response.Redirect("/ClientSide/CSConfirmation.aspx");
@@ -105,30 +99,6 @@ namespace Dynamic_questionnaire_system.ClientSide
             }
         }
 
-        //取得題目
-        public static DataRow GetTopic(string IDNumber)
-        {
-            string connStr = DBHelper.GetConnectionString();
-            string dbcommand =
-                $@"SELECT *
-                    FROM [Questionnaires]
-                    WHERE [Questionnaires].[QuestionnaireID] = @QuestionnaireID
-                ";
-
-            List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
-
-            try
-            {
-                return DBHelper.ReadDataRow(connStr, dbcommand, list);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog(ex);
-                return null;
-            }
-        }
-
         public void Generate_Page()
         {
             SqlConnection Conn = new SqlConnection(ConnStr);
@@ -145,7 +115,7 @@ namespace Dynamic_questionnaire_system.ClientSide
             if (dr1.HasRows)
             {
                 Label Label_table_start = new Label();  //-- 只是為了畫面美觀而已。
-                Label_table_start.Text = "<table border=\"1\" width=\"480px\" id=\"table1\" style=\"border: 3px dotted #000080\"><tr><td>這是一個 PlaceHolder控制項，可以動態產生（加入）Web控制項。</td></tr>";
+                Label_table_start.Text = "<table border=\"1\" width=\"480px\" id=\"table1\" style=\"border: 3px dotted #000080\">";
                 PlaceHolder1.Controls.Add(Label_table_start);
 
                 int table_i = 0;
@@ -300,9 +270,6 @@ namespace Dynamic_questionnaire_system.ClientSide
             PlaceHolder1.Controls.Add(LB_summary);  //-- 動態加入畫面（PlaceHolder1）之中
         }
 
-
-
-
         //== 計算這個問卷出了幾個題目（Questionnaires）？
         protected int Compute_QNo(int M_ID)
         {
@@ -319,8 +286,6 @@ namespace Dynamic_questionnaire_system.ClientSide
 
             return x; //-- 執行SQL指令。
         }
-
-
 
         //== 針對這個問卷，每一個題目（Questionnaires）的ID編號
         protected System.Collections.ArrayList Take_D1_ID(int M_ID)

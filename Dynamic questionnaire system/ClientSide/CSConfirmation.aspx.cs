@@ -15,7 +15,7 @@ namespace Dynamic_questionnaire_system.ClientSide
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string IDNumber = this.Request.QueryString["ID"];
+            string IDNumber = Session["ID"].ToString();
             this.reHeading.DataSource = GetHeading(IDNumber);
             this.reHeading.DataBind();
 
@@ -35,11 +35,11 @@ namespace Dynamic_questionnaire_system.ClientSide
             string dbcommand =
                 $@"SELECT [Heading]
                     FROM [Outline]
-                    WHERE Number = @IDNumber
+                    WHERE QuestionnaireID = @QuestionnaireID
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@IDNumber", IDNumber));
+            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
 
             try
             {
@@ -99,15 +99,15 @@ namespace Dynamic_questionnaire_system.ClientSide
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
-                $@" INSERT INTO [Information] ([UserID], [Name], [Phone], [Email], [Age])
-                    SELECT newid() AS [UserID], @Name, @Phone, @Email, @Age
+                $@" INSERT INTO [Record] ([AnswererID], [AnsName], [AnsPhone], [AnsEmail], [AnsAge])
+                    SELECT newid() AS [AnswererID], @AnsName, @AnsPhone, @AnsEmail, @AnsAge
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@Name", Name));
-            list.Add(new SqlParameter("@Phone", Phone));
-            list.Add(new SqlParameter("@Email", Email));
-            list.Add(new SqlParameter("@Age", Age));
+            list.Add(new SqlParameter("@AnsName", Name));
+            list.Add(new SqlParameter("@AnsPhone", Phone));
+            list.Add(new SqlParameter("@AnsEmail", Email));
+            list.Add(new SqlParameter("@AnsAge", Age));
 
             try
             {
