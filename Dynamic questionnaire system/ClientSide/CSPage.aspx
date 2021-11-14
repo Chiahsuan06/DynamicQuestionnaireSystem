@@ -30,7 +30,6 @@
                      </div>
                 </ItemTemplate>
             </asp:Repeater>
-            <asp:Label ID="Label_M_title" runat="server"></asp:Label>
         </div>
         <div>   <%--內容--%>
             <asp:Repeater ID="reContent" runat="server">

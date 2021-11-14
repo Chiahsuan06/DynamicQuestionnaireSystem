@@ -15,7 +15,11 @@ namespace Dynamic_questionnaire_system.ClientSide
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string IDNumber = Session["ID"].ToString();
+            if (this.Request.QueryString["ID"] == null)
+            {
+                Response.Redirect("/ClientSide/CSList.aspx");
+            }
+            string IDNumber = this.Request.QueryString["ID"];
             this.reHeading.DataSource = GetHeading(IDNumber);
             this.reHeading.DataBind();
 
@@ -57,14 +61,14 @@ namespace Dynamic_questionnaire_system.ClientSide
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>  
-        //跳得回去但沒有帶Session =>未實作
+        //跳得回去但沒有帶Session
         protected void btnCancel_Click(object sender, EventArgs e)
         {
-            this.Session["Name"] = this.ltlName.Text;
-            this.Session["Phone"] = this.ltlPhone.Text;
-            this.Session["Email"] = this.ltlEmail.Text;
-            this.Session["Age"] = this.ltlAge.Text;
-            Response.Redirect("/ClientSide/CSPage.aspx");
+            this.Session["CSCFIName"] = this.ltlName.Text;
+            this.Session["CSCFIPhone"] = this.ltlPhone.Text;
+            this.Session["CSCFIEmail"] = this.ltlEmail.Text;
+            this.Session["CSCFIAge"] = this.ltlAge.Text;
+            Response.Redirect("/ClientSide/CSPage.aspx?ID=" + Request.QueryString["ID"]);
         }
 
         /// <summary>

@@ -27,9 +27,19 @@ namespace Dynamic_questionnaire_system.ClientSide
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (this.Request.QueryString["ID"] == null) { Response.Redirect("/ClientSide/CSList.aspx"); }
-            string IDNumber = this.Request.QueryString["ID"];
+            if (this.Request.QueryString["ID"] == null)
+            { 
+                Response.Redirect("/ClientSide/CSList.aspx"); 
+            }
+            if (!IsPostBack)
+            {
+                this.txtbName.Text = this.Session["CSCFIName"] as string;
+                this.txtbPhone.Text = this.Session["CSCFIPhone"] as string;
+                this.txtbEmail.Text = this.Session["CSCFIEmail"] as string;
+                this.txtbAge.Text = this.Session["CSCFIAge"] as string;
+            }
 
+            string IDNumber = this.Request.QueryString["ID"];
             this.reHeading.DataSource = GetHeadingContent(IDNumber);//標題
             this.reHeading.DataBind();
             this.reContent.DataSource = GetHeadingContent(IDNumber);//內容
@@ -62,10 +72,9 @@ namespace Dynamic_questionnaire_system.ClientSide
                 this.Session["Phone"] = this.txtbPhone.Text;
                 this.Session["Email"] = this.txtbEmail.Text;
                 this.Session["Age"] = this.txtbAge.Text;
-                this.Session["ID"] = Request.QueryString["ID"];
 
                 MessageBox.Show($"即將前往確認頁面，請確認填寫的資訊是否正確", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Response.Redirect("/ClientSide/CSConfirmation.aspx");
+                Response.Redirect("/ClientSide/CSConfirmation.aspx?ID=" + Request.QueryString["ID"]);
             }
         }
 
