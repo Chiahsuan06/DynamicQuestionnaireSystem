@@ -30,6 +30,7 @@
                      </div>
                 </ItemTemplate>
             </asp:Repeater>
+            <asp:Label ID="Label_M_title" runat="server"></asp:Label>
         </div>
         <div>   <%--內容--%>
             <asp:Repeater ID="reContent" runat="server">
@@ -56,20 +57,6 @@
         </asp:PlaceHolder>
 
         <div>  <%--題目、選項--%>
-            <%--<asp:Repeater ID="reTopic" runat="server">
-                <ItemTemplate>
-                    <p>
-                        <%#Eval("TopicDescription") %>
-                    </p>
-                </ItemTemplate>
-            </asp:Repeater>
-            <asp:Repeater ID="reOptions" runat="server">
-                <ItemTemplate>
-                    <p>
-                        <%#Eval("OptionsDescription") %>
-                    </p>
-                </ItemTemplate>
-            </asp:Repeater>--%>
             <asp:PlaceHolder ID="PlaceHolder1" runat="server">
 
             </asp:PlaceHolder>
