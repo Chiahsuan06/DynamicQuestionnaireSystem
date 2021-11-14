@@ -50,7 +50,7 @@ namespace Dynamic_questionnaire_system.ClientSide
 
         protected void btnSent_Click(object sender, EventArgs e)
         {
-            if (this.txtbName.Text == null || this.txtbPhone.Text == null || this.txtbEmail.Text == null || this.txtbAge.Text == null)
+            if (string.IsNullOrWhiteSpace(this.txtbName.Text) || string.IsNullOrWhiteSpace(this.txtbPhone.Text)  || string.IsNullOrWhiteSpace(this.txtbEmail.Text)  || string.IsNullOrWhiteSpace(this.txtbAge.Text))
             {
                 this.plcNoWriteData.Visible = true;
             }
