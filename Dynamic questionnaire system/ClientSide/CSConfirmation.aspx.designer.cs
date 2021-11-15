@@ -105,13 +105,22 @@ namespace Dynamic_questionnaire_system.ClientSide
         protected global::System.Web.UI.WebControls.Literal ltlAge;
 
         /// <summary>
-        /// reTopic 控制項。
+        /// PlaceHolder1 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater reTopic;
+        protected global::System.Web.UI.WebControls.PlaceHolder PlaceHolder1;
+
+        /// <summary>
+        /// Label1 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label1;
 
         /// <summary>
         /// btnCancel 控制項。

@@ -5,6 +5,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <%--    <div>
+        <asp:Label ID="lblWelcome" runat="server"></asp:Label>
+    </div>--%>
     <div class="auto-style1" style="border: thin solid #000000" >
             <asp:Label ID="lblTitle" runat="server" Text="問卷標題："></asp:Label>
             <asp:TextBox ID="txtTitle" runat="server" TextMode="Search"></asp:TextBox><br />

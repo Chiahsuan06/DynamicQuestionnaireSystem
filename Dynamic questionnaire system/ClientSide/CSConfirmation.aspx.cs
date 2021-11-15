@@ -1,5 +1,6 @@
 ﻿using DBSource;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -27,6 +28,9 @@ namespace Dynamic_questionnaire_system.ClientSide
             this.ltlPhone.Text = Session["Phone"] as string;
             this.ltlEmail.Text = Session["Email"] as string;
             this.ltlAge.Text = Session["Age"] as string;
+
+            ArrayList M1_D1_D2_AL = Session["ListM1_D1_D2_AL"] as ArrayList;
+            this.Label1.Text = M1_D1_D2_AL.ToString();
         }
 
         /// <summary>

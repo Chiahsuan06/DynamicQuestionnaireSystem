@@ -1,5 +1,6 @@
 ﻿using DBSource;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -74,6 +75,47 @@ namespace Dynamic_questionnaire_system.ClientSide
                 this.Session["Email"] = this.txtbEmail.Text;
                 this.Session["Age"] = this.txtbAge.Text;
 
+                ArrayList M1_D1_D2 = new ArrayList();
+
+                int QNo = Compute_QNo(M_ID);
+                ArrayList D1_AL = Take_D1_ID(M_ID);
+
+                for (int i = 0; i <= (QNo - 1); i++)
+                {
+                    string Dyan_WebControlID = "D1" + D1_AL[i];
+                    switch (PlaceHolder1.FindControl(Dyan_WebControlID).ToString())
+                    {
+                        case "System.Web.UI.WebControls.CheckBoxList":
+                            CheckBoxList CBL1 = (CheckBoxList)PlaceHolder1.FindControl(Dyan_WebControlID);
+                            string CBL1_Value = "";
+
+                            for (int j = 0; j <= (CBL1.Items.Count - 1); j++)
+                            {
+                                if (CBL1.Items[j].Selected)
+                                {
+                                    CBL1_Value = CBL1_Value + CBL1.Items[j].Text;
+                                }
+                            }
+                            M1_D1_D2.Add("<br/>第" + i + "題 所選的是--" + CBL1_Value);
+
+                            break;
+
+                        case "System.Web.UI.WebControls.RadioButtonList":
+                            CheckBoxList CBL2 = (CheckBoxList)PlaceHolder1.FindControl(Dyan_WebControlID);
+                            M1_D1_D2.Add("<br/>第" + i + "題 所選的是--" + CBL2.SelectedItem.Text);
+
+                            break;
+
+                        default:
+                            System.Web.UI.WebControls.TextBox TB = (System.Web.UI.WebControls.TextBox)PlaceHolder1.FindControl(Dyan_WebControlID);
+                            M1_D1_D2.Add("<br/>第" + i + "題 所選的是--" + TB.Text);
+
+                            break;
+                    }
+                }
+
+                Session["ListM1_D1_D2_AL"] = M1_D1_D2;
+
                 MessageBox.Show($"即將前往確認頁面，請確認填寫的資訊是否正確", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Response.Redirect("/ClientSide/CSConfirmation.aspx?ID=" + Request.QueryString["ID"]);
             }
@@ -124,7 +166,7 @@ namespace Dynamic_questionnaire_system.ClientSide
 
             if (dr1.HasRows)
             {
-                Label Label_table_start = new Label();  //-- 只是為了畫面美觀而已。
+                Label Label_table_start = new Label();
                 Label_table_start.Text = "<table border=\"1\" width=\"480px\" id=\"table1\" style=\"border: 3px dotted #000080\">";
                 PlaceHolder1.Controls.Add(Label_table_start);
 
@@ -149,7 +191,7 @@ namespace Dynamic_questionnaire_system.ClientSide
 
                     //**** "產生" 這一份問卷的「每一個題目」。Questionnaires資料表 ****
 
-                    Label Label_table_tr = new Label();  //-- 只是為了畫面美觀而已。
+                    Label Label_table_tr = new Label();
                     if ((table_i % 2) == 0)
                     {
                         Label_table_tr.Text = "<tr><td>";
@@ -161,7 +203,7 @@ namespace Dynamic_questionnaire_system.ClientSide
                     PlaceHolder1.Controls.Add(Label_table_tr);
 
                     //---- (3-1). 共用的部分 -------------------------------------------
-                    //--  自己寫的副程式，用來產生每一個題目的「主題」、「說明（摘要）」、是否必填？
+                    //--  用來產生每一個題目的「主題」、「說明（摘要）」、是否必填？
                     Generate_D1_Common(D1_ID, D1_TITLE, D1_MustKeyIn, D1_SUMMARY);
 
                     //---- (3-2). 差異的部分 -------------------------------------------
@@ -173,10 +215,9 @@ namespace Dynamic_questionnaire_system.ClientSide
                             CB_Q1.ID = "D1_" + D1_ID;
 
                             //-- 單/複選的子選項，記錄在 Question資料表裡面。
-                            SqlCommand cmd2 = new SqlCommand("SELECT * From [Question] WHERE [TopicNum] = @TopicNum AND [QuestionnaireID] = @QuestionnaireID", Conn);
+                            SqlCommand cmd2 = new SqlCommand("SELECT * FROM [Question] WHERE [TopicNum] = @TopicNum AND [QuestionnaireID] = @QuestionnaireID", Conn);
                             cmd2.Parameters.Add("@TopicNum", SqlDbType.Int).Value = D1_ID;
                             cmd2.Parameters.Add("@QuestionnaireID", SqlDbType.Int).Value = M_ID;
-
 
                             SqlDataReader dr2 = cmd2.ExecuteReader();  //-- 執行SQL指令。
                             dr2.Read();  //-- 只讀一列記錄。
@@ -191,7 +232,7 @@ namespace Dynamic_questionnaire_system.ClientSide
                             dr2.Close();
                             PlaceHolder1.Controls.Add(CB_Q1);  //-- 動態加入畫面（PlaceHolder1）之中
 
-                            Label Label_br = new Label();  //-- 只是為了畫面美觀而已。
+                            Label Label_br = new Label();
                             Label_br.Text = "<br />";
                             PlaceHolder1.Controls.Add(Label_br);
                             break;
@@ -209,7 +250,7 @@ namespace Dynamic_questionnaire_system.ClientSide
                             SqlDataReader dr3 = cmd3.ExecuteReader();  //-- 執行SQL指令。
                             dr3.Read();  //-- 只讀一列記錄。
 
-                            for (int i = 1; i <= (int)dr3["answer_all"]; i++)   //-- 看看這個問題（單/複選）有幾個子選項？
+                            for (int i = 1; i <= (int)dr3["OptionsAll"]; i++)   //-- 看看這個問題（單/複選）有幾個子選項？
                             {
                                 string answer_item = "answer" + i;
                                 CB_Q2.Items.Add(dr3[answer_item].ToString());
@@ -224,25 +265,25 @@ namespace Dynamic_questionnaire_system.ClientSide
                             PlaceHolder1.Controls.Add(Label_br1);
                             break;
 
-                        default:  //-- 其他就算是文字輸入（TB，TextBox）
+                        default:  //-- 其他 文字輸入（TB，TextBox）
                             System.Web.UI.WebControls.TextBox CB_Q3 = new System.Web.UI.WebControls.TextBox();
                             CB_Q3.ID = "D1_" + D1_ID;
                             PlaceHolder1.Controls.Add(CB_Q3);  //-- 動態加入畫面（PlaceHolder1）之中
 
-                            Label Label_br2 = new Label();  //-- 只是為了畫面美觀而已。
+                            Label Label_br2 = new Label();  
                             Label_br2.Text = "<br /><br />";
                             PlaceHolder1.Controls.Add(Label_br2);
                             break;
                     }  // End of switch case
 
-                    Label Label_table_td = new Label();  //-- 只是為了畫面美觀而已。
+                    Label Label_table_td = new Label();  
                     Label_table_td.Text = "</td></tr>";
                     PlaceHolder1.Controls.Add(Label_table_td);
 
                     table_i += 1;
                 }
 
-                Label Label_table_end = new Label(); //-- 只是為了畫面美觀而已。
+                Label Label_table_end = new Label();
                 Label_table_end.Text = "</table>";
                 PlaceHolder1.Controls.Add(Label_table_end);
             }
@@ -285,9 +326,9 @@ namespace Dynamic_questionnaire_system.ClientSide
         {
             SqlConnection Conn = new SqlConnection(ConnStr);
             Conn.Open();   //-- 連結DB
-            SqlCommand cmdQNo = new SqlCommand("SELECT COUNT(TopicNum) FROM [Questionnaires] WHERE[QuestionnaireID] IN (SELECT TOP 1" + M_ID + "From[Outline] WHERE[Vote] = '投票中' AND[StartTime] <= GETDATE() AND[EndTime] >= GETDATE() ORDER BY[QuestionnaireID] DESC)"
-                , Conn);
-            //-- 把 Outline資料表裡面，最新的一場投票，呈現在網站的首頁上面。
+            SqlCommand cmdQNo = new SqlCommand("SELECT COUNT([TopicNum]) FROM [Questionnaires] WHERE [QuestionnaireID] IN (SELECT [QuestionnaireID] = @QuestionnaireID From [Outline] WHERE [Vote] = '投票中' AND [StartTime] <= GETDATE() AND [EndTime] >= GETDATE())", Conn);
+            cmdQNo.Parameters.Add("@QuestionnaireID", SqlDbType.Int).Value = M_ID;
+            //-- 把 Outline資料表裡面，呈現在網站的首頁上面。
 
             int x = (int)cmdQNo.ExecuteScalar();  //-- 執行SQL指令。
             cmdQNo.Cancel();
@@ -302,7 +343,8 @@ namespace Dynamic_questionnaire_system.ClientSide
         {
             SqlConnection Conn = new SqlConnection(ConnStr);
             Conn.Open();   //-- 連結DB
-            SqlCommand cmdD1 = new SqlCommand("SELECT [TopicNum] FROM [Questionnaires] WHERE [QuestionnaireID] = " + M_ID, Conn);
+            SqlCommand cmdD1 = new SqlCommand("SELECT [TopicNum] FROM [Questionnaires] WHERE [QuestionnaireID] = @QuestionnaireID", Conn);
+            cmdD1.Parameters.Add("@QuestionnaireID", SqlDbType.Int).Value = M_ID;
             //-- 把 Outline資料表裡面，最新的一場投票，呈現在網站的首頁上面。
 
             SqlDataReader drD1 = cmdD1.ExecuteReader();  //-- 執行SQL指令。

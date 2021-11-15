@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DBSource;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,7 +12,11 @@ namespace Dynamic_questionnaire_system.UserSide
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            //if (!AuthManager.IsLogined())
+            //{
+            //    Response.Redirect("/UserSide/USLogin.aspx");
+            //    return;
+            //}
         }
     }
 }

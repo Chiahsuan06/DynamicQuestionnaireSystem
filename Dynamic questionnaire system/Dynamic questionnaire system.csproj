@@ -90,12 +90,16 @@
     <Content Include="ClientSide\CSList.aspx" />
     <Content Include="ClientSide\CSPage.aspx" />
     <Content Include="ClientSide\CSStatistics.aspx" />
+    <Content Include="Default.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Images\add.png" />
     <Content Include="Images\bin.png" />
+    <Content Include="Images\login.png" />
+    <Content Include="Images\survey.png" />
     <Content Include="jQuery\jQuery3.6.0.js" />
     <Content Include="UserControl\ucPager.ascx" />
     <Content Include="UserSide\USList.aspx" />
+    <Content Include="UserSide\USLogin.aspx" />
     <Content Include="UserSide\USPage.aspx" />
     <Content Include="UserSide\USProblemManagement.aspx" />
     <Content Include="Web.config" />
@@ -129,6 +133,13 @@
     <Compile Include="ClientSide\CSStatistics.aspx.designer.cs">
       <DependentUpon>CSStatistics.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -153,6 +164,13 @@
     </Compile>
     <Compile Include="UserSide\USList.aspx.designer.cs">
       <DependentUpon>USList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="UserSide\USLogin.aspx.cs">
+      <DependentUpon>USLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserSide\USLogin.aspx.designer.cs">
+      <DependentUpon>USLogin.aspx</DependentUpon>
     </Compile>
     <Compile Include="UserSide\USPage.aspx.cs">
       <DependentUpon>USPage.aspx</DependentUpon>

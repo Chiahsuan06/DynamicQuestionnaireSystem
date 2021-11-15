@@ -29,13 +29,15 @@
             <asp:Literal ID="ltlAge" runat="server"></asp:Literal>
         </div>
          <div>  <%--題目--%>
-             <asp:Repeater ID="reTopic" runat="server">
+<%--             <asp:Repeater ID="reTopic" runat="server">
                 <ItemTemplate>
                     <p>
                         <%#Eval("Topic") %>
                     </p>
                 </ItemTemplate>
-            </asp:Repeater>
+            </asp:Repeater>--%>
+             <asp:PlaceHolder ID="PlaceHolder1" runat="server"></asp:PlaceHolder>
+             <asp:Label ID="Label1" runat="server" ></asp:Label>
         </div>
         <div>
             <asp:Button ID="btnCancel" runat="server" Text="修改" OnClick="btnCancel_Click" />
