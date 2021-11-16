@@ -28,14 +28,33 @@ namespace Dynamic_questionnaire_system.UserSide
             string inp_Account = this.txtAccount.Text;
             string inp_PWD = this.txtPassword.Text;
 
-            string msg;
-            if (AuthManager.TryLogin(inp_Account, inp_PWD, out msg))
+            if (string.IsNullOrWhiteSpace(inp_Account) || string.IsNullOrWhiteSpace(inp_PWD))
             {
-                this.ltlMsg.Text = msg;
+                this.ltlMsg.Text = "Account / PWD is required.";
                 return;
             }
 
-            Response.Redirect("/UserSide/USList.aspx");
+            var dr = AuthManager.GetUserInfoByAccount(inp_Account);
+
+            //check null
+            if (dr == null)
+            {
+                this.ltlMsg.Text = "Account doesn't exists.";
+                return;
+            }
+
+            //check account / PWD
+            if (string.Compare(dr["Account"].ToString(), inp_Account, true) == 0 && string.Compare(dr["Password"].ToString(), inp_PWD, false) == 0)
+            {
+                this.Session["UserLoginInfo"] = dr["Account"].ToString();
+                Response.Redirect("/UserSide/USList.aspx");
+            }
+            else
+            {
+                this.ltlMsg.Text = "Login fail. Place check Account / PWD.";
+                return;
+            }
+
         }
     }
 }

@@ -64,7 +64,6 @@ namespace Dynamic_questionnaire_system.ClientSide
             List<SqlParameter> list = new List<SqlParameter>();
             list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
 
-
             try
             {
                 return DBHelper.ReadDataTable(connStr, dbcommand, list);

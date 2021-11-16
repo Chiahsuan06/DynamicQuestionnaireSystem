@@ -41,7 +41,6 @@
               border-top: none;
             }
         </style>
-
         <script>
             function openQuestionnaire(evt, idName) {
 
@@ -60,7 +59,7 @@
                 evt.currentTarget.className += " active";
             }
 
-            document.getElementById("defaultOpen").click();
+                  document.getElementById("defaultOpen").click();
         </script>
 
         <div class="tab">
@@ -112,18 +111,22 @@
             <br />
             <asp:ImageButton ID="ImgbtnBin" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" OnClick="ImgbtnBin_Click"/>&nbsp;&nbsp;<asp:Label ID="lblAddMessage" runat="server" ForeColor="Red"></asp:Label>
             <asp:GridView ID="givQuestion" runat="server" AutoGenerateColumns="False" OnRowCommand="givQuestion_RowCommand">
- <%--               <Columns>
-                    <asp:CheckBoxField />
-                    <asp:BoundField HeaderText="#"  />
-                    <asp:BoundField HeaderText="問題"  />
-                    <asp:BoundField HeaderText="種類"  />
-                    <asp:CheckBoxField HeaderText="必填" />
+                <Columns>
+                    <asp:TemplateField>
+                        <ItemTemplate>
+                            <asp:CheckBox ID="CheckBox1" runat="server" />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:BoundField HeaderText="#"/>
+                    <asp:BoundField HeaderText="問題"/>
+                    <asp:BoundField HeaderText="種類"/>
+                    <asp:CheckBoxField HeaderText="必填"/>
                     <asp:TemplateField>
                         <ItemTemplate>
                             <a>編輯</a>
                         </ItemTemplate>
                     </asp:TemplateField>
-                </Columns>--%>
+                </Columns>
             </asp:GridView>
             <div>
                 <asp:Button ID="btngivCancel" runat="server" Text="取消" OnClick="btngivCancel_Click"/>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -153,11 +156,11 @@
             <asp:PlaceHolder ID="PlaceHolderDetail" runat="server">
                 <div>
                     <asp:Label ID="plblName" runat="server" Text="姓名"></asp:Label>
-                    <asp:TextBox ID="txtName" runat="server" ReadOnly="True"></asp:TextBox>
+                    <asp:TextBox ID="txtName" runat="server" ReadOnly="True"></asp:TextBox><br />
                     <asp:Label ID="plblPhone" runat="server" Text="手機"></asp:Label>
-                    <asp:TextBox ID="txtPhone" runat="server" ReadOnly="True"></asp:TextBox>
+                    <asp:TextBox ID="txtPhone" runat="server" ReadOnly="True"></asp:TextBox><br />
                     <asp:Label ID="plblEmail" runat="server" Text="Email"></asp:Label>
-                    <asp:TextBox ID="txtEmail" runat="server" ReadOnly="True"></asp:TextBox>
+                    <asp:TextBox ID="txtEmail" runat="server" ReadOnly="True"></asp:TextBox><br />
                     <asp:Label ID="plblAge" runat="server" Text="年齡"></asp:Label>
                     <asp:TextBox ID="txtAge" runat="server" ReadOnly="True"></asp:TextBox>
                     <asp:Label ID="lblWriteT" runat="server" Text=""></asp:Label>  <%--連結時間--%>

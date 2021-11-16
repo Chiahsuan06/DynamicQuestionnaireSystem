@@ -15,7 +15,7 @@ namespace DBSource
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
-                $@" SELECT [UserID],[Password],[Name],[Phone],[Email],[QID1],[QID2],[QID3],[QID4],[QID5],[QID_All]
+                $@" SELECT [UserID],[Account],[Password],[Name],[Phone],[Email],[QID1],[QID2],[QID3],[QID4],[QID5],[QID_All]
                     FROM [Questionnaire].[dbo].[Information]
                     WHERE [Account] = @Account
                 ";
@@ -31,42 +31,6 @@ namespace DBSource
             {
                 Logger.WriteLog(ex);
                 return null;
-            }
-        }
-        public static bool TryLogin(string account, string pwd, out string errorMsg)
-        {
-            // check empty
-            if (string.IsNullOrWhiteSpace(account) ||
-                string.IsNullOrWhiteSpace(pwd))
-            {
-                errorMsg = "Account / PWD is required.";
-                return false;
-            }
-
-
-            // read db and check
-            DataRow userInfo = GetUserInfoByAccount(account);
-
-            // check null
-            if (userInfo == null)
-            {
-                errorMsg = $"Account: {account} doesn't exists.";
-                return false;
-            }
-
-            // check account / pwd
-            bool isPwbRight = string.Compare(userInfo["Password"].ToString(), pwd, false) == 0;
-
-            if (isPwbRight)
-            {
-                errorMsg = "Login fail. Please check Account / Password.";
-                return false;
-            }
-            else
-            {
-                HttpContext.Current.Session["UserLoginInfo"] = userInfo["Account"];
-                errorMsg = string.Empty;
-                return true;
             }
         }
 

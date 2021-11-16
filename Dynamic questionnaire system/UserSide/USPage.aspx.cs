@@ -20,6 +20,12 @@ namespace Dynamic_questionnaire_system.UserSide
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            // check is logined
+            if (!AuthManager.IsLogined())
+            {
+                Response.Redirect("/UserSide/USLogin.aspx");
+                return;
+            }
             if (this.Request.QueryString["ID"] == null)
             {
                 this.txtStartT.Text = DateTime.Now.ToString("yyyy-MM-dd");  //預設為當日

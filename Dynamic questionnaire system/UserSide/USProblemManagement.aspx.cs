@@ -12,11 +12,12 @@ namespace Dynamic_questionnaire_system.UserSide
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            //if (!AuthManager.IsLogined())
-            //{
-            //    Response.Redirect("/UserSide/USLogin.aspx");
-            //    return;
-            //}
+            // check is logined
+            if (!AuthManager.IsLogined())
+            {
+                Response.Redirect("/UserSide/USLogin.aspx");
+                return;
+            }
         }
     }
 }

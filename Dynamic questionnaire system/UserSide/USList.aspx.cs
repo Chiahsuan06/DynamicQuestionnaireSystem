@@ -16,6 +16,12 @@ namespace Dynamic_questionnaire_system.UserSide
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            // check is logined
+            if (!AuthManager.IsLogined())
+            {
+                Response.Redirect("/UserSide/USLogin.aspx");
+                return;
+            }
             this.GridView1.DataSource = GetDBData();  ///讓GridView1顯示DB的資料
             this.GridView1.DataBind();
             var dt = GetDBData();
