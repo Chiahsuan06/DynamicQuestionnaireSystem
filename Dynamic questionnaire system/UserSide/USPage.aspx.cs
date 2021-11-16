@@ -496,8 +496,8 @@ namespace Dynamic_questionnaire_system.UserSide
 	                      ,[Outline].[Heading]
                           ,[Record Details].[TopicNum]
 	                      ,[TopicDescription]
-                          ,[Record Details].[OptionsNum]
-	                      ,[OptionsDescription]
+                          ,[Record Details].[ReplicationNum]
+	                      ,[RDAns]
                       FROM [Questionnaire].[dbo].[Record]
                       JOIN [Questionnaire].[dbo].[Outline]
                       ON [Record].[QuestionnaireID] = [Outline].[QuestionnaireID]
@@ -505,8 +505,7 @@ namespace Dynamic_questionnaire_system.UserSide
                       ON [Record].RecordNum = [Record Details].RecordNum
                       JOIN[Questionnaire].[dbo].[Questionnaires]
                       ON [Record Details].[TopicNum] = [Questionnaires].[TopicNum]  
-                      JOIN[Questionnaire].[dbo].[Question]
-                      ON [Question].[OptionsNum] = [Record Details].[OptionsNum]
+					  ORDER BY [Record].[RecordNum],[Record Details].[TopicNum]
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
