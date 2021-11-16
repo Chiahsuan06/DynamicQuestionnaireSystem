@@ -7,5 +7,5 @@
     <a runat="server" id="aLink4" href="#">4</a>
     <a runat="server" id="aLink5" href="#">5</a>
     <a runat="server" id="aLinkLast" href="#">Last</a>
-    <asp:Literal ID="ltPage" runat="server"></asp:Literal>
+    <%--<asp:Literal ID="ltPage" runat="server"></asp:Literal>--%>
 </div>

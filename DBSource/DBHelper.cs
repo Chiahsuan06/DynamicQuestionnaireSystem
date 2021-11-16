@@ -57,7 +57,6 @@ namespace DBSource
 
                 }
             }
-
         }
 
         public static int ModifyData(string connStr, string dbCommand, List<SqlParameter> paramList)
@@ -87,6 +86,7 @@ namespace DBSource
                 }
             }
         }
+
     }
 }
 

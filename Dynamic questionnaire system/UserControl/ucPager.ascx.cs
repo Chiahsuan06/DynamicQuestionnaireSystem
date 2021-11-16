@@ -79,7 +79,7 @@ namespace Dynamic_questionnaire_system.UserControl
             this.aLink4.Visible = (nextP1 <= totalPage);
             this.aLink5.Visible = (nextP2 <= totalPage);
 
-            this.ltPage.Text = $"共{this.TotalSize}筆，共{totalPage}頁，目前在第{this.GetCurrentPage()}頁";
+            //this.ltPage.Text = $"共{this.TotalSize}筆，共{totalPage}頁，目前在第{this.GetCurrentPage()}頁";
         }
     }
 }

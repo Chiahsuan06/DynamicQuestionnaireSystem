@@ -21,6 +21,7 @@ namespace Dynamic_questionnaire_system.ClientSide
                 Response.Redirect("/ClientSide/CSList.aspx");
             }
             string IDNumber = this.Request.QueryString["ID"];
+
             this.reHeading.DataSource = GetHeading(IDNumber);
             this.reHeading.DataBind();
 
@@ -92,7 +93,6 @@ namespace Dynamic_questionnaire_system.ClientSide
             if (result == DialogResult.OK)
             {
                 sentUserInformation(Name, Phone, Email, Age);
-
                 Session.Clear();
             }
             HttpContext.Current.Response.Write("<script> alert('資料送出成功，即將返回列表頁') </script>");

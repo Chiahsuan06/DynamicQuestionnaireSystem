@@ -115,6 +115,7 @@ namespace Dynamic_questionnaire_system.ClientSide
                 }
 
                 Session["ListM1_D1_D2_AL"] = M1_D1_D2;
+                Session["TopicNum"] = Take_D1_ID(M_ID);
 
                 MessageBox.Show($"即將前往確認頁面，請確認填寫的資訊是否正確", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Response.Redirect("/ClientSide/CSConfirmation.aspx?ID=" + Request.QueryString["ID"]);
