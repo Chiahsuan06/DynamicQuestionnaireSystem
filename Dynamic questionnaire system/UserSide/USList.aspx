@@ -31,7 +31,11 @@
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField HeaderText="#" DataField="QuestionnaireID" />
-            <asp:HyperLinkField HeaderText="問卷" DataTextField='Heading' DataNavigateUrlFields="QuestionnaireID" DataNavigateUrlFormatString="CSPage.aspx?ID={0}" />
+            <asp:TemplateField HeaderText="問卷">
+                <ItemTemplate>
+                    <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("QuestionnaireID", "USPage.aspx?ID={0}") %>' Text='<%# Eval("Heading") %>'></asp:HyperLink>
+                </ItemTemplate>
+            </asp:TemplateField>
             <asp:BoundField HeaderText="狀態" DataField="Vote"/>
             <asp:BoundField HeaderText="開始時間" DataField="StartTime" DataFormatString="{0:yyyy-MM-dd}"/>
             <asp:BoundField HeaderText="結束時間" DataField="EndTime" DataFormatString="{0:yyyy-MM-dd}"/>

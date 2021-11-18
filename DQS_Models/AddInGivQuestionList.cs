@@ -8,11 +8,10 @@ namespace DQS_Models
 {
     public class AddInGivQuestionList
     {
-        public int Number { get; set; }  //#
-        public string QuestionType { get; set; }    //種類
-        public string Question { get; set; }  //問題
-        public string Choose { get; set; }   //問題種類
-        public bool Required { get; set; }   //必填
+        public int TopicNum { get; set; }  //#
+        public string TopicDescription { get; set; }  //問題
+        public string TopicType { get; set; }   //問題種類
+        public bool TopicMustKeyIn { get; set; }   //必填
         public string Options { get; set; }  //回答
 
     }

@@ -59,7 +59,7 @@
                 evt.currentTarget.className += " active";
             }
 
-                  document.getElementById("defaultOpen").click();
+            document.getElementById("defaultOpen").click();
         </script>
 
         <div class="tab">
@@ -117,10 +117,14 @@
                             <asp:CheckBox ID="CheckBox1" runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField HeaderText="#"/>
-                    <asp:BoundField HeaderText="問題"/>
-                    <asp:BoundField HeaderText="種類"/>
-                    <asp:CheckBoxField HeaderText="必填"/>
+                    <asp:BoundField HeaderText="#" DataField="TopicNum"/>
+                    <asp:BoundField HeaderText="問題" DataField="TopicDescription"/>
+                    <asp:BoundField HeaderText="種類" DataField="TopicType"/>
+                    <asp:TemplateField HeaderText="必填" >
+                        <ItemTemplate>
+                            <asp:CheckBox ID="chbMustKeyIn" runat="server" />
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField>
                         <ItemTemplate>
                             <a>編輯</a>

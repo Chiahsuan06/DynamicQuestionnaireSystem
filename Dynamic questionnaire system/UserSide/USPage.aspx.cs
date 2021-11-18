@@ -26,11 +26,12 @@ namespace Dynamic_questionnaire_system.UserSide
                 Response.Redirect("/UserSide/USLogin.aspx");
                 return;
             }
-            if (this.Request.QueryString["ID"] == null)
+            if (this.Request.QueryString["ID"] == null)  //重新思考
             {
                 this.txtStartT.Text = DateTime.Now.ToString("yyyy-MM-dd");  //預設為當日
             }
 
+            //後台內頁-2
             givQuestion.DataSource = this.Session["GivQuestionList"] as DataTable;
             givQuestion.DataBind();
 
@@ -131,18 +132,20 @@ namespace Dynamic_questionnaire_system.UserSide
             DateTime StartT = Convert.ToDateTime(this.txtStartT.Text);
             DateTime EndT = Convert.ToDateTime(this.txtEndT.Text);
             Guid QuestionnaireNum = Guid.NewGuid();
+            string Account = this.Session["UserLoginInfo"].ToString();
 
             if (string.IsNullOrEmpty(this.txtQuestaireName.Text) || string.IsNullOrEmpty(this.txtContent.Text) || string.IsNullOrEmpty(this.txtStartT.Text) || string.IsNullOrEmpty(this.txtEndT.Text))
             {
                 this.lblMessage.Visible = true;
                 this.lblMessage.Text = "問卷名稱、描述內容、開始時間、結束時間 皆為必填";
             }
+
             if (ckbActivated.Checked == true)  //狀態要顯示已啟用
             {
                 //已啟用 Vote 要寫投票中
                 string Vote = "投票中";
                 MessageBox.Show($"提醒您問卷將送出，請確認", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Add(Heading, Content, StartT, EndT, QuestionnaireNum, Vote);
+                Add(Heading, Content, StartT, EndT, QuestionnaireNum, Vote, Account);
             }
             else
             {
@@ -150,18 +153,18 @@ namespace Dynamic_questionnaire_system.UserSide
                 {
                     string Vote = "尚未開始";
                     MessageBox.Show($"提醒您問卷將送出，請確認", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Add(Heading, Content, StartT, EndT, QuestionnaireNum, Vote);
+                    Add(Heading, Content, StartT, EndT, QuestionnaireNum, Vote, Account);
 
                 }
                 else if (EndT < DateTime.Now) //已完結
                 {
                     string Vote = "已完結";
                     MessageBox.Show($"提醒您問卷將送出，請確認", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Add(Heading, Content, StartT, EndT, QuestionnaireNum, Vote);
+                    Add(Heading, Content, StartT, EndT, QuestionnaireNum, Vote, Account);
                 }
             }
-            string QuestionnaireID = GetQuestionnaireID(Heading, Content, StartT, EndT).ToString();
-            this.Request.QueryString["ID"] = QuestionnaireID; //錯誤訊息：集合是唯讀的
+            var NewQuestionnaireID = GetQuestionnaireID(Heading, Content, StartT, EndT, Account);
+            this.Request.QueryString["NewQID"] = NewQuestionnaireID["QuestionnaireID"].ToString(); //錯誤訊息：集合是唯讀的
         }
         /// <summary>
         /// 問卷 - 取消紐
@@ -177,12 +180,12 @@ namespace Dynamic_questionnaire_system.UserSide
         /// </summary>
         /// <param name="IDNumber"></param>
         /// <returns></returns>
-        public static DataTable Add(string Heading, string Content, DateTime StartT, DateTime EndT, Guid QuestionnaireNum, string Vote)
+        public static DataTable Add(string Heading, string Content, DateTime StartT, DateTime EndT, Guid QuestionnaireNum, string Vote, string Account)
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
-                $@" INSERT INTO Outline (Heading, Content, StartTime, EndTime, QuestionnaireNum, Vote)
-                    VALUES (@Heading, @Content, @StartTime, @EndTime, NEWID(), @Vote )
+                $@" INSERT INTO Outline (Heading, Content, StartTime, EndTime, QuestionnaireNum, Vote, Account)
+                    VALUES (@Heading, @Content, @StartTime, @EndTime, NEWID(), @Vote, @Account )
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
@@ -191,7 +194,8 @@ namespace Dynamic_questionnaire_system.UserSide
             list.Add(new SqlParameter("@StartTime", StartT));
             list.Add(new SqlParameter("@EndTime", EndT));
             list.Add(new SqlParameter("@QuestionnaireNum", QuestionnaireNum));
-            list.Add(new SqlParameter("@Vote", Vote));
+            list.Add(new SqlParameter("@Vote", Vote)); 
+            list.Add(new SqlParameter("@Account", Account));
 
             try
             {
@@ -205,7 +209,7 @@ namespace Dynamic_questionnaire_system.UserSide
         }
 
         /// <summary>
-        /// 問卷 - 取得QuestionnaireID
+        /// 問卷 - 取得新增問卷的QuestionnaireID
         /// </summary>
         /// <param name="Heading"></param>
         /// <param name="Content"></param>
@@ -214,14 +218,15 @@ namespace Dynamic_questionnaire_system.UserSide
         /// <param name="QuestionnaireNum"></param>
         /// <param name="Vote"></param>
         /// <returns></returns>
-        public static DataTable GetQuestionnaireID(string Heading, string Content, DateTime StartT, DateTime EndT)
+        public static DataRow GetQuestionnaireID(string Heading, string Content, DateTime StartT, DateTime EndT, string Account)
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
                 $@" SELECT [QuestionnaireID]
                     FROM [Outline]
                     WHERE [Heading] = @Heading　
-                            AND [Content] = @Content AND [StartTime] = @StartTime AND [EndTime] = @EndTime
+                      AND [Content] = @Content AND [StartTime] = @StartTime 
+                      AND [EndTime] = @EndTime AND [Account] = @Account
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
@@ -229,10 +234,11 @@ namespace Dynamic_questionnaire_system.UserSide
             list.Add(new SqlParameter("@Content", Content));
             list.Add(new SqlParameter("@StartTime", StartT));
             list.Add(new SqlParameter("@EndTime", EndT));
+            list.Add(new SqlParameter("@Account", Account));
 
             try
             {
-                return DBHelper.ReadDataTable(connStr, dbcommand, list);
+                return DBHelper.ReadDataRow(connStr, dbcommand, list);
             }
             catch (Exception ex)
             {
@@ -251,72 +257,83 @@ namespace Dynamic_questionnaire_system.UserSide
         //沒有顯示
         protected void btnAddIn_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtQuestion.Text) || string.IsNullOrEmpty(txtOptions.Text))
-            {
-                this.lblAddMessage.Text = "問題 和 回答 不得空白";
-            }
-            if (this.Session["GivQuestion"] == null)
-            {
-                this.Session["GivQuestion"] = new List<AddInGivQuestionList>();
-            }
-            int Num = 1;
-            if (Num != 1)
-            {
-                Num += 1;
-            }
-
             string QuestionType;
-            if (ddlType.SelectedIndex == 0)
+            if (ddlType.SelectedIndex == 1)   //要從資料庫呼出來
             {
-               QuestionType = "自訂問題";
+                
+                QuestionType = "常用問題1";
             }
             else
             {
-               QuestionType = "常用問題1";
+                QuestionType = "自訂問題";
+
+                if (string.IsNullOrEmpty(txtQuestion.Text) || string.IsNullOrEmpty(txtOptions.Text))
+                {
+                    this.lblAddMessage.Text = "問題 和 回答 不得空白";
+                    return;
+                }
+
+                List<AddInGivQuestionList> gpList;
+
+                if (this.Session["GivQuestion"] != null)
+                {
+                    gpList = this.Session["GivQuestion"] as List<AddInGivQuestionList>;
+                }
+                else
+                {
+                    gpList = new List<AddInGivQuestionList>();
+                    this.Session["GivQuestion"] = gpList;
+                }
+
+
+                int Num = 1;
+                if (Num != 1)
+                {
+                    Num += 1;
+                }
+
+                string Question = this.txtQuestion.Text;
+
+                string QuestChoose;
+                if (ddlChoose.SelectedIndex == 0)
+                {
+                    QuestChoose = "單選方塊";
+                }
+                else if (ddlChoose.SelectedIndex == 1)
+                {
+                    QuestChoose = "複選方塊";
+                }
+                else
+                {
+                    QuestChoose = "文字";
+                }
+
+                bool ckbRe;
+                if (ckbRequired.Checked)
+                {
+                    ckbRe = true;
+                }
+                else
+                {
+                    ckbRe = false;
+                }
+
+                string Options = this.txtOptions.Text;
+
+                //var gpList = new AddInGivQuestionList()
+                //{
+                //   TopicNum = Num,
+                //   TopicDescription = Question,
+                //   TopicType = QuestChoose,
+                //   TopicMustKeyIn = ckbRe,
+                //   Options = Options
+                //};
+
+
+                this.givQuestion.DataSource = gpList;
+                this.givQuestion.DataBind();
             }
-
-            string Question = this.txtQuestion.Text;
-
-            string QuestChoose;
-            if (ddlChoose.SelectedIndex == 0)
-            {
-                QuestChoose = "單選方塊";
-            }
-            else if (ddlChoose.SelectedIndex == 1)
-            {
-                QuestChoose = "複選方塊";
-            }
-            else
-            {
-                QuestChoose = "文字";
-            }
-
-            bool ckbRe;
-            if (ckbRequired.Checked)
-            {
-                ckbRe = true;
-            }
-            else 
-            {
-                ckbRe = false;
-            }
-
-            string Options = this.txtOptions.Text;
-
-            var gqList = new AddInGivQuestionList()
-            {
-                Number = Num,
-                QuestionType = QuestionType,
-                Question = Question,
-                Choose = QuestChoose,
-                Required = ckbRe,
-                Options = Options
-            };
-
-            this.Session["GivQuestion"] = gqList;
-
-            this.givQuestion.DataSource = this.Session["GivQuestion"] as DataTable;
-            this.givQuestion.DataBind();
+            
         }
 
         protected void givQuestion_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -354,6 +371,7 @@ namespace Dynamic_questionnaire_system.UserSide
         }
         #endregion
 
+        #region 填寫資料
         /// <summary>
         /// 填寫資料 - 匯出紐
         /// </summary>
@@ -368,44 +386,44 @@ namespace Dynamic_questionnaire_system.UserSide
         }
         private void EstablishCSV(DataTable dt, string fileName)
         {
-             HttpContext.Current.Response.Clear();
-             StreamWriter sw = new StreamWriter(Response.OutputStream, Encoding.UTF8);
-             int iColCount = dt.Columns.Count;
-             for (int i = 0; i < iColCount; i++)//表頭
-             {
-                 sw.Write("\"" + dt.Columns[i] + "\"");
-                 if (i < iColCount - 1)
-                 {
-                     sw.Write(",");
-                 }
-             }
-             sw.Write(sw.NewLine);
-             foreach (DataRow dr in dt.Rows)//行內資料
-             {
-                 for (int i = 0; i < iColCount; i++)
-                 {
+            HttpContext.Current.Response.Clear();
+            StreamWriter sw = new StreamWriter(Response.OutputStream, Encoding.UTF8);
+            int iColCount = dt.Columns.Count;
+            for (int i = 0; i < iColCount; i++)//表頭
+            {
+                sw.Write("\"" + dt.Columns[i] + "\"");
+                if (i < iColCount - 1)
+                {
+                    sw.Write(",");
+                }
+            }
+            sw.Write(sw.NewLine);
+            foreach (DataRow dr in dt.Rows)//行內資料
+            {
+                for (int i = 0; i < iColCount; i++)
+                {
                     if (!Convert.IsDBNull(dr[i]))
-                            sw.Write("\"" + dr[i].ToString() + "\"");
+                        sw.Write("\"" + dr[i].ToString() + "\"");
                     else
-                            sw.Write("\"\"");
+                        sw.Write("\"\"");
                     if (i < iColCount - 1)
                     {
                         sw.Write(",");
                     }
-                 }
-                 sw.Write(sw.NewLine);
-             }
+                }
+                sw.Write(sw.NewLine);
+            }
 
 
-             sw.Close();
-             HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + fileName);
-             HttpContext.Current.Response.ContentType = "text/csv";
-             HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.UTF8;
+            sw.Close();
+            HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + fileName);
+            HttpContext.Current.Response.ContentType = "text/csv";
+            HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.UTF8;
 
-             HttpContext.Current.Response.Write(sw);
-             HttpContext.Current.Response.End();
+            HttpContext.Current.Response.Write(sw);
+            HttpContext.Current.Response.End();
 
-         }
+        }
 
         /// <summary>
         /// 顯示givExport資料
@@ -470,7 +488,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@RecordNum", RecordNum));;
+            list.Add(new SqlParameter("@RecordNum", RecordNum)); ;
 
             try
             {
@@ -526,5 +544,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 return null;
             }
         }
+        #endregion
+
     }
 }

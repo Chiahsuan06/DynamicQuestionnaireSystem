@@ -38,7 +38,6 @@ namespace DBSource
 
         /// <summary> 檢查目前是否登入 </summary>
         /// <returns></returns>
-        //加入後一直不成功
         public static bool IsLogined()
         {
             if (HttpContext.Current.Session["UserLoginInfo"] == null)
