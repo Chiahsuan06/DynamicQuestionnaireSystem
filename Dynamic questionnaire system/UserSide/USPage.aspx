@@ -6,7 +6,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
+       <%-- <style>
             body {font-family: Arial;}
 
             .tab {
@@ -60,7 +60,7 @@
             }
 
             document.getElementById("defaultOpen").click();
-        </script>
+        </script>--%>
 
         <div class="tab">
           <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'Questionnaire')" id="defaultOpen">問卷</button>
@@ -77,10 +77,10 @@
             <asp:TextBox ID="txtContent" runat="server" TextMode="MultiLine"></asp:TextBox>
             <br />
             <asp:Label ID="lblStartT" runat="server" Text="開始時間"></asp:Label>&nbsp;&nbsp;
-            <asp:TextBox ID="txtStartT" runat="server" TextMode="Date" ></asp:TextBox>
+            <asp:TextBox ID="txtStartT" runat="server"></asp:TextBox>
             <br />
             <asp:Label ID="lblEndT" runat="server" Text="結束時間"></asp:Label>&nbsp;&nbsp;
-            <asp:TextBox ID="txtEndT" runat="server" TextMode="Date"></asp:TextBox>
+            <asp:TextBox ID="txtEndT" runat="server"></asp:TextBox>
             <br />
             <asp:CheckBox ID="ckbActivated" runat="server" Checked="True" /><asp:Label ID="lblActivated" runat="server" Text="已啟用"></asp:Label>
             <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

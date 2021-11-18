@@ -26,16 +26,33 @@ namespace Dynamic_questionnaire_system.UserSide
                 Response.Redirect("/UserSide/USLogin.aspx");
                 return;
             }
-            if (this.Request.QueryString["ID"] == null)  //重新思考
+            if (this.Request.QueryString["ID"] == null)  //全新問卷
             {
                 this.txtStartT.Text = DateTime.Now.ToString("yyyy-MM-dd");  //預設為當日
             }
+            else //既有問卷
+            {
+                int QuestionnaireID = Convert.ToInt32(this.Request.QueryString["ID"]);
+                var dr = GetDBData(QuestionnaireID);
+                this.txtQuestaireName.Text = dr["Heading"].ToString();
+                this.txtContent.Text = dr["Content"].ToString();
+                this.txtStartT.Text = Convert.ToDateTime(dr["StartTime"]).ToString("yyyy/MM/dd");
+                this.txtEndT.Text = Convert.ToDateTime(dr["EndTime"]).ToString("yyyy/MM/dd");
+                if (dr["Vote"].ToString() == "投票中")
+                {
+                    this.ckbActivated.Checked = true;
+                }
+                else
+                {
+                    this.ckbActivated.Checked = false;
+                }
+            }
 
-            //後台內頁-2
+            //後台內頁2-問題
             givQuestion.DataSource = this.Session["GivQuestionList"] as DataTable;
             givQuestion.DataBind();
 
-            //問題部分
+            //後台內頁2-問題
             if (ddlType.SelectedIndex == 1)   //常用問題1 =>常用問題設定要去常用問題管理，要記得處理
             {
                 this.txtQuestion.Text = "";
@@ -127,44 +144,78 @@ namespace Dynamic_questionnaire_system.UserSide
         /// <param name="e"></param>
         protected void btnSent_Click(object sender, EventArgs e)
         {
-            string Heading = this.txtQuestaireName.Text;
-            string Content = this.txtContent.Text;
-            DateTime StartT = Convert.ToDateTime(this.txtStartT.Text);
-            DateTime EndT = Convert.ToDateTime(this.txtEndT.Text);
-            Guid QuestionnaireNum = Guid.NewGuid();
-            string Account = this.Session["UserLoginInfo"].ToString();
-
-            if (string.IsNullOrEmpty(this.txtQuestaireName.Text) || string.IsNullOrEmpty(this.txtContent.Text) || string.IsNullOrEmpty(this.txtStartT.Text) || string.IsNullOrEmpty(this.txtEndT.Text))
+            if (this.Request.QueryString["ID"] == null)  //=>生成新問卷
             {
-                this.lblMessage.Visible = true;
-                this.lblMessage.Text = "問卷名稱、描述內容、開始時間、結束時間 皆為必填";
-            }
+                string Heading = this.txtQuestaireName.Text;
+                string Content = this.txtContent.Text;
+                DateTime StartT = Convert.ToDateTime(this.txtStartT.Text);
+                DateTime EndT = Convert.ToDateTime(this.txtEndT.Text);
+                Guid QuestionnaireNum = Guid.NewGuid();
+                string Account = this.Session["UserLoginInfo"].ToString();
 
-            if (ckbActivated.Checked == true)  //狀態要顯示已啟用
-            {
-                //已啟用 Vote 要寫投票中
-                string Vote = "投票中";
-                MessageBox.Show($"提醒您問卷將送出，請確認", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Add(Heading, Content, StartT, EndT, QuestionnaireNum, Vote, Account);
+                if (string.IsNullOrEmpty(this.txtQuestaireName.Text) || string.IsNullOrEmpty(this.txtContent.Text) || string.IsNullOrEmpty(this.txtStartT.Text) || string.IsNullOrEmpty(this.txtEndT.Text))
+                {
+                    this.lblMessage.Visible = true;
+                    this.lblMessage.Text = "問卷名稱、描述內容、開始時間、結束時間 皆為必填";
+                }
+
+                if (ckbActivated.Checked == true)  //狀態要顯示已啟用
+                {
+                    //已啟用 Vote 要寫投票中
+                    string Vote = "投票中";
+                    MessageBox.Show($"提醒您問卷將送出，請確認", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Add(Heading, Content, StartT, EndT, QuestionnaireNum, Vote, Account);
+                }
+                else
+                {
+                    if (StartT > DateTime.Now) //尚未開始
+                    {
+                        string Vote = "尚未開始";
+                        MessageBox.Show($"提醒您問卷將送出，請確認", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        Add(Heading, Content, StartT, EndT, QuestionnaireNum, Vote, Account);
+
+                    }
+                    else if (EndT < DateTime.Now) //已完結
+                    {
+                        string Vote = "已完結";
+                        MessageBox.Show($"提醒您問卷將送出，請確認", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        Add(Heading, Content, StartT, EndT, QuestionnaireNum, Vote, Account);
+                    }
+                }
+                var NewQuestionnaireID = GetQuestionnaireID(Heading, Content, StartT, EndT, Account);
+                this.Request.QueryString["NewQID"] = NewQuestionnaireID["QuestionnaireID"].ToString(); //錯誤訊息：集合是唯讀的
             }
             else
             {
-                if (StartT > DateTime.Now) //尚未開始
-                {
-                    string Vote = "尚未開始";
-                    MessageBox.Show($"提醒您問卷將送出，請確認", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Add(Heading, Content, StartT, EndT, QuestionnaireNum, Vote, Account);
+                string Heading = this.txtQuestaireName.Text;
+                string Content = this.txtContent.Text;
+                DateTime StartT = Convert.ToDateTime(this.txtStartT.Text);
+                DateTime EndT = Convert.ToDateTime(this.txtEndT.Text);
+                int QuestionnaireID = Convert.ToInt32(this.Request.QueryString["ID"]);
+                string Vote = "";
 
-                }
-                else if (EndT < DateTime.Now) //已完結
+                if (ckbActivated.Checked == true)  //狀態要顯示已啟用
                 {
-                    string Vote = "已完結";
+                    Vote = "投票中";
                     MessageBox.Show($"提醒您問卷將送出，請確認", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Add(Heading, Content, StartT, EndT, QuestionnaireNum, Vote, Account);
                 }
+                else
+                {
+                    if (StartT > DateTime.Now) //尚未開始
+                    {
+                        Vote = "尚未開始";
+                        MessageBox.Show($"提醒您問卷將送出，請確認", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    }
+                    else if (EndT < DateTime.Now) //已完結
+                    {
+                        Vote = "已完結";
+                        MessageBox.Show($"提醒您問卷將送出，請確認", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                UpData(Heading, Content, Vote, StartT, EndT, QuestionnaireID);
             }
-            var NewQuestionnaireID = GetQuestionnaireID(Heading, Content, StartT, EndT, Account);
-            this.Request.QueryString["NewQID"] = NewQuestionnaireID["QuestionnaireID"].ToString(); //錯誤訊息：集合是唯讀的
+            
         }
         /// <summary>
         /// 問卷 - 取消紐
@@ -174,6 +225,62 @@ namespace Dynamic_questionnaire_system.UserSide
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             Response.Redirect("/UserSide/USList.aspx");
+        }
+        /// <summary>
+        /// 取得已有問卷資料
+        /// </summary>
+        /// <param name="Account"></param>
+        /// <returns></returns>
+        public static DataRow GetDBData(int QuestionnaireID)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@"SELECT [Heading],[Vote],[StartTime],[EndTime],[Content]
+                     FROM [Outline]
+                     WHERE[QuestionnaireID] = @QuestionnaireID
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@QuestionnaireID", QuestionnaireID));
+
+            try
+            {
+                return DBHelper.ReadDataRow(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
+        }
+
+        public static DataTable UpData(string Heading, string Content, string Vote, DateTime StartT, DateTime EndT, int QuestionnaireID)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@"UPDATE [Outline]
+                    SET [Heading] = @Heading, [Vote] = @Vote, [StartTime] = @StartTime
+                    	,[EndTime] = @EndTime, [Content] = @Content
+                    WHERE [QuestionnaireID] = @QuestionnaireID;
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@QuestionnaireID", QuestionnaireID));
+            list.Add(new SqlParameter("@Heading", Heading));
+            list.Add(new SqlParameter("@Content", Content));
+            list.Add(new SqlParameter("@StartTime", StartT));
+            list.Add(new SqlParameter("@EndTime", EndT));
+            list.Add(new SqlParameter("@Vote", Vote));
+
+            try
+            {
+                return DBHelper.ReadDataTable(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
         }
         /// <summary>
         /// 問卷 - 寫進資料庫

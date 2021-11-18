@@ -19,7 +19,7 @@
         </div>
     <br />
         <div>
-            <asp:ImageButton ID="ImgbtnBin" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" OnClick="ImgbtnBin_Click" OnClientClick="return confirm(&quot;請確認您將刪除的問卷，是否正確&quot;)" />&nbsp;&nbsp;&nbsp;&nbsp;
+            <asp:ImageButton ID="ImgbtnBin" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" OnClientClick="return confirm(&quot;請確認您將刪除的問卷，是否正確&quot;)" OnClick="ImgbtnBin_Click1" />&nbsp;&nbsp;&nbsp;&nbsp;
             <asp:ImageButton ID="ImgbtnAdd" runat="server" ImageUrl="~/Images/add.png" Height="29px" Width="34px" OnClick="ImgbtnAdd_Click" />
             <asp:Label ID="lblMessage" runat="server" Visible="false"></asp:Label>
         </div>
@@ -27,7 +27,7 @@
         <Columns>
             <asp:TemplateField>
                 <ItemTemplate>
-                    <asp:CheckBox ID="CheckBox1" runat="server" />
+                    <asp:CheckBox ID="CheckBox1" runat="server"></asp:CheckBox>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField HeaderText="#" DataField="QuestionnaireID" />

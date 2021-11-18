@@ -1,4 +1,5 @@
 ﻿using DBSource;
+using Sitecore.FakeDb;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,9 +23,10 @@ namespace Dynamic_questionnaire_system.UserSide
                 Response.Redirect("/UserSide/USLogin.aspx");
                 return;
             }
-            this.GridView1.DataSource = GetDBData();  ///讓GridView1顯示DB的資料
+            string Account = HttpContext.Current.Session["UserLoginInfo"] as string;
+            this.GridView1.DataSource = GetDBData(Account);  ///讓GridView1顯示 DB中 Account的資料
             this.GridView1.DataBind();
-            var dt = GetDBData();
+            var dt = GetDBData(Account);
             DataSearch(dt);
         }
         /// <summary>
@@ -152,7 +154,7 @@ namespace Dynamic_questionnaire_system.UserSide
         /// 顯示資料、判斷投票狀態(已完結、尚未開始、投票中)
         /// </summary>
         /// <returns></returns>
-        public static DataTable GetDBData()
+        public static DataTable GetDBData(string Account)
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
@@ -170,9 +172,11 @@ namespace Dynamic_questionnaire_system.UserSide
                    
                     SELECT [Outline].[QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
                     FROM [Outline]
+                    WHERE[Account] = @Account
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@Account", Account));
 
             try
             {
@@ -233,49 +237,42 @@ namespace Dynamic_questionnaire_system.UserSide
         /// <param name="sender"></param>
         /// <param name="e"></param>    
         //刪除方法沒成功
-        protected void ImgbtnBin_Click(object sender, ImageClickEventArgs e)
+        protected void ImgbtnBin_Click1(object sender, ImageClickEventArgs e)
         {
-            List<object> parameters = new List<object>();
-            List<object> parameters_value = new List<object>();
-
-            for (int i = 0; i < GridView1.Rows.Count; i++)
+            foreach (GridViewRow row in GridView1.Rows)
             {
-                CheckBox cb = (CheckBox)GridView1.Rows[i].FindControl("CheckBox1");
-
-                if (cb.Checked == true)
+                if (row.RowType == DataControlRowType.DataRow)
                 {
-                    parameters.Add("@QuestionnaireID");
-                    parameters_value.Add(GridView1.Rows[i].Cells[1].Text);
+                    CheckBox cb = (row.Cells[0].FindControl("CheckBox1") as CheckBox);
+                    if (cb.Checked)
+                    {
+                        int QuestionnaireID = Convert.ToInt32(row.Cells[1].Text);
+                        DelQuestionnaireID(QuestionnaireID);
+                    }
                 }
             }
-
-            if (parameters.Count != 0)  //寫刪除方法進DB
-            {
-                for (int i = 0; i < parameters.Count; i++)
-                {
-                    int CHQuestionnaireID = Convert.ToInt32(parameters_value[i]);
-                    DelQuestionnaireID(CHQuestionnaireID);
-                }
-                Response.Write("<Script language= 'JaveScript'> alert('刪除完成!');<Script>");
-            }
+            GridView1.DataBind();
         }
         /// <summary>
         /// DB刪除問卷
         /// </summary>
         /// <param name="QuestionnaireID"></param>
         /// <returns></returns>
-        
         //要刪除整份問卷 =>SQL 成功
-        public static DataTable DelQuestionnaireID(int QuestionnaireID)
+        public static DataRow DelQuestionnaireID(int QuestionnaireID)
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
                 $@"  DELETE FROM [Outline]
-                      WHERE QuestionnaireID = @QuestionnaireID
+                        WHERE QuestionnaireID = @QuestionnaireID
                      DELETE FROM [Questionnaires]
-                      WHERE QuestionnaireID = @QuestionnaireID
+                        WHERE QuestionnaireID = @QuestionnaireID
                      DELETE FROM [Question]
-                     WHERE [Question].QuestionnaireID = @QuestionnaireID
+                        WHERE QuestionnaireID = @QuestionnaireID
+                     DELETE FROM [Record]
+                        WHERE QuestionnaireID = @QuestionnaireID
+                     DELETE FROM [Record Details]
+                        WHERE QuestionnaireID = @QuestionnaireID
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
@@ -283,7 +280,7 @@ namespace Dynamic_questionnaire_system.UserSide
 
             try
             {
-                return DBHelper.ReadDataTable(connStr, dbcommand, list);
+                return DBHelper.ReadDataRow(connStr, dbcommand, list);
             }
             catch (Exception ex)
             {
@@ -292,6 +289,6 @@ namespace Dynamic_questionnaire_system.UserSide
             }
         }
 
-
+       
     }
 }
