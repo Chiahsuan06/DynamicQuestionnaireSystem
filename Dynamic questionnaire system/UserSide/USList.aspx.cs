@@ -139,10 +139,14 @@ namespace Dynamic_questionnaire_system.UserSide
                 if (vt == "尚未開始")
                 {
                     e.Row.Cells[3].Text = "已關閉";
+                    e.Row.Cells[4].Text = "-";
+                    e.Row.Cells[5].Text = "-";
                 }
                 else if (vt == "已完結")
                 {
                     e.Row.Cells[3].Text = "已關閉";
+                    e.Row.Cells[4].Text = "-";
+                    e.Row.Cells[5].Text = "-";
                 }
                 else //投票中
                 {
