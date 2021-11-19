@@ -360,6 +360,11 @@ namespace Dynamic_questionnaire_system.UserSide
         #endregion
 
         #region 問題
+        /// <summary>
+        /// 修正問卷顯示 文字
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void givQuestion_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
@@ -379,16 +384,18 @@ namespace Dynamic_questionnaire_system.UserSide
                 }
 
                 CheckBox gQckb = e.Row.Cells[4].FindControl("chbMustKeyIn") as CheckBox;
-                int QuestionnaireID = Convert.ToInt32(this.Request.QueryString["ID"]);
-                var dr = GetGivDBDataRow(QuestionnaireID);
-                if (dr["TopicMustKeyIn"].ToString() == "Y")
+                string mk = (string)DataBinder.Eval(e.Row.DataItem, "TopicMustKeyIn");
+                if (mk == "Y")
                 {
                     gQckb.Checked = true;
+                    e.Row.Cells[5].Visible = false;
                 }
                 else
                 {
                     gQckb.Checked = false;
+                    e.Row.Cells[5].Visible = false;
                 }
+                givQuestion.HeaderRow.Cells[5].Visible = false;
             }
         }
 

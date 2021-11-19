@@ -125,6 +125,7 @@
                             <asp:CheckBox ID="chbMustKeyIn" runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
+                    <asp:BoundField DataField="TopicMustKeyIn" />
                     <asp:TemplateField>
                         <ItemTemplate>
                             <a>編輯</a>
