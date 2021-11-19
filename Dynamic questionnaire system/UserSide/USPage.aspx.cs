@@ -398,6 +398,92 @@ namespace Dynamic_questionnaire_system.UserSide
                 givQuestion.HeaderRow.Cells[5].Visible = false;
             }
         }
+        /// <summary>
+        /// 按編輯送資料到txtbox
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void givQuestion_RowUpdating(object sender, GridViewUpdateEventArgs e)
+        {
+            this.txtQuestion.Text = givQuestion.Rows[e.RowIndex].Cells[2].Text;
+
+            if (givQuestion.Rows[e.RowIndex].Cells[3].Text == "單選方塊")
+            {
+                this.ddlChoose.SelectedIndex = 0;
+            }
+            else if (givQuestion.Rows[e.RowIndex].Cells[3].Text == "複選方塊")
+            {
+                this.ddlChoose.SelectedIndex = 1;
+            }
+            else
+            {
+                this.ddlChoose.SelectedIndex = 2;
+            }
+
+            if (givQuestion.Rows[e.RowIndex].Cells[5].Text == "Y")
+            {
+                this.ckbRequired.Checked = true;
+            }
+            else
+            {
+                this.ckbRequired.Checked = false;
+            }
+
+            int QuestionnaireID = Convert.ToInt32(this.Request.QueryString["ID"]);
+            int TopicNum = Convert.ToInt32(givQuestion.Rows[e.RowIndex].Cells[1].Text);
+            var dr = GetGivAnsDBDataRow(QuestionnaireID, TopicNum);
+            string a1 = dr["answer1"].ToString();
+            string a2 = dr["answer2"].ToString();
+            string a3 = dr["answer3"].ToString();
+            string a4 = dr["answer4"].ToString();
+            string a5 = dr["answer5"].ToString();
+            string a6 = dr["answer6"].ToString();
+            string a7 = dr["answer7"].ToString();
+            string a8 = dr["answer8"].ToString();
+            string a9 = dr["answer9"].ToString();
+            string a10 = dr["answer10"].ToString();
+            int noq = Convert.ToInt32(dr["OptionsAll"].ToString());
+            if (noq == 10)
+            {
+                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4 + ";" + a5 + ";" + a6 + ";" + a7 + ";" + a8 + ";" + a9 + ";" + a10;
+            }
+            if (noq == 9)
+            {
+                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4 + ";" + a5 + ";" + a6 + ";" + a7 + ";" + a8 + ";" + a9;
+            }
+            if (noq == 8)
+            {
+                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4 + ";" + a5 + ";" + a6 + ";" + a7 + ";" + a8;
+            }
+            if (noq == 7)
+            {
+                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4 + ";" + a5 + ";" + a6 + ";" + a7;
+            }
+            if (noq == 6)
+            {
+                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4 + ";" + a5 + ";" + a6;
+            }
+            if (noq == 5)
+            {
+                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4 + ";" + a5;
+            }
+            if (noq == 4)
+            {
+                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4;
+            }
+            if (noq == 3)
+            {
+                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3;
+            }
+            if (noq == 2)
+            {
+                this.txtOptions.Text = a1 + ";" + a2;
+            }
+            if (noq == 1)
+            {
+                this.txtOptions.Text = a1;
+            }
+        }
 
         /// <summary>
         /// 問題 - 加入到表裡
@@ -570,6 +656,34 @@ namespace Dynamic_questionnaire_system.UserSide
 
             List<SqlParameter> list = new List<SqlParameter>();
             list.Add(new SqlParameter("@QuestionnaireID", QuestionnaireID));
+
+            try
+            {
+                return DBHelper.ReadDataRow(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
+        }
+        public static DataRow GetGivAnsDBDataRow(int QuestionnaireID, int TopicNum)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@"SELECT [Questionnaires].[TopicNum],[TopicDescription],[TopicSummary],[TopicType],[TopicMustKeyIn]
+                   	     ,[Question].[answer1],[Question].[answer2],[Question].[answer3],[Question].[answer4],[Question].[answer5]
+                         ,[Question].[answer6],[Question].[answer7],[Question].[answer8],[Question].[answer9],[Question].[answer10]
+                   	     ,[Question].[OptionsAll]
+                     FROM [Questionnaire].[dbo].[Questionnaires]
+                     RIGHT JOIN [Question] ON [Questionnaires].[TopicNum] = [Question].[TopicNum]
+                     WHERE [Questionnaires].[QuestionnaireID] = @QuestionnaireID
+                     AND [Questionnaires].[TopicNum] = @TopicNum
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@QuestionnaireID", QuestionnaireID));
+            list.Add(new SqlParameter("@TopicNum", TopicNum));
 
             try
             {
@@ -756,6 +870,10 @@ namespace Dynamic_questionnaire_system.UserSide
                 return null;
             }
         }
+
+
+
+
         #endregion
 
 

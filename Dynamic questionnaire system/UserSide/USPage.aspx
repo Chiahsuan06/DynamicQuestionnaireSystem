@@ -110,7 +110,7 @@
             <asp:Button ID="btnAddIn" runat="server" Text="加入" OnClick="btnAddIn_Click" />
             <br /><br />
             <asp:ImageButton ID="ImgbtnBin" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" OnClick="ImgbtnBin_Click"/>&nbsp;&nbsp;<asp:Label ID="lblAddMessage" runat="server" ForeColor="Red"></asp:Label>
-            <asp:GridView ID="givQuestion" runat="server" AutoGenerateColumns="False" OnRowCommand="givQuestion_RowCommand" OnRowDataBound="givQuestion_RowDataBound">
+            <asp:GridView ID="givQuestion" runat="server" AutoGenerateColumns="False" OnRowCommand="givQuestion_RowCommand" OnRowDataBound="givQuestion_RowDataBound" OnRowUpdating="givQuestion_RowUpdating">
                 <Columns>
                     <asp:TemplateField>
                         <ItemTemplate>
@@ -126,11 +126,7 @@
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:BoundField DataField="TopicMustKeyIn" />
-                    <asp:TemplateField>
-                        <ItemTemplate>
-                            <a>編輯</a>
-                        </ItemTemplate>
-                    </asp:TemplateField>
+                    <asp:ButtonField ButtonType="Button" CommandName="Update" Text="編輯" />
                 </Columns>
             </asp:GridView>
             <div>
