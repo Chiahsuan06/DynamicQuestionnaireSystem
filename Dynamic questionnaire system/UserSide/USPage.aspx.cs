@@ -13,6 +13,7 @@ using NPOI.SS.UserModel;
 using System.IO;
 using System.Text;
 using DQS_Models;
+using CheckBox = System.Web.UI.WebControls.CheckBox;
 
 namespace Dynamic_questionnaire_system.UserSide
 {
@@ -46,18 +47,21 @@ namespace Dynamic_questionnaire_system.UserSide
                 {
                     this.ckbActivated.Checked = false;
                 }
+
+                //後台內頁2-問題
+                //this.givQuestion.DataSource = this.Session["GivQuestionList"] as DataTable;
+                this.givQuestion.DataSource = GetGivDBData(QuestionnaireID);
+                this.givQuestion.DataBind();
+
+                //後台內頁2-問題
+                if (ddlType.SelectedIndex == 1)   //常用問題1 =>常用問題設定要去常用問題管理，要記得處理
+                {
+                    this.txtQuestion.Text = "";
+                    this.txtOptions.Text = "";
+                }
             }
 
-            //後台內頁2-問題
-            givQuestion.DataSource = this.Session["GivQuestionList"] as DataTable;
-            givQuestion.DataBind();
 
-            //後台內頁2-問題
-            if (ddlType.SelectedIndex == 1)   //常用問題1 =>常用問題設定要去常用問題管理，要記得處理
-            {
-                this.txtQuestion.Text = "";
-                this.txtOptions.Text = "";
-            }
 
 
             //後台內頁3-填寫資料
@@ -67,7 +71,8 @@ namespace Dynamic_questionnaire_system.UserSide
             DataSearch(dt);
 
         }
-        
+
+        #region 分頁
         /// <summary>
         /// 分頁控制
         /// </summary>
@@ -134,6 +139,8 @@ namespace Dynamic_questionnaire_system.UserSide
 
             return intPage;
         }
+        #endregion
+
 
         #region 問卷
 
@@ -203,7 +210,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 MessageBox.Show($"提醒您問卷將送出，請確認", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 UpData(Heading, Content, Vote, StartT, EndT, QuestionnaireID);
             }
-            
+            Response.Redirect("/UserSide/USList.aspx");
         }
         /// <summary>
         /// 問卷 - 取消紐
@@ -353,6 +360,38 @@ namespace Dynamic_questionnaire_system.UserSide
         #endregion
 
         #region 問題
+        protected void givQuestion_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                string tt = (string)DataBinder.Eval(e.Row.DataItem, "TopicType");
+                if (tt == "CB")
+                {
+                    e.Row.Cells[3].Text = "複選方塊";
+                }
+                else if (tt == "RB")
+                {
+                    e.Row.Cells[3].Text = "單選方塊";
+                }
+                else
+                {
+                    e.Row.Cells[3].Text = "文字";
+                }
+
+                CheckBox gQckb = e.Row.Cells[4].FindControl("chbMustKeyIn") as CheckBox;
+                int QuestionnaireID = Convert.ToInt32(this.Request.QueryString["ID"]);
+                var dr = GetGivDBDataRow(QuestionnaireID);
+                if (dr["TopicMustKeyIn"].ToString() == "Y")
+                {
+                    gQckb.Checked = true;
+                }
+                else
+                {
+                    gQckb.Checked = false;
+                }
+            }
+        }
+
         /// <summary>
         /// 問題 - 加入到表裡
         /// </summary>
@@ -472,6 +511,68 @@ namespace Dynamic_questionnaire_system.UserSide
         protected void btngivSent_Click(object sender, EventArgs e)
         {
 
+        }
+
+
+
+        /// <summary>
+        /// 取得已有問卷資料
+        /// </summary>
+        /// <param name="Account"></param>
+        /// <returns></returns>
+        public static DataTable GetGivDBData(int QuestionnaireID)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@"SELECT [Questionnaires].[TopicNum],[TopicDescription],[TopicSummary],[TopicType],[TopicMustKeyIn]
+                   	     ,[Question].[answer1],[Question].[answer2],[Question].[answer3],[Question].[answer4],[Question].[answer5]
+                         ,[Question].[answer6],[Question].[answer7],[Question].[answer8],[Question].[answer9],[Question].[answer10]
+                   	     ,[Question].[OptionsAll]
+                     FROM [Questionnaire].[dbo].[Questionnaires]
+                     RIGHT JOIN [Question] ON [Questionnaires].[TopicNum] = [Question].[TopicNum]
+                     WHERE [Questionnaires].[QuestionnaireID] = @QuestionnaireID
+                     ORDER BY [Questionnaires].[TopicNum]
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@QuestionnaireID", QuestionnaireID));
+
+            try
+            {
+                return DBHelper.ReadDataTable(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
+        }
+        public static DataRow GetGivDBDataRow(int QuestionnaireID)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@"SELECT [Questionnaires].[TopicNum],[TopicDescription],[TopicSummary],[TopicType],[TopicMustKeyIn]
+                   	     ,[Question].[answer1],[Question].[answer2],[Question].[answer3],[Question].[answer4],[Question].[answer5]
+                         ,[Question].[answer6],[Question].[answer7],[Question].[answer8],[Question].[answer9],[Question].[answer10]
+                   	     ,[Question].[OptionsAll]
+                     FROM [Questionnaire].[dbo].[Questionnaires]
+                     RIGHT JOIN [Question] ON [Questionnaires].[TopicNum] = [Question].[TopicNum]
+                     WHERE [Questionnaires].[QuestionnaireID] = @QuestionnaireID
+                     ORDER BY [Questionnaires].[TopicNum]
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@QuestionnaireID", QuestionnaireID));
+
+            try
+            {
+                return DBHelper.ReadDataRow(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
         }
         #endregion
 
@@ -649,6 +750,7 @@ namespace Dynamic_questionnaire_system.UserSide
             }
         }
         #endregion
+
 
     }
 }

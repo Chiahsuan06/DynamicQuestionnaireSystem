@@ -71,10 +71,10 @@
 
         <div id="Questionnaire" class="tabcontent">  <%--問卷--%>
             <asp:Label ID="lblQuestaireName" runat="server" Text="問卷名稱"></asp:Label>&nbsp;&nbsp;
-            <asp:TextBox ID="txtQuestaireName" runat="server"></asp:TextBox>
+            <asp:TextBox ID="txtQuestaireName" runat="server" Height="25px" Width="271px"></asp:TextBox>
             <br />
             <asp:Label ID="lblContent" runat="server" Text="描述內容"></asp:Label>&nbsp;&nbsp;
-            <asp:TextBox ID="txtContent" runat="server" TextMode="MultiLine"></asp:TextBox>
+            <asp:TextBox ID="txtContent" runat="server" TextMode="MultiLine" Height="130px" Width="279px"></asp:TextBox>
             <br />
             <asp:Label ID="lblStartT" runat="server" Text="開始時間"></asp:Label>&nbsp;&nbsp;
             <asp:TextBox ID="txtStartT" runat="server"></asp:TextBox>
@@ -105,12 +105,12 @@
             </asp:DropDownList>&nbsp;&nbsp;
             <asp:CheckBox ID="ckbRequired" runat="server" /><asp:Label ID="lblRequired" runat="server" Text="必填"></asp:Label>
             <br />
-            <asp:Label ID="lblOptions" runat="server" Text="回答"></asp:Label>
-            <asp:TextBox ID="txtOptions" runat="server"></asp:TextBox><p>(多個答案以；分隔)</p>&nbsp;&nbsp;
+            <asp:Label ID="lblOptions" runat="server" Text="回答"></asp:Label>&nbsp;&nbsp;
+            <asp:TextBox ID="txtOptions" runat="server"></asp:TextBox>(多個答案以；分隔)&nbsp;&nbsp;
             <asp:Button ID="btnAddIn" runat="server" Text="加入" OnClick="btnAddIn_Click" />
-            <br />
+            <br /><br />
             <asp:ImageButton ID="ImgbtnBin" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" OnClick="ImgbtnBin_Click"/>&nbsp;&nbsp;<asp:Label ID="lblAddMessage" runat="server" ForeColor="Red"></asp:Label>
-            <asp:GridView ID="givQuestion" runat="server" AutoGenerateColumns="False" OnRowCommand="givQuestion_RowCommand">
+            <asp:GridView ID="givQuestion" runat="server" AutoGenerateColumns="False" OnRowCommand="givQuestion_RowCommand" OnRowDataBound="givQuestion_RowDataBound">
                 <Columns>
                     <asp:TemplateField>
                         <ItemTemplate>
@@ -120,7 +120,7 @@
                     <asp:BoundField HeaderText="#" DataField="TopicNum"/>
                     <asp:BoundField HeaderText="問題" DataField="TopicDescription"/>
                     <asp:BoundField HeaderText="種類" DataField="TopicType"/>
-                    <asp:TemplateField HeaderText="必填" >
+                    <asp:TemplateField HeaderText="必填">
                         <ItemTemplate>
                             <asp:CheckBox ID="chbMustKeyIn" runat="server" />
                         </ItemTemplate>

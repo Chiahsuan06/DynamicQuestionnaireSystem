@@ -20,20 +20,23 @@
     <br />
         <div>
             <asp:ImageButton ID="ImgbtnBin" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" OnClientClick="return confirm(&quot;請確認您將刪除的問卷，是否正確&quot;)" OnClick="ImgbtnBin_Click1" />&nbsp;&nbsp;&nbsp;&nbsp;
-            <asp:ImageButton ID="ImgbtnAdd" runat="server" ImageUrl="~/Images/add.png" Height="29px" Width="34px" OnClick="ImgbtnAdd_Click" />
+            <asp:ImageButton ID="ImgbtnAdd" runat="server" ImageUrl="~/Images/add.png" Height="29px" Width="34px" OnClick="ImgbtnAdd_Click" ToolTip="新增問卷" />
             <asp:Label ID="lblMessage" runat="server" Visible="false"></asp:Label>
         </div>
     <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" OnRowDataBound="GridView1_RowDataBound">
         <Columns>
             <asp:TemplateField>
+                <EditItemTemplate>
+                    <asp:CheckBox ID="CheckBox1" runat="server" />
+                </EditItemTemplate>
                 <ItemTemplate>
-                    <asp:CheckBox ID="CheckBox1" runat="server"></asp:CheckBox>
+                    <asp:CheckBox ID="CheckBox1" runat="server" />
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField HeaderText="#" DataField="QuestionnaireID" />
             <asp:TemplateField HeaderText="問卷">
                 <ItemTemplate>
-                    <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("QuestionnaireID", "USPage.aspx?ID={0}") %>' Text='<%# Eval("Heading") %>'></asp:HyperLink>
+                    <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("QuestionnaireID", "USPage.aspx?ID={0}") %>' Text='<%# Eval("Heading") %>' ToolTip="更新問卷內容"></asp:HyperLink>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField HeaderText="狀態" DataField="Vote"/>

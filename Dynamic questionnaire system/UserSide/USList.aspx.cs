@@ -240,7 +240,7 @@ namespace Dynamic_questionnaire_system.UserSide
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>    
-        //刪除方法沒成功
+        //刪除方法沒成功 => Checked == false
         protected void ImgbtnBin_Click1(object sender, ImageClickEventArgs e)
         {
             foreach (GridViewRow row in GridView1.Rows)
@@ -248,7 +248,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 if (row.RowType == DataControlRowType.DataRow)
                 {
                     CheckBox cb = (row.Cells[0].FindControl("CheckBox1") as CheckBox);
-                    if (cb.Checked)
+                    if (cb.Checked == true)
                     {
                         int QuestionnaireID = Convert.ToInt32(row.Cells[1].Text);
                         DelQuestionnaireID(QuestionnaireID);
@@ -263,7 +263,7 @@ namespace Dynamic_questionnaire_system.UserSide
         /// <param name="QuestionnaireID"></param>
         /// <returns></returns>
         //要刪除整份問卷 =>SQL 成功
-        public static DataRow DelQuestionnaireID(int QuestionnaireID)
+        public static DataTable DelQuestionnaireID(int QuestionnaireID)
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
@@ -284,7 +284,7 @@ namespace Dynamic_questionnaire_system.UserSide
 
             try
             {
-                return DBHelper.ReadDataRow(connStr, dbcommand, list);
+                return DBHelper.ReadDataTable(connStr, dbcommand, list);
             }
             catch (Exception ex)
             {
