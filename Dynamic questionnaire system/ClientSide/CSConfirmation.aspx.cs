@@ -31,12 +31,16 @@ namespace Dynamic_questionnaire_system.ClientSide
             this.ltlEmail.Text = Session["Email"] as string;
             this.ltlAge.Text = Session["Age"] as string;
 
-            // todo: 這裡還沒完成 =>構思是將問卷畫面坐起來，所以有些程式碼和上頁相同，照理已選的選項已經存在Session裡，又將其轉回ArrayList....如何讓其顯示???
             ArrayList M1_D1_D2 = Session["ListM1_D1_D2"] as ArrayList;
             foreach (var item in M1_D1_D2)
             {
-                Response.Write(item);
-                
+                Label Ans = new Label();
+                Ans.Text = item.ToString();
+                PlaceHolder1.Controls.Add(Ans);
+
+                Label Label_table_td = new Label();
+                Label_table_td.Text = "<br />";
+                PlaceHolder1.Controls.Add(Label_table_td);
             }
 
 
