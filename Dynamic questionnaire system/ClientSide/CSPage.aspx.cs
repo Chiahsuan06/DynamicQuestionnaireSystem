@@ -80,6 +80,8 @@ namespace Dynamic_questionnaire_system.ClientSide
                 int QNo = Compute_QNo(M_ID);
                 ArrayList D1_AL = Take_D1_ID(M_ID);
                 ArrayList D1_TD = Take_TopicDescription(M_ID);
+                this.Session["TNRDList"] = new List<QAList>();
+                var TNRD = this.Session["TNRDList"] as List<QAList>;
 
                 for (int i = 0; i <= (QNo - 1); i++)
                 {
@@ -94,36 +96,51 @@ namespace Dynamic_questionnaire_system.ClientSide
                             {
                                 if (CBL1.Items[j].Selected)
                                 {
-                                    CBL1_Value = CBL1_Value + CBL1.Items[j].Text;
+                                    CBL1_Value = CBL1_Value + CBL1.Items[j].Text +";";
                                 }
                             }
-                            //M1_D1_D2.Add("<br/>第" + i + "題 所選的是--" + CBL1_Value);
                             M1_D1_D2.Add("<br/>第" + (i + 1) + "題" + D1_TD[i] + "<br/>" + CBL1_Value + "<br/>");
+                            var TNRD_CB = new QAList()
+                            {
+                                TopicNum = (int)D1_AL[i],
+                                RDAns = CBL1_Value
+                            };
+                            TNRD.Add(TNRD_CB);
 
                             break;
 
                         case "System.Web.UI.WebControls.RadioButtonList":
                             RadioButtonList CBL2 = (RadioButtonList)PlaceHolder1.FindControl(Dyan_WebControlID);
-                            //M1_D1_D2.Add("<br/>第" + i + "題 所選的是--" + CBL2.SelectedItem.Text);
                             M1_D1_D2.Add("<br/>第" + (i + 1) + "題" + D1_TD[i] + "<br/>" + CBL2.SelectedItem.Text + "<br/>");
+                            var TNRD_RB = new QAList()
+                            {
+                                TopicNum = (int)D1_AL[i],
+                                RDAns = CBL2.SelectedItem.Text
+                            };
+                            TNRD.Add(TNRD_RB);
 
                             break;
 
                         default:
                             System.Web.UI.WebControls.TextBox TB = (System.Web.UI.WebControls.TextBox)PlaceHolder1.FindControl(Dyan_WebControlID);
-                            //M1_D1_D2.Add("<br/>第" + i + "題 所選的是--" + TB.Text);
                             M1_D1_D2.Add("<br/>第" + (i + 1) + "題" + D1_TD[i] + "<br/>" + TB.Text + "<br/>");
+                            var TNRD_TB = new QAList()
+                            {
+                                TopicNum = (int)D1_AL[i],
+                                RDAns = TB.Text
+                            };
+                            TNRD.Add(TNRD_TB);
 
                             break;
+
                     }
 
 
                 }
 
-
-
                 Session["ListM1_D1_D2"] = M1_D1_D2;
-                Session["TopicNum"] = Take_D1_ID(M_ID);
+                Session["D1_AL"] = D1_AL;
+                Session["TNRDList"] = TNRD;
 
                 MessageBox.Show($"即將前往確認頁面，請確認填寫的資訊是否正確", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Response.Redirect("/ClientSide/CSConfirmation.aspx?ID=" + Request.QueryString["ID"]);
@@ -363,7 +380,7 @@ namespace Dynamic_questionnaire_system.ClientSide
             return x; //-- 執行SQL指令。
         }
 
-        //== 針對這個問卷，每一個題目（Questionnaires）的ID編號
+        //== 針對這個問卷，每一個題目（Questionnaires）的ID編號 =>TopicNum
         protected System.Collections.ArrayList Take_D1_ID(int M_ID)
         {
             SqlConnection Conn = new SqlConnection(ConnStr);
@@ -387,7 +404,7 @@ namespace Dynamic_questionnaire_system.ClientSide
             return D1_array;
         }
 
-        //== 針對這個問卷，每一個題目
+        //== 針對這個問卷，每一個題目描述 =>TopicDescription
         protected System.Collections.ArrayList Take_TopicDescription(int M_ID)
         {
             SqlConnection Conn = new SqlConnection(ConnStr);
