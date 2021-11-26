@@ -59,32 +59,33 @@ namespace DBSource
             }
         }
 
-        public static int ModifyData(string connStr, string dbCommand, List<SqlParameter> paramList)
+        public static SqlDataReader ExecuteReadesql(string sqlOrprocedure, SqlParameter[] param, bool isProcedure)
         {
-            using (SqlConnection conn = new SqlConnection(connStr))
+            try
             {
-                using (SqlCommand comm = new SqlCommand(dbCommand, conn))
-                {
-                    comm.Parameters.AddRange(paramList.ToArray());
-                    conn.Open();
-                    int effectRowsCount = comm.ExecuteNonQuery();
-                    return effectRowsCount;
-                }
-            }
-        }
+                string connStr = GetConnectionString();
+                SqlConnection con = new SqlConnection(connStr);
 
-        public static void CreateData(string connStr, string dbCommand, List<SqlParameter> createList)
-        {
-            using (SqlConnection conn = new SqlConnection(connStr))
+                Console.WriteLine("sucess");
+
+                SqlCommand command = new SqlCommand(sqlOrprocedure, con);
+
+                if (isProcedure)
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                }
+
+                con.Open();
+                command.Parameters.AddRange(param);
+                return command.ExecuteReader(CommandBehavior.CloseConnection);
+
+            }
+            catch (Exception ex)
             {
-                using (SqlCommand comm = new SqlCommand(dbCommand, conn))
-                {
-                    comm.Parameters.AddRange(createList.ToArray());
-                    conn.Open();
-                    comm.ExecuteNonQuery();
-
-                }
+                //  writelog("執行 executeReadesql(string sqlOrprocedure, SqlParameter[] param, bool isProcedure)方法發生異常:" + ex.Message);
+                throw ex;
             }
+
         }
 
     }

@@ -82,7 +82,7 @@ namespace Dynamic_questionnaire_system.ClientSide
 
                 for (int i = 0; i <= (QNo - 1); i++)
                 {
-                    string Dyan_WebControlID = "D1" + D1_AL[i];
+                    string Dyan_WebControlID = "D1_" + D1_AL[i];
                     switch (PlaceHolder1.FindControl(Dyan_WebControlID).ToString())
                     {
                         case "System.Web.UI.WebControls.CheckBoxList":
@@ -101,7 +101,7 @@ namespace Dynamic_questionnaire_system.ClientSide
                             break;
 
                         case "System.Web.UI.WebControls.RadioButtonList":
-                            CheckBoxList CBL2 = (CheckBoxList)PlaceHolder1.FindControl(Dyan_WebControlID);
+                            RadioButtonList CBL2 = (RadioButtonList)PlaceHolder1.FindControl(Dyan_WebControlID);
                             M1_D1_D2.Add("<br/>第" + i + "題 所選的是--" + CBL2.SelectedItem.Text);
 
                             break;
@@ -114,7 +114,7 @@ namespace Dynamic_questionnaire_system.ClientSide
                     }
                 }
 
-                Session["ListM1_D1_D2_AL"] = M1_D1_D2;
+                Session["ListM1_D1_D2"] = M1_D1_D2;
                 Session["TopicNum"] = Take_D1_ID(M_ID);
 
                 MessageBox.Show($"即將前往確認頁面，請確認填寫的資訊是否正確", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -151,7 +151,7 @@ namespace Dynamic_questionnaire_system.ClientSide
                 return null;
             }
         }
-
+        //問卷
         public void Generate_Page()
         {
             SqlConnection Conn = new SqlConnection(ConnStr);
@@ -229,6 +229,14 @@ namespace Dynamic_questionnaire_system.ClientSide
                                 CB_Q1.Items.Add(dr2[answer_item].ToString());
                             }
                             //---------------------------------------------------------------------------(end)
+
+                            //string answerCB = dr2["answers"].ToString();
+                            //string[] answersCB = answerCB.Split(';');
+                            //foreach (var item in answersCB)
+                            //{
+                            //    CB_Q1.Items.Add(item);
+                            //}
+
                             cmd2.Cancel();  //-- 用完就立即關閉資源。
                             dr2.Close();
                             PlaceHolder1.Controls.Add(CB_Q1);  //-- 動態加入畫面（PlaceHolder1）之中
@@ -257,6 +265,14 @@ namespace Dynamic_questionnaire_system.ClientSide
                                 CB_Q2.Items.Add(dr3[answer_item].ToString());
                             }
                             //---------------------------------------------------------------------------(end)
+                            
+
+                            //string answerRB = dr3["answers"].ToString();
+                            //string[] answersRB = answerRB.Split(';');
+                            //foreach (var item in answersRB)
+                            //{
+                            //    CB_Q2.Items.Add(item);
+                            //}
                             cmd3.Cancel();  //-- 用完就立即關閉資源。
                             dr3.Close();
                             PlaceHolder1.Controls.Add(CB_Q2);  //-- 動態加入畫面（PlaceHolder1）之中

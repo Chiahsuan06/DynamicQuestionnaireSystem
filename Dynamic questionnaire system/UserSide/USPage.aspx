@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Models/Main.Master" AutoEventWireup="true" CodeBehind="USPage.aspx.cs" Inherits="Dynamic_questionnaire_system.UserSide.USPage" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Models/Main.Master" AutoEventWireup="true" CodeBehind="USPage.aspx.cs" Inherits="Dynamic_questionnaire_system.UserSide.USPage" EnableEventValidation="false" %>
 
 <%@ Register Src="~/UserControl/ucPager.ascx" TagPrefix="uc1" TagName="ucPager" %>
 
@@ -138,36 +138,38 @@
 
         <div id="WriteInformation" class="tabcontent">  <%--填寫資料--%>
             <asp:Button ID="btnExport" runat="server" Text="匯出" OnClick="btnExport_Click" />
-            <asp:GridView ID="givExport" runat="server" AutoGenerateColumns="False">
+            <asp:GridView ID="givExport" runat="server" AutoGenerateColumns="False" DataKeyNames="RecordNum" >
                 <Columns>
                     <asp:BoundField HeaderText="#" DataField="RecordNum"/>
                     <asp:BoundField HeaderText="姓名" DataField="AnsName" />
                     <asp:BoundField HeaderText="填寫時間" DataField="AnsTime"/>
                     <asp:TemplateField HeaderText="觀看細節">
                         <ItemTemplate>
-                            <a href="USPage.aspxID=<%#Eval("RecordNum") %>">前往</a>
+                            <asp:Button ID="btnDetail" runat="server" Text="前往" CommandName="GoDetail" />
                         </ItemTemplate>
                     </asp:TemplateField>
+                    <asp:HyperLinkField DataNavigateUrlFields="QuestionnaireID,RecordNum" DataNavigateUrlFormatString="USPage.aspx?ID={0}&amp;RN={1}" HeaderText="觀看細節" Text="前往" />
                 </Columns>
             </asp:GridView>
             <uc1:ucPager runat="server" ID="ucPager" PageSize ="10" Url="/UserSide/USPage.aspx"/>
 
             <%--分頁--%>
-
-            <asp:PlaceHolder ID="PlaceHolderDetail" runat="server">
+           
+            <asp:PlaceHolder ID="PlaceHolderDetail" runat="server" Visible="False">
                 <div>
-                    <asp:Label ID="plblName" runat="server" Text="姓名"></asp:Label>
+                    <asp:Label ID="plblName" runat="server" Text="姓名："></asp:Label>&nbsp;&nbsp;
                     <asp:TextBox ID="txtName" runat="server" ReadOnly="True"></asp:TextBox><br />
-                    <asp:Label ID="plblPhone" runat="server" Text="手機"></asp:Label>
+                    <asp:Label ID="plblPhone" runat="server" Text="手機："></asp:Label>&nbsp;&nbsp;
                     <asp:TextBox ID="txtPhone" runat="server" ReadOnly="True"></asp:TextBox><br />
-                    <asp:Label ID="plblEmail" runat="server" Text="Email"></asp:Label>
+                    <asp:Label ID="plblEmail" runat="server" Text="Email："></asp:Label>&nbsp;
                     <asp:TextBox ID="txtEmail" runat="server" ReadOnly="True"></asp:TextBox><br />
-                    <asp:Label ID="plblAge" runat="server" Text="年齡"></asp:Label>
-                    <asp:TextBox ID="txtAge" runat="server" ReadOnly="True"></asp:TextBox>
-                    <asp:Label ID="lblWriteT" runat="server" Text=""></asp:Label>  <%--連結時間--%>
+                    <asp:Label ID="plblAge" runat="server" Text="年齡："></asp:Label>&nbsp;&nbsp;
+                    <asp:TextBox ID="txtAge" runat="server" ReadOnly="True"></asp:TextBox>&nbsp;&nbsp;
+                    <asp:Label ID="lblWriteT" runat="server" Text="填寫時間："></asp:Label><asp:Label ID="lblAnsT" runat="server" ></asp:Label>
                 </div>
                 <div>
                     <%--跳出填答問卷--%>
+                    <asp:PlaceHolder ID="AnsDetail" runat="server"></asp:PlaceHolder>
                 </div>
             </asp:PlaceHolder>
 

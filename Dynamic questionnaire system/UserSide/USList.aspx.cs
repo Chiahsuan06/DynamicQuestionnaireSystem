@@ -29,6 +29,7 @@ namespace Dynamic_questionnaire_system.UserSide
             var dt = GetDBData(Account);
             DataSearch(dt);
         }
+
         /// <summary>
         /// 搜尋區
         /// </summary>
@@ -224,8 +225,6 @@ namespace Dynamic_questionnaire_system.UserSide
                 return null;
             }
         }
-
-
         /// <summary>
         /// 新增問卷
         /// </summary>
@@ -235,12 +234,15 @@ namespace Dynamic_questionnaire_system.UserSide
         {
             Response.Redirect("/UserSide/USPage.aspx");
         }
+
+
         /// <summary>
         /// 刪除問卷
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>    
-        //刪除方法沒成功 => Checked == false
+        // todo: 這裡還沒完成 =>將刪除鍵放進去Gridview裡也是一樣......
+        //刪除方法沒成功 => Checked == false???  
         protected void ImgbtnBin_Click1(object sender, ImageClickEventArgs e)
         {
             foreach (GridViewRow row in GridView1.Rows)
@@ -250,8 +252,8 @@ namespace Dynamic_questionnaire_system.UserSide
                     CheckBox cb = (row.Cells[0].FindControl("CheckBox1") as CheckBox);
                     if (cb.Checked == true)
                     {
-                        int QuestionnaireID = Convert.ToInt32(row.Cells[1].Text);
-                        DelQuestionnaireID(QuestionnaireID);
+                        int ID = Convert.ToInt32(row.Cells[1].Text);
+                        DelQuestionnaireID(ID);
                     }
                 }
             }
@@ -267,16 +269,16 @@ namespace Dynamic_questionnaire_system.UserSide
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
-                $@"  DELETE FROM [Outline]
-                        WHERE QuestionnaireID = @QuestionnaireID
-                     DELETE FROM [Questionnaires]
-                        WHERE QuestionnaireID = @QuestionnaireID
-                     DELETE FROM [Question]
-                        WHERE QuestionnaireID = @QuestionnaireID
-                     DELETE FROM [Record]
-                        WHERE QuestionnaireID = @QuestionnaireID
-                     DELETE FROM [Record Details]
-                        WHERE QuestionnaireID = @QuestionnaireID
+                $@"DELETE FROM [Outline]
+                      WHERE QuestionnaireID = @QuestionnaireID
+                   DELETE FROM [Questionnaires]
+                      WHERE QuestionnaireID = @QuestionnaireID
+                   DELETE FROM [Question]
+                      WHERE QuestionnaireID = @QuestionnaireID
+                   DELETE FROM [Record]
+                      WHERE QuestionnaireID = @QuestionnaireID
+                   DELETE FROM [Record Details]
+                      WHERE QuestionnaireID = @QuestionnaireID
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
@@ -286,13 +288,11 @@ namespace Dynamic_questionnaire_system.UserSide
             {
                 return DBHelper.ReadDataTable(connStr, dbcommand, list);
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 Logger.WriteLog(ex);
                 return null;
             }
         }
-
-       
     }
 }

@@ -14,6 +14,8 @@ using System.IO;
 using System.Text;
 using DQS_Models;
 using CheckBox = System.Web.UI.WebControls.CheckBox;
+using Button = System.Web.UI.WebControls.Button;
+
 
 namespace Dynamic_questionnaire_system.UserSide
 {
@@ -69,6 +71,27 @@ namespace Dynamic_questionnaire_system.UserSide
             this.givExport.DataBind();
             var dt = GetRecordData();
             DataSearch(dt);
+
+
+            //顯示詳細資料
+            if (!IsPostBack)
+            {
+                this.PlaceHolderDetail.Visible = true;
+
+                if (Request.QueryString["ID"] != null && Request.QueryString["RN"] != null)
+                {
+                    int RecordNum = Convert.ToInt32(Request.QueryString["RN"].ToString());
+                    var gdd = GetRecordDetailsData(RecordNum);
+
+                    this.txtName.Text = gdd["AnsName"].ToString();
+                    this.txtPhone.Text = gdd["AnsPhone"].ToString();
+                    this.txtEmail.Text = gdd["AnsEmail"].ToString();
+                    this.txtAge.Text = gdd["AnsAge"].ToString();
+                    this.lblAnsT.Text = Convert.ToDateTime(gdd["AnsTime"]).ToString("yyyy/MM/dd");
+
+                    // todo: 這裡還沒完成 =>顯示問卷內容
+                }
+            }
 
         }
 
@@ -169,9 +192,9 @@ namespace Dynamic_questionnaire_system.UserSide
                 string Account = this.Session["UserLoginInfo"].ToString();
 
                 if (ckbActivated.Checked == true)  //狀態要顯示已啟用
-                {                    
+                {
                     Vote = "投票中";          //已啟用 Vote 要寫投票中
-                } 
+                }
                 else
                 {
                     if (StartT > DateTime.Now) //尚未開始
@@ -204,7 +227,7 @@ namespace Dynamic_questionnaire_system.UserSide
                     }
                     else if (EndT < DateTime.Now) //已完結
                     {
-                        Vote = "已完結";                        
+                        Vote = "已完結";
                     }
                 }
                 MessageBox.Show($"提醒您問卷將送出，請確認", "確定", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -305,7 +328,7 @@ namespace Dynamic_questionnaire_system.UserSide
             list.Add(new SqlParameter("@StartTime", StartT));
             list.Add(new SqlParameter("@EndTime", EndT));
             list.Add(new SqlParameter("@QuestionnaireNum", QuestionnaireNum));
-            list.Add(new SqlParameter("@Vote", Vote)); 
+            list.Add(new SqlParameter("@Vote", Vote));
             list.Add(new SqlParameter("@Account", Account));
 
             try
@@ -496,7 +519,7 @@ namespace Dynamic_questionnaire_system.UserSide
             string QuestionType;
             if (ddlType.SelectedIndex == 1)   //要從資料庫呼出來
             {
-                
+
                 QuestionType = "常用問題1";
             }
             else
@@ -569,7 +592,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 this.givQuestion.DataSource = gpList;
                 this.givQuestion.DataBind();
             }
-            
+
         }
 
         protected void givQuestion_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -783,50 +806,6 @@ namespace Dynamic_questionnaire_system.UserSide
             }
         }
         /// <summary>
-        /// 取得問卷填寫的細節
-        /// </summary>
-        /// <returns></returns>
-        public static DataTable GetRecordDetailsData(int RecordNum)
-        {
-            string connStr = DBHelper.GetConnectionString();
-            string dbcommand =
-                $@" SELECT [Record].[RecordNum]
-                          ,[Record].[QuestionnaireID]
-                          ,[AnswererID]
-                          ,[AnsName]
-                          ,[AnsPhone]
-                          ,[AnsEmail]
-                          ,[AnsAge]
-                          ,[AnsTime]
-	                      ,[ReplicationNum]
-                          ,[Record Details].[TopicNum]
-	                      ,[TopicDescription]
-                          ,[Record Details].[OptionsNum]
-	                      ,[OptionsDescription]
-                      FROM [Questionnaire].[dbo].[Record]
-                      JOIN [Questionnaire].[dbo].[Record Details]
-                      ON [Record].RecordNum = [Record Details].RecordNum
-                      JOIN[Questionnaire].[dbo].[Questionnaires]
-                      ON [Record Details].[TopicNum] = [Questionnaires].[TopicNum]  
-                      JOIN[Questionnaire].[dbo].[Question]
-                      ON [Question].[OptionsNum] = [Record Details].[OptionsNum]
-                      WHERE [Record].[RecordNum] = @RecordNum
-                ";
-
-            List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@RecordNum", RecordNum)); ;
-
-            try
-            {
-                return DBHelper.ReadDataTable(connStr, dbcommand, list);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog(ex);
-                return null;
-            }
-        }
-        /// <summary>
         /// 取得使用者資訊、每個問題、每個問題的答案
         /// </summary>
         /// <param name="RecordNum"></param>
@@ -870,8 +849,49 @@ namespace Dynamic_questionnaire_system.UserSide
                 return null;
             }
         }
+        /// <summary>
+        /// 取得問卷填寫的細節
+        /// </summary>
+        /// <returns></returns>
+        public static DataRow GetRecordDetailsData(int RecordNum)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@"SELECT [Record].[RecordNum]
+                          ,[Record].[QuestionnaireID]
+                          ,[AnswererID]
+                          ,[AnsName]
+                          ,[AnsPhone]
+                          ,[AnsEmail]
+                          ,[AnsAge]
+                          ,[AnsTime]
+	                      ,[ReplicationNum]
+                          ,[Record Details].[TopicNum]
+	                      ,[TopicDescription]
+						  ,[RDAns]
+                      FROM [Questionnaire].[dbo].[Record]
+                      JOIN [Questionnaire].[dbo].[Record Details]
+                      ON [Record].RecordNum = [Record Details].RecordNum
+                      JOIN[Questionnaire].[dbo].[Questionnaires]
+                      ON [Record Details].[TopicNum] = [Questionnaires].[TopicNum]  
+                      JOIN[Questionnaire].[dbo].[Question]
+                      ON [Question].[TopicNum] = [Record Details].[TopicNum]
+                      WHERE [Record].[RecordNum] = @RecordNum 
+                ";
 
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@RecordNum", RecordNum)); ;
 
+            try
+            {
+                return DBHelper.ReadDataRow(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
+        }
 
 
         #endregion

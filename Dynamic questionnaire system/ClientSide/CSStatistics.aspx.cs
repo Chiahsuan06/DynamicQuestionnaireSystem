@@ -12,6 +12,7 @@ namespace Dynamic_questionnaire_system.ClientSide
 {
     public partial class CSStatistics : System.Web.UI.Page
     {
+        // todo: 這裡還沒完成 => 單一題可顯示，一題以上就沒有.....或許是資料來源衝突??
         protected void Page_Load(object sender, EventArgs e)
         {
             if (this.Request.QueryString["StatisticsID"] == null)

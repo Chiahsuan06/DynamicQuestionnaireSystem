@@ -15,7 +15,7 @@
         <table>
             <tr>
                 <td>
-                    <a href="../UserSide/USPage.aspx">問卷管理</a>
+                    <a href="../UserSide/USList.aspx">問卷管理</a>
                     <br /><br />
                     <a href="../UserSide/USProblemManagement.aspx">常用問題管理</a>
                 </td>
