@@ -79,6 +79,7 @@ namespace Dynamic_questionnaire_system.ClientSide
 
                 int QNo = Compute_QNo(M_ID);
                 ArrayList D1_AL = Take_D1_ID(M_ID);
+                ArrayList D1_TD = Take_TopicDescription(M_ID);
 
                 for (int i = 0; i <= (QNo - 1); i++)
                 {
@@ -96,23 +97,30 @@ namespace Dynamic_questionnaire_system.ClientSide
                                     CBL1_Value = CBL1_Value + CBL1.Items[j].Text;
                                 }
                             }
-                            M1_D1_D2.Add("<br/>第" + i + "題 所選的是--" + CBL1_Value);
+                            //M1_D1_D2.Add("<br/>第" + i + "題 所選的是--" + CBL1_Value);
+                            M1_D1_D2.Add("<br/>第" + (i + 1) + "題" + D1_TD[i] + "<br/>" + CBL1_Value + "<br/>");
 
                             break;
 
                         case "System.Web.UI.WebControls.RadioButtonList":
                             RadioButtonList CBL2 = (RadioButtonList)PlaceHolder1.FindControl(Dyan_WebControlID);
-                            M1_D1_D2.Add("<br/>第" + i + "題 所選的是--" + CBL2.SelectedItem.Text);
+                            //M1_D1_D2.Add("<br/>第" + i + "題 所選的是--" + CBL2.SelectedItem.Text);
+                            M1_D1_D2.Add("<br/>第" + (i + 1) + "題" + D1_TD[i] + "<br/>" + CBL2.SelectedItem.Text + "<br/>");
 
                             break;
 
                         default:
                             System.Web.UI.WebControls.TextBox TB = (System.Web.UI.WebControls.TextBox)PlaceHolder1.FindControl(Dyan_WebControlID);
-                            M1_D1_D2.Add("<br/>第" + i + "題 所選的是--" + TB.Text);
+                            //M1_D1_D2.Add("<br/>第" + i + "題 所選的是--" + TB.Text);
+                            M1_D1_D2.Add("<br/>第" + (i + 1) + "題" + D1_TD[i] + "<br/>" + TB.Text + "<br/>");
 
                             break;
                     }
+
+
                 }
+
+
 
                 Session["ListM1_D1_D2"] = M1_D1_D2;
                 Session["TopicNum"] = Take_D1_ID(M_ID);
@@ -371,6 +379,30 @@ namespace Dynamic_questionnaire_system.ClientSide
             {
                 while (drD1.Read())
                     D1_array.Add(drD1["TopicNum"]);
+            }
+            cmdD1.Cancel();
+            Conn.Close();
+            Conn.Dispose();
+
+            return D1_array;
+        }
+
+        //== 針對這個問卷，每一個題目
+        protected System.Collections.ArrayList Take_TopicDescription(int M_ID)
+        {
+            SqlConnection Conn = new SqlConnection(ConnStr);
+            Conn.Open();   //-- 連結DB
+            SqlCommand cmdD1 = new SqlCommand("SELECT [TopicDescription] FROM [Questionnaires] WHERE [QuestionnaireID] = @QuestionnaireID", Conn);
+            cmdD1.Parameters.Add("@QuestionnaireID", SqlDbType.Int).Value = M_ID;
+            //-- 把 Outline資料表裡面，最新的一場投票，呈現在網站的首頁上面。
+
+            SqlDataReader drD1 = cmdD1.ExecuteReader();  //-- 執行SQL指令。
+
+            System.Collections.ArrayList D1_array = new System.Collections.ArrayList();
+            if (drD1.HasRows)
+            {
+                while (drD1.Read())
+                    D1_array.Add(drD1["TopicDescription"]);
             }
             cmdD1.Cancel();
             Conn.Close();

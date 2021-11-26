@@ -69,7 +69,7 @@ namespace Dynamic_questionnaire_system.UserSide
             //後台內頁3-填寫資料
             this.givExport.DataSource = GetRecordData();  //做方法
             this.givExport.DataBind();
-            var dt = GetRecordData();
+            var dt = GetRecordData(); 
             DataSearch(dt);
 
 
