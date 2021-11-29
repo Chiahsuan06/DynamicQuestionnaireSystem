@@ -24,9 +24,9 @@ namespace Dynamic_questionnaire_system.UserSide
                 return;
             }
             string Account = HttpContext.Current.Session["UserLoginInfo"] as string;
-            this.GridView1.DataSource = GetDBData(Account);  ///讓GridView1顯示 DB中 Account的資料
+            this.GridView1.DataSource = ContextManager.GetUSDBData(Account);  ///讓GridView1顯示 DB中 Account的資料
             this.GridView1.DataBind();
-            var dt = GetDBData(Account);
+            var dt = ContextManager.GetUSDBData(Account);
             DataSearch(dt);
         }
 
@@ -55,9 +55,9 @@ namespace Dynamic_questionnaire_system.UserSide
                 HttpContext.Current.Response.Write("<script> alert('開始時間大於結束時間，請重新填寫') </script>");
             }
 
-            this.GridView1.DataSource = findData(findTitle, findStart, findEnd);
+            this.GridView1.DataSource = ContextManager.FindData(findTitle, findStart, findEnd);
             this.GridView1.DataBind();
-            var dtFD = findData(findTitle, findStart, findEnd);
+            var dtFD = ContextManager.FindData(findTitle, findStart, findEnd);
             DataSearch(dtFD);
         }
         /// <summary>
@@ -155,76 +155,8 @@ namespace Dynamic_questionnaire_system.UserSide
                 }
             }
         }
-        /// <summary>
-        /// 顯示資料、判斷投票狀態(已完結、尚未開始、投票中)
-        /// </summary>
-        /// <returns></returns>
-        public static DataTable GetDBData(string Account)
-        {
-            string connStr = DBHelper.GetConnectionString();
-            string dbcommand =
-                $@"UPDATE [Outline]
-                      SET [Vote] = '已完結'
-                      WHERE [EndTime] < GETDATE()
-                   
-                   UPDATE [Outline]
-                      SET [Vote] = '尚未開始'
-                      WHERE [StartTime] > GETDATE()
-                   
-                   UPDATE [Outline]
-                      SET [Vote] = '投票中'
-                      WHERE [StartTime] < GETDATE() AND [EndTime] > GETDATE()
-                   
-                    SELECT [Outline].[QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
-                    FROM [Outline]
-                    WHERE[Account] = @Account
-                ";
+        
 
-            List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@Account", Account));
-
-            try
-            {
-                return DBHelper.ReadDataTable(connStr, dbcommand, list);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog(ex);
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// 搜尋 包含指定文字、包含在開始、結束指定時間區間
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public static DataTable findData(string Title, DateTime Start, DateTime End)
-        {
-            string connStr = DBHelper.GetConnectionString();
-            string dbcommand =
-                $@" SELECT [Outline].[QuestionnaireID],[Heading],[Vote],[StartTime],[EndTime]
-                    FROM [Outline]
-                    WHERE [Heading] LIKE (@Title + '%')
-                    OR [StartTime] >= @Start
-                    AND [EndTime] <= @End
-                ";
-
-            List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@Title", Title));
-            list.Add(new SqlParameter("@Start", Start));
-            list.Add(new SqlParameter("@End", End));
-
-            try
-            {
-                return DBHelper.ReadDataTable(connStr, dbcommand, list);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog(ex);
-                return null;
-            }
-        }
         /// <summary>
         /// 新增問卷
         /// </summary>

@@ -40,10 +40,10 @@ namespace Dynamic_questionnaire_system.ClientSide
                 this.txtbAge.Text = this.Session["CSCFIAge"] as string;
             }
 
-            string IDNumber = this.Request.QueryString["ID"];
-            this.reHeading.DataSource = GetHeadingContent(IDNumber);//標題
+            int IDNumber = Convert.ToInt32(this.Request.QueryString["ID"]);
+            this.reHeading.DataSource = ContextManager.GetHeadingContent(IDNumber);//標題
             this.reHeading.DataBind();
-            this.reContent.DataSource = GetHeadingContent(IDNumber);//內容
+            this.reContent.DataSource = ContextManager.GetHeadingContent(IDNumber);//內容
             this.reContent.DataBind();
         }
 
@@ -152,30 +152,6 @@ namespace Dynamic_questionnaire_system.ClientSide
         /// 顯示資料
         /// </summary>
         /// <returns></returns>
-        //標題、內容
-        public static DataTable GetHeadingContent(string IDNumber)
-        {
-            string connStr = DBHelper.GetConnectionString();
-            string dbcommand =
-                $@"SELECT [Heading],[Vote],[StartTime],[EndTime],[Content]
-                    FROM [Outline]
-                    WHERE [Outline].[QuestionnaireID] = @QuestionnaireID
-                ";
-
-            List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
-
-
-            try
-            {
-                return DBHelper.ReadDataTable(connStr, dbcommand, list);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog(ex);
-                return null;
-            }
-        }
         //問卷
         public void Generate_Page()
         {

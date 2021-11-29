@@ -8,7 +8,12 @@
 <head runat="server">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title></title>
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    
+
 </head>
+
 <body>
     <form id="form1" runat="server">
         <h1>前台</h1>
@@ -19,7 +24,7 @@
         </asp:Repeater>
         <asp:Repeater ID="reTopicDescription" runat="server">
             <ItemTemplate>
-                <p><%#Eval("TopicNum") %>.<%#Eval("TopicDescription") %></p>
+                <p><%# Container.ItemIndex + 1 %>.<%#Eval("TopicDescription") %></p>
                 <asp:Chart ID="Chart1" runat="server">
                             <Series>
                                 <asp:Series Name="Series1"></asp:Series>
@@ -39,6 +44,7 @@
                         </asp:SqlDataSource>
             </ItemTemplate>
         </asp:Repeater>
+        <div id="chart_div"></div>
         <%--<div>
             <asp:Chart ID="Chart1" runat="server" DataSourceID="SqlDataSource1">
                 <Series>
