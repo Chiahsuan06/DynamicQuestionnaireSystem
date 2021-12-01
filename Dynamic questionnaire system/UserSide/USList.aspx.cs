@@ -63,6 +63,7 @@ namespace Dynamic_questionnaire_system.UserSide
             var dtFD = ContextManager.FindData(findTitle, findStart, findEnd);
             DataSearch(dtFD);
         }
+
         /// <summary>
         /// 分頁控制
         /// </summary>
@@ -175,9 +176,7 @@ namespace Dynamic_questionnaire_system.UserSide
         /// 刪除問卷
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>    
-        // todo: 這裡還沒完成 =>將刪除鍵放進去Gridview裡也是一樣......
-        //刪除方法沒成功 => Checked == false???  
+        /// <param name="e"></param>     
         protected void ImgbtnBin_Click1(object sender, ImageClickEventArgs e)
         {
             foreach (GridViewRow row in GridView1.Rows)
@@ -200,7 +199,6 @@ namespace Dynamic_questionnaire_system.UserSide
         /// </summary>
         /// <param name="QuestionnaireID"></param>
         /// <returns></returns>
-        //要刪除整份問卷 =>SQL 成功
         public static DataTable DelQuestionnaireID(int QuestionnaireID)
         {
             string connStr = DBHelper.GetConnectionString();

@@ -1,12 +1,16 @@
 ﻿using DBSource;
 using DQS_Models;
+using Json.Net;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
+using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -14,7 +18,7 @@ namespace Dynamic_questionnaire_system.ClientSide
 {
     public partial class CSStatistics : System.Web.UI.Page
     {
-        // todo: 這裡還沒完成 => 單一題可顯示，一題以上就沒有.....或許是資料來源衝突??
+        // todo: 這裡還沒完成
         protected void Page_Load(object sender, EventArgs e)
         {
             if (this.Request.QueryString["StatisticsID"] == null)
@@ -31,6 +35,116 @@ namespace Dynamic_questionnaire_system.ClientSide
             this.reTopicDescription.DataBind();
 
 
+            
+            var dr = GetStatisticsDBSource(IDNum);
+
+            var getStatistics = new GetStatistics()
+            {
+                TopicNum = (int)dr["TopicNum"],
+                TopicDescription = (string)dr["TopicDescription"],
+                TopicType = (string)dr["TopicType"],
+                answer1 = (string)dr["answer1"],
+                answer2 = (string)dr["answer2"],
+                answer3 = (string)dr["answer3"],
+                answer4 = (string)dr["answer4"],
+                answer5 = (string)dr["answer5"],
+                answer6 = (string)dr["answer6"],
+                OptionsAll = (int)dr["OptionsAll"],
+                RDAns = (string)dr["RDAns"],
+            };
+
+            switch(getStatistics.TopicType)
+            {
+                case "CB":
+                    /*=>要將複選答案分開*/
+                    string s = getStatistics.RDAns;
+                    string[] subs = s.Split(';');
+                    foreach (string sub in subs)
+                    {
+                        getStatistics.RDAns = sub;
+                        if (getStatistics.RDAns == getStatistics.answer1)
+                        {
+                            getStatistics.answer1Vaule += 1;
+                        }
+                        else if (getStatistics.RDAns == getStatistics.answer2) 
+                        {
+                            getStatistics.answer2Vaule += 1;
+                        }
+                        else if (getStatistics.RDAns == getStatistics.answer3)
+                        {
+                            getStatistics.answer3Vaule += 1;
+                        }
+                        else if (getStatistics.RDAns == getStatistics.answer4)
+                        {
+                            getStatistics.answer4Vaule += 1;
+                        }
+                        else if (getStatistics.RDAns == getStatistics.answer5)
+                        {
+                            getStatistics.answer5Vaule += 1;
+                        }
+                        else if (getStatistics.RDAns == getStatistics.answer6)
+                        {
+                            getStatistics.answer6Vaule += 1;
+                        }
+                    }
+                    break;
+
+                case "RB":
+                    if (getStatistics.RDAns == getStatistics.answer1)
+                    {
+                        getStatistics.answer1Vaule += 1;
+                    }
+                    else if (getStatistics.RDAns == getStatistics.answer2)
+                    {
+                        getStatistics.answer2Vaule += 1;
+                    }
+                    else if (getStatistics.RDAns == getStatistics.answer3)
+                    {
+                        getStatistics.answer3Vaule += 1;
+                    }
+                    else if (getStatistics.RDAns == getStatistics.answer4)
+                    {
+                        getStatistics.answer4Vaule += 1;
+                    }
+                    else if (getStatistics.RDAns == getStatistics.answer5)
+                    {
+                        getStatistics.answer5Vaule += 1;
+                    }
+                    else if (getStatistics.RDAns == getStatistics.answer6)
+                    {
+                        getStatistics.answer6Vaule += 1;
+                    }
+                    break;
+
+                case "TB":
+
+                    break;
+            }
+            
+            if (getStatistics.OptionsAll == 6)
+            {
+
+            }
+            if (getStatistics.OptionsAll == 5)
+            {
+
+            }
+            if (getStatistics.OptionsAll == 4)
+            {
+
+            }
+            if (getStatistics.OptionsAll == 3)
+            {
+
+            }
+            if (getStatistics.OptionsAll == 2)
+            {
+
+            }
+            if (getStatistics.OptionsAll == 1)
+            {
+
+            }
 
 
             #region  統計圖
@@ -87,7 +201,7 @@ namespace Dynamic_questionnaire_system.ClientSide
         /// </summary>
         /// <param name="IDNumber"></param>
         /// <returns></returns>
-        public static DataTable GetStatisticsDBSource(int IDNumber)
+        public static DataRow GetStatisticsDBSource(int IDNumber)
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
@@ -107,7 +221,7 @@ namespace Dynamic_questionnaire_system.ClientSide
 
             try
             {
-                return DBHelper.ReadDataTable(connStr, dbcommand, list);
+                return DBHelper.ReadDataRow(connStr, dbcommand, list);
             }
             catch (Exception ex)
             {
@@ -115,6 +229,58 @@ namespace Dynamic_questionnaire_system.ClientSide
                 return null;
             }
         }
+
+        public string DataTableToJson(DataTable table)
+        {
+            var JsonString = new StringBuilder();
+            if (table.Rows.Count > 0)
+            {
+                JsonString.Append("[");
+                for (int i = 0; i < table.Rows.Count; i++)
+                {
+                    JsonString.Append("{");
+                    for (int j = 0; j < table.Columns.Count; j++)
+                    {
+                        if (j < table.Columns.Count - 1)
+                        {
+                            JsonString.Append("\"" + table.Columns[j].ColumnName.ToString() + "\":" + "\"" + table.Rows[i][j].ToString() + "\",");
+                        }
+                        else if (j == table.Columns.Count - 1)
+                        {
+                            JsonString.Append("\"" + table.Columns[j].ColumnName.ToString() + "\":" + "\"" + table.Rows[i][j].ToString() + "\"");
+                        }
+                    }
+                    if (i == table.Rows.Count - 1)
+                    {
+                        JsonString.Append("}");
+                    }
+                    else
+                    {
+                        JsonString.Append("},");
+                    }
+                }
+                JsonString.Append("]");
+            }
+            return JsonString.ToString();
+        }
+
+        //public static string ListToJson(T data)
+        //{
+        //    try
+        //    {
+        //        System.Runtime.Serialization.Json.DataContractJsonSerializer serializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(data.GetType());
+        //        using (MemoryStream ms = new MemoryStream())
+        //        {
+        //            serializer.WriteObject(ms, data);
+        //            return Encoding.UTF8.GetString(ms.ToArray());
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        return null;
+        //    }
+        //}
+
 
     }
 }
