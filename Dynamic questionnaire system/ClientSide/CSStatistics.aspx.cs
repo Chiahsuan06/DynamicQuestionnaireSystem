@@ -1,4 +1,5 @@
 ﻿using DBSource;
+using DQS_Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -31,6 +32,8 @@ namespace Dynamic_questionnaire_system.ClientSide
 
 
 
+
+            #region  統計圖
             //** 資料來源  http://msdn.microsoft.com/zh-tw/library/z9h4dk8y(v=vs.110).aspx
 
             // Define the name and type of the client scripts on the page.
@@ -64,6 +67,10 @@ namespace Dynamic_questionnaire_system.ClientSide
                 cstext2.Append("data.addColumn('string', 'Topping');");
                 cstext2.Append("data.addColumn('number', 'Slices');");
                 cstext2.Append("data.addRows([['Mushrooms', 3], ['Onions', 1], ['Olives', 1], ['Zucchini', 1], ['Pepperoni', 2]]);");
+
+
+
+
                 cstext2.Append("var options = { 'title': '圖表的標題--How Much Pizza I Ate Last Night', 'width': 400, 'height': 300 };");
                 cstext2.Append("var chart = new google.visualization.PieChart(document.getElementById('chart_div'));");
                 cstext2.Append("chart.draw(data, options);");
@@ -72,9 +79,42 @@ namespace Dynamic_questionnaire_system.ClientSide
                 cs.RegisterClientScriptBlock(cstype, csname2, cstext2.ToString(), false);
 
             }
+            #endregion
         }
-        
 
-        
+        /// <summary>
+        /// 取得 統計所需資料
+        /// </summary>
+        /// <param name="IDNumber"></param>
+        /// <returns></returns>
+        public static DataTable GetStatisticsDBSource(int IDNumber)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@"SELECT [Record Details].[TopicNum], [Questionnaires].[TopicDescription], [Questionnaires].[TopicType], 
+                          [Question].[answer1], [Question].[answer2],[Question].[answer3], [Question].[answer4], [Question].[answer5], 
+		                  [Question].[answer6], [Question].[OptionsAll],[RDAns]
+                    FROM [Record Details]
+                    JOIN [Questionnaires] 
+                    ON [Questionnaires].TopicNum = [Record Details].TopicNum
+                    JOIN [Question] 
+                    ON [Question].TopicNum = [Record Details].TopicNum
+                    WHERE [Record Details].[QuestionnaireID] = @QuestionnaireID
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
+
+            try
+            {
+                return DBHelper.ReadDataTable(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
+        }
+
     }
 }

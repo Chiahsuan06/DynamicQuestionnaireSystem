@@ -6,7 +6,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-       <%-- <style>
+        <%--<style>
             body {font-family: Arial;}
 
             .tab {
@@ -108,6 +108,7 @@
             <asp:Label ID="lblOptions" runat="server" Text="回答"></asp:Label>&nbsp;&nbsp;
             <asp:TextBox ID="txtOptions" runat="server"></asp:TextBox>(多個答案以；分隔)&nbsp;&nbsp;
             <asp:Button ID="btnAddIn" runat="server" Text="加入" OnClick="btnAddIn_Click" />
+            <asp:HiddenField ID="HiddenField1" runat="server" />
             <br /><br />
             <asp:ImageButton ID="ImgbtnBin" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" OnClick="ImgbtnBin_Click"/>&nbsp;&nbsp;<asp:Label ID="lblAddMessage" runat="server" ForeColor="Red"></asp:Label>
             <asp:GridView ID="givQuestion" runat="server" AutoGenerateColumns="False" OnRowCommand="givQuestion_RowCommand" OnRowDataBound="givQuestion_RowDataBound" OnRowUpdating="givQuestion_RowUpdating">

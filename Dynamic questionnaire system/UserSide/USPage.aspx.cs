@@ -326,27 +326,7 @@ namespace Dynamic_questionnaire_system.UserSide
             string a4 = dr["answer4"].ToString();
             string a5 = dr["answer5"].ToString();
             string a6 = dr["answer6"].ToString();
-            string a7 = dr["answer7"].ToString();
-            string a8 = dr["answer8"].ToString();
-            string a9 = dr["answer9"].ToString();
-            string a10 = dr["answer10"].ToString();
             int noq = Convert.ToInt32(dr["OptionsAll"].ToString());
-            if (noq == 10)
-            {
-                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4 + ";" + a5 + ";" + a6 + ";" + a7 + ";" + a8 + ";" + a9 + ";" + a10;
-            }
-            if (noq == 9)
-            {
-                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4 + ";" + a5 + ";" + a6 + ";" + a7 + ";" + a8 + ";" + a9;
-            }
-            if (noq == 8)
-            {
-                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4 + ";" + a5 + ";" + a6 + ";" + a7 + ";" + a8;
-            }
-            if (noq == 7)
-            {
-                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4 + ";" + a5 + ";" + a6 + ";" + a7;
-            }
             if (noq == 6)
             {
                 this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4 + ";" + a5 + ";" + a6;
@@ -408,7 +388,6 @@ namespace Dynamic_questionnaire_system.UserSide
                     gpList = new List<AddInGivQuestionList>();
                     this.Session["GivQuestion"] = gpList;
                 }
-
 
                 int Num = 1;
                 if (Num != 1)

@@ -15,6 +15,14 @@ namespace Dynamic_questionnaire_system.UserSide
 {
     public partial class USList : System.Web.UI.Page
     {
+        protected void Page_Init(object sender, EventArgs e)
+        {
+            string Account = HttpContext.Current.Session["UserLoginInfo"] as string;
+            this.GridView1.DataSource = ContextManager.GetUSDBData(Account);
+            this.GridView1.DataBind();
+            var dt = ContextManager.GetUSDBData(Account);
+            DataSearch(dt);
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             // check is logined
@@ -23,11 +31,6 @@ namespace Dynamic_questionnaire_system.UserSide
                 Response.Redirect("/UserSide/USLogin.aspx");
                 return;
             }
-            string Account = HttpContext.Current.Session["UserLoginInfo"] as string;
-            this.GridView1.DataSource = ContextManager.GetUSDBData(Account);  ///讓GridView1顯示 DB中 Account的資料
-            this.GridView1.DataBind();
-            var dt = ContextManager.GetUSDBData(Account);
-            DataSearch(dt);
         }
 
         /// <summary>
@@ -190,6 +193,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 }
             }
             GridView1.DataBind();
+            Response.Redirect("/UserSide/USList.aspx");
         }
         /// <summary>
         /// DB刪除問卷
