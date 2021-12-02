@@ -35,10 +35,10 @@ namespace Dynamic_questionnaire_system.ClientSide
             this.reTopicDescription.DataBind();
 
 
-            
-            var dr = GetStatisticsDBSource(IDNum);
 
-            var getStatistics = new GetStatistics()
+            var dr = GetStatisticsDBSource(IDNum);
+            // todo: 這裡卡著、SQL是OK、單獨用 Response.Write(dr["TopicNum"])是OK的
+            var getStatistics = new GetStatistics
             {
                 TopicNum = (int)dr["TopicNum"],
                 TopicDescription = (string)dr["TopicDescription"],
@@ -52,8 +52,8 @@ namespace Dynamic_questionnaire_system.ClientSide
                 OptionsAll = (int)dr["OptionsAll"],
                 RDAns = (string)dr["RDAns"],
             };
-
-            switch(getStatistics.TopicType)
+            
+            switch (getStatistics.TopicType)
             {
                 case "CB":
                     /*=>要將複選答案分開*/
@@ -66,7 +66,7 @@ namespace Dynamic_questionnaire_system.ClientSide
                         {
                             getStatistics.answer1Vaule += 1;
                         }
-                        else if (getStatistics.RDAns == getStatistics.answer2) 
+                        else if (getStatistics.RDAns == getStatistics.answer2)
                         {
                             getStatistics.answer2Vaule += 1;
                         }
@@ -117,36 +117,35 @@ namespace Dynamic_questionnaire_system.ClientSide
                     break;
 
                 case "TB":
-
+                    Label label = new Label();
+                    label.Text = "文字不做統計";
                     break;
             }
-            
-            if (getStatistics.OptionsAll == 6)
-            {
 
-            }
-            if (getStatistics.OptionsAll == 5)
-            {
+            var sessionStatisticsList = this.Session["StatisticsList"] as List<GetStatistics>;//將Session轉成List，再做總和
+            sessionStatisticsList.Add(getStatistics);
 
-            }
-            if (getStatistics.OptionsAll == 4)
-            {
+            int totalA1Vaule = 0;
+            int totalA2Vaule = 0;
+            int totalA3Vaule = 0;
+            int totalA4Vaule = 0;
+            int totalA5Vaule = 0;
+            int totalA6Vaule = 0;
 
-            }
-            if (getStatistics.OptionsAll == 3)
+            foreach (var sub in sessionStatisticsList)
             {
-
-            }
-            if (getStatistics.OptionsAll == 2)
-            {
-
-            }
-            if (getStatistics.OptionsAll == 1)
-            {
-
+                totalA1Vaule += sub.answer1Vaule;
+                totalA2Vaule += sub.answer2Vaule;
+                totalA3Vaule += sub.answer3Vaule;
+                totalA4Vaule += sub.answer4Vaule;
+                totalA5Vaule += sub.answer5Vaule;
+                totalA6Vaule += sub.answer6Vaule;
             }
 
-
+            // todo: 這裡先寫顯示結果，再思考下一步如何處理，但因為上面卡著所以還沒跑出來
+            Response.Write($"{totalA1Vaule}, {totalA2Vaule}, {totalA3Vaule}, {totalA4Vaule}, {totalA5Vaule}, {totalA6Vaule}");
+            string json = JsonConvert.SerializeObject(getStatistics, Formatting.Indented);
+            Response.Write(json);
             #region  統計圖
             //** 資料來源  http://msdn.microsoft.com/zh-tw/library/z9h4dk8y(v=vs.110).aspx
 
@@ -206,7 +205,7 @@ namespace Dynamic_questionnaire_system.ClientSide
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
                 $@"SELECT [Record Details].[TopicNum], [Questionnaires].[TopicDescription], [Questionnaires].[TopicType], 
-                          [Question].[answer1], [Question].[answer2],[Question].[answer3], [Question].[answer4], [Question].[answer5], 
+                          [Question].[answer1], [Question].[answer2],[Question].[answer3], [Question].[answer4], [Question].[answer5],
 		                  [Question].[answer6], [Question].[OptionsAll],[RDAns]
                     FROM [Record Details]
                     JOIN [Questionnaires] 
