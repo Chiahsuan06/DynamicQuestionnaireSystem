@@ -44,6 +44,8 @@
                         </asp:SqlDataSource>
             </ItemTemplate>
         </asp:Repeater>
+        <div id="Barchart_div"></div>
+
         <div id="chart_div"></div>
         <%--<div>
             <asp:Chart ID="Chart1" runat="server" DataSourceID="SqlDataSource1">

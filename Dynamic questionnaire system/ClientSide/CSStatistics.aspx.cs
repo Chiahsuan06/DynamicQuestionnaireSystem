@@ -3,6 +3,7 @@ using DQS_Models;
 using Json.Net;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -37,7 +38,7 @@ namespace Dynamic_questionnaire_system.ClientSide
             // todo: 這裡卡著  1203
             var tb = GetStatisticsDBSourceTB(IDNum);
             var dr = GetStatisticsDBSource(IDNum);
-            var StatisticsList = new List<GetStatistics>();
+            List<GetStatistics> StatisticsList = new List<GetStatistics>();
 
             var getStatistics = new GetStatistics
             {
@@ -54,10 +55,11 @@ namespace Dynamic_questionnaire_system.ClientSide
                 RDAns = (string)dr["RDAns"],
             };
 
-            switch (getStatistics.TopicType)
+            // 用迴圈跑，但要in ??
+            foreach (var item in dr.Table.Columns)
             {
-                case "CB":
-                    /*=>要將複選答案分開*/  //用長條圖
+                if (getStatistics.TopicType.ToString() == "CB")
+                {
                     string s = getStatistics.RDAns;
                     string[] subs = s.Split(';');
                     foreach (string sub in subs)
@@ -86,10 +88,63 @@ namespace Dynamic_questionnaire_system.ClientSide
                         {
                             getStatistics.answer6Vaule += 1;
                         }
-                    }
-                    break;
 
-                case "RB": //用圓餅圖
+                        StatisticsList.Add(getStatistics);
+                    }
+                }
+            }
+            
+            #region 統計圖 - 長條圖
+
+            // Define the name and type of the client scripts on the page.
+            String csname11 = "Script1";
+            String csname22 = "Script2";
+            Type cstype1 = this.GetType();
+
+            // Get a ClientScriptManager reference from the Page class.
+            ClientScriptManager cs1 = Page.ClientScript;
+
+            if (!cs1.IsStartupScriptRegistered(cstype1, csname11))
+            {
+                String cstext1 = "google.load('visualization', '1.0', { 'packages': ['corechart'] });";
+                cstext1 += "google.setOnLoadCallback(drawChart);";
+
+                cs1.RegisterStartupScript(cstype1, csname11, cstext1, true);
+                // 使用 addScriptTags (最後一個)參數，指出 script 參數所提供的指令碼是否包裝在 <script> 項目區塊中。 
+                // 最後一個參數 addScriptTags 設為 true，表示<script>指令碼標記會自動加入。
+            }
+
+            // Check to see if the client script is already registered.
+            if (!cs1.IsClientScriptBlockRegistered(cstype1, csname22))
+            {
+                StringBuilder cstext2 = new StringBuilder();
+                cstext2.Append("<script type=\"text/javascript\">  function drawChart() {");
+                cstext2.Append("var data = new google.visualization.DataTable();");
+                cstext2.Append("data.addColumn('string', 'Topping');");
+                cstext2.Append("data.addColumn('number', 'Slices');");
+                cstext2.Append($"data.addRows([[{getStatistics.answer1}, {getStatistics.answer1Vaule}], [{getStatistics.answer2}, {getStatistics.answer2Vaule}], [{getStatistics.answer3}, {getStatistics.answer3Vaule}], [{getStatistics.answer4}, {getStatistics.answer4Vaule}], [{getStatistics.answer5}, {getStatistics.answer5Vaule}], [{getStatistics.answer6}, {getStatistics.answer6Vaule}]]);");
+                cstext2.Append("var options = { 'title': '圖表的標題--How Much Pizza I Ate Last Night', 'width': 400, 'height': 300 };");
+                cstext2.Append("var chart = new google.visualization.BarChart(document.getElementById('Barchart_div'));");
+                cstext2.Append("chart.draw(data, options);");
+                cstext2.Append("}</script>");
+
+                cs1.RegisterClientScriptBlock(cstype1, csname22, cstext2.ToString(), false);
+
+            }
+
+            #endregion
+
+            foreach (var item in StatisticsList)
+            {
+                int totalA1Vaule = 0;
+                int totalA2Vaule = 0;
+                int totalA3Vaule = 0;
+                int totalA4Vaule = 0;
+                int totalA5Vaule = 0;
+                int totalA6Vaule = 0;
+
+                if (getStatistics.TopicType.ToString() == "RB")
+                {
                     if (getStatistics.RDAns == getStatistics.answer1)
                     {
                         getStatistics.answer1Vaule += 1;
@@ -114,39 +169,52 @@ namespace Dynamic_questionnaire_system.ClientSide
                     {
                         getStatistics.answer6Vaule += 1;
                     }
-                    break;
 
-                case "TB":
+                    StatisticsList.Add(getStatistics);
+                    foreach (var sub in StatisticsList)
+                    {
+                        totalA1Vaule += sub.answer1Vaule;
+                        totalA2Vaule += sub.answer2Vaule;
+                        totalA3Vaule += sub.answer3Vaule;
+                        totalA4Vaule += sub.answer4Vaule;
+                        totalA5Vaule += sub.answer5Vaule;
+                        totalA6Vaule += sub.answer6Vaule;
+                    }
+
+                }
+            }
+
+            foreach (var item in StatisticsList)
+            {
+                if (getStatistics.TopicType.ToString() == "TB")
+                {
                     Label label = new Label();
                     label.Text = "文字不做統計";
-                    break;
+                }
             }
-            StatisticsList.Add(getStatistics);
 
-            int totalA1Vaule = 0;
-            int totalA2Vaule = 0;
-            int totalA3Vaule = 0;
-            int totalA4Vaule = 0;
-            int totalA5Vaule = 0;
-            int totalA6Vaule = 0;
 
-            foreach (var sub in StatisticsList)
-            {
-                totalA1Vaule += sub.answer1Vaule;
-                totalA2Vaule += sub.answer2Vaule;
-                totalA3Vaule += sub.answer3Vaule;
-                totalA4Vaule += sub.answer4Vaule;
-                totalA5Vaule += sub.answer5Vaule;
-                totalA6Vaule += sub.answer6Vaule;
-            }
+            //int totalA1Vaule_CB = 0;
+            //int totalA2Vaule_CB = 0;
+            //int totalA3Vaule_CB = 0;
+            //int totalA4Vaule_CB = 0;
+            //int totalA5Vaule_CB = 0;
+            //int totalA6Vaule_CB = 0;
+
+            //foreach (var sub in StatisticsList)
+            //{
+            //    totalA1Vaule_CB += sub.answer1Vaule;
+            //    totalA2Vaule_CB += sub.answer2Vaule;
+            //    totalA3Vaule_CB += sub.answer3Vaule;
+            //    totalA4Vaule_CB += sub.answer4Vaule;
+            //    totalA5Vaule_CB += sub.answer5Vaule;
+            //    totalA6Vaule_CB += sub.answer6Vaule;
+            //}
 
             // todo: 這裡先寫顯示結果，再思考下一步如何處理，但因為上面卡著所以還沒跑出來
-            //Response.Write(tb.Rows[0].ToString());
-            string json = JsonConvert.SerializeObject(StatisticsList, Formatting.Indented);
-            Response.Write(json);
+            //string json = JsonConvert.SerializeObject(StatisticsList, Formatting.Indented);
+            //Response.Write(json);
 
-            #region 統計圖 - 長條圖
-            #endregion
 
             #region  統計圖 - 圓餅圖
             //** 資料來源  http://msdn.microsoft.com/zh-tw/library/z9h4dk8y(v=vs.110).aspx
@@ -182,10 +250,6 @@ namespace Dynamic_questionnaire_system.ClientSide
                 cstext2.Append("data.addColumn('string', 'Topping');");
                 cstext2.Append("data.addColumn('number', 'Slices');");
                 cstext2.Append("data.addRows([['Mushrooms', 3], ['Onions', 1], ['Olives', 1], ['Zucchini', 1], ['Pepperoni', 2]]);");
-
-
-
-
                 cstext2.Append("var options = { 'title': '圖表的標題--How Much Pizza I Ate Last Night', 'width': 400, 'height': 300 };");
                 cstext2.Append("var chart = new google.visualization.PieChart(document.getElementById('chart_div'));");
                 cstext2.Append("chart.draw(data, options);");
