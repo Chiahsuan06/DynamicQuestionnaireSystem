@@ -34,62 +34,62 @@ namespace Dynamic_questionnaire_system.ClientSide
             this.reTopicDescription.DataSource = ContextManager.GetTopicDescription(IDNum);
             this.reTopicDescription.DataBind();
 
-
-
+            // todo: 這裡卡著  1203
+            var tb = GetStatisticsDBSourceTB(IDNum);
             var dr = GetStatisticsDBSource(IDNum);
-            // todo: 這裡卡著、SQL是OK、單獨用 Response.Write(dr["TopicNum"])是OK的
+            var StatisticsList = new List<GetStatistics>();
+
             var getStatistics = new GetStatistics
             {
                 TopicNum = (int)dr["TopicNum"],
                 TopicDescription = (string)dr["TopicDescription"],
                 TopicType = (string)dr["TopicType"],
-                answer1 = (string)dr["answer1"],
-                answer2 = (string)dr["answer2"],
-                answer3 = (string)dr["answer3"],
-                answer4 = (string)dr["answer4"],
-                answer5 = (string)dr["answer5"],
-                answer6 = (string)dr["answer6"],
+                answer1 = dr["answer1"] as string,
+                answer2 = dr["answer2"] as string,
+                answer3 = dr["answer3"] as string,
+                answer4 = dr["answer4"] as string,
+                answer5 = dr["answer5"] as string,
+                answer6 = dr["answer6"] as string,
                 OptionsAll = (int)dr["OptionsAll"],
                 RDAns = (string)dr["RDAns"],
             };
-            
+
             switch (getStatistics.TopicType)
             {
                 case "CB":
-                    /*=>要將複選答案分開*/
+                    /*=>要將複選答案分開*/  //用長條圖
                     string s = getStatistics.RDAns;
                     string[] subs = s.Split(';');
                     foreach (string sub in subs)
                     {
-                        getStatistics.RDAns = sub;
-                        if (getStatistics.RDAns == getStatistics.answer1)
+                        if (sub == getStatistics.answer1)
                         {
                             getStatistics.answer1Vaule += 1;
                         }
-                        else if (getStatistics.RDAns == getStatistics.answer2)
+                        else if (sub == getStatistics.answer2)
                         {
                             getStatistics.answer2Vaule += 1;
                         }
-                        else if (getStatistics.RDAns == getStatistics.answer3)
+                        else if (sub == getStatistics.answer3)
                         {
                             getStatistics.answer3Vaule += 1;
                         }
-                        else if (getStatistics.RDAns == getStatistics.answer4)
+                        else if (sub == getStatistics.answer4)
                         {
                             getStatistics.answer4Vaule += 1;
                         }
-                        else if (getStatistics.RDAns == getStatistics.answer5)
+                        else if (sub == getStatistics.answer5)
                         {
                             getStatistics.answer5Vaule += 1;
                         }
-                        else if (getStatistics.RDAns == getStatistics.answer6)
+                        else if (sub == getStatistics.answer6)
                         {
                             getStatistics.answer6Vaule += 1;
                         }
                     }
                     break;
 
-                case "RB":
+                case "RB": //用圓餅圖
                     if (getStatistics.RDAns == getStatistics.answer1)
                     {
                         getStatistics.answer1Vaule += 1;
@@ -121,9 +121,7 @@ namespace Dynamic_questionnaire_system.ClientSide
                     label.Text = "文字不做統計";
                     break;
             }
-
-            var sessionStatisticsList = this.Session["StatisticsList"] as List<GetStatistics>;//將Session轉成List，再做總和
-            sessionStatisticsList.Add(getStatistics);
+            StatisticsList.Add(getStatistics);
 
             int totalA1Vaule = 0;
             int totalA2Vaule = 0;
@@ -132,7 +130,7 @@ namespace Dynamic_questionnaire_system.ClientSide
             int totalA5Vaule = 0;
             int totalA6Vaule = 0;
 
-            foreach (var sub in sessionStatisticsList)
+            foreach (var sub in StatisticsList)
             {
                 totalA1Vaule += sub.answer1Vaule;
                 totalA2Vaule += sub.answer2Vaule;
@@ -143,10 +141,14 @@ namespace Dynamic_questionnaire_system.ClientSide
             }
 
             // todo: 這裡先寫顯示結果，再思考下一步如何處理，但因為上面卡著所以還沒跑出來
-            Response.Write($"{totalA1Vaule}, {totalA2Vaule}, {totalA3Vaule}, {totalA4Vaule}, {totalA5Vaule}, {totalA6Vaule}");
-            string json = JsonConvert.SerializeObject(getStatistics, Formatting.Indented);
+            //Response.Write(tb.Rows[0].ToString());
+            string json = JsonConvert.SerializeObject(StatisticsList, Formatting.Indented);
             Response.Write(json);
-            #region  統計圖
+
+            #region 統計圖 - 長條圖
+            #endregion
+
+            #region  統計圖 - 圓餅圖
             //** 資料來源  http://msdn.microsoft.com/zh-tw/library/z9h4dk8y(v=vs.110).aspx
 
             // Define the name and type of the client scripts on the page.
@@ -193,6 +195,8 @@ namespace Dynamic_questionnaire_system.ClientSide
 
             }
             #endregion
+
+            
         }
 
         /// <summary>
@@ -228,7 +232,34 @@ namespace Dynamic_questionnaire_system.ClientSide
                 return null;
             }
         }
+        public static DataTable GetStatisticsDBSourceTB(int IDNumber)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@"SELECT [Record Details].[TopicNum], [Questionnaires].[TopicDescription], [Questionnaires].[TopicType], 
+                          [Question].[answer1], [Question].[answer2],[Question].[answer3], [Question].[answer4], [Question].[answer5],
+		                  [Question].[answer6], [Question].[OptionsAll],[RDAns]
+                    FROM [Record Details]
+                    JOIN [Questionnaires] 
+                    ON [Questionnaires].TopicNum = [Record Details].TopicNum
+                    JOIN [Question] 
+                    ON [Question].TopicNum = [Record Details].TopicNum
+                    WHERE [Record Details].[QuestionnaireID] = @QuestionnaireID
+                ";
 
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
+
+            try
+            {
+                return DBHelper.ReadDataTable(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
+        }
         public string DataTableToJson(DataTable table)
         {
             var JsonString = new StringBuilder();
@@ -262,23 +293,6 @@ namespace Dynamic_questionnaire_system.ClientSide
             }
             return JsonString.ToString();
         }
-
-        //public static string ListToJson(T data)
-        //{
-        //    try
-        //    {
-        //        System.Runtime.Serialization.Json.DataContractJsonSerializer serializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(data.GetType());
-        //        using (MemoryStream ms = new MemoryStream())
-        //        {
-        //            serializer.WriteObject(ms, data);
-        //            return Encoding.UTF8.GetString(ms.ToArray());
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        return null;
-        //    }
-        //}
 
 
     }
