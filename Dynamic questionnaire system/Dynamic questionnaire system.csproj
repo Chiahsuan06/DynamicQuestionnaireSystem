@@ -108,9 +108,9 @@
     <Content Include="Images\survey.png" />
     <Content Include="jQuery\jQuery3.6.0.js" />
     <Content Include="UserControl\ucPager.ascx" />
+    <Content Include="UserSide\USDetail.aspx" />
     <Content Include="UserSide\USList.aspx" />
     <Content Include="UserSide\USLogin.aspx" />
-    <Content Include="UserSide\USPage.aspx" />
     <Content Include="UserSide\USProblemManagement.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -168,6 +168,13 @@
     <Compile Include="UserControl\ucPager.ascx.designer.cs">
       <DependentUpon>ucPager.ascx</DependentUpon>
     </Compile>
+    <Compile Include="UserSide\USDetail.aspx.cs">
+      <DependentUpon>USDetail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserSide\USDetail.aspx.designer.cs">
+      <DependentUpon>USDetail.aspx</DependentUpon>
+    </Compile>
     <Compile Include="UserSide\USList.aspx.cs">
       <DependentUpon>USList.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -181,13 +188,6 @@
     </Compile>
     <Compile Include="UserSide\USLogin.aspx.designer.cs">
       <DependentUpon>USLogin.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="UserSide\USPage.aspx.cs">
-      <DependentUpon>USPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="UserSide\USPage.aspx.designer.cs">
-      <DependentUpon>USPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="UserSide\USProblemManagement.aspx.cs">
       <DependentUpon>USProblemManagement.aspx</DependentUpon>

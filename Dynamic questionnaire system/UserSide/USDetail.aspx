@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Models/Main.Master" AutoEventWireup="true" CodeBehind="USPage.aspx.cs" Inherits="Dynamic_questionnaire_system.UserSide.USPage" EnableEventValidation="false" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Models/Main.Master" AutoEventWireup="true" CodeBehind="USDetail.aspx.cs" Inherits="Dynamic_questionnaire_system.UserSide.USDetail" EnableEventValidation="false" %>
 
 <%@ Register Src="~/UserControl/ucPager.ascx" TagPrefix="uc1" TagName="ucPager" %>
 
@@ -149,10 +149,10 @@
                             <asp:Button ID="btnDetail" runat="server" Text="前往" CommandName="GoDetail" />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:HyperLinkField DataNavigateUrlFields="QuestionnaireID,RecordNum" DataNavigateUrlFormatString="USPage.aspx?ID={0}&amp;RN={1}" HeaderText="觀看細節" Text="前往" />
+                    <asp:HyperLinkField DataNavigateUrlFields="QuestionnaireID,RecordNum" DataNavigateUrlFormatString="USDetail.aspx?ID={0}&amp;RN={1}" HeaderText="觀看細節" Text="前往" />
                 </Columns>
             </asp:GridView>
-            <uc1:ucPager runat="server" ID="ucPager" PageSize ="10" Url="/UserSide/USPage.aspx"/>
+            <uc1:ucPager runat="server" ID="ucPager" PageSize ="10" Url="/UserSide/USDetail.aspx"/>
 
             <%--分頁--%>
            

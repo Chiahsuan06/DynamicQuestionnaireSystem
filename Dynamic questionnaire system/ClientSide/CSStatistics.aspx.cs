@@ -36,9 +36,9 @@ namespace Dynamic_questionnaire_system.ClientSide
             this.reTopicDescription.DataBind();
 
             // todo: 這裡卡著  1203
-            var tb = GetStatisticsDBSourceTB(IDNum);
+            //var tb = GetStatisticsDBSourceTB(IDNum);
             var dr = GetStatisticsDBSource(IDNum);
-            List<GetStatistics> StatisticsList = new List<GetStatistics>();
+            Response.Write(dr.ItemArray.ToString());
 
             var getStatistics = new GetStatistics
             {
@@ -54,42 +54,43 @@ namespace Dynamic_questionnaire_system.ClientSide
                 OptionsAll = (int)dr["OptionsAll"],
                 RDAns = (string)dr["RDAns"],
             };
-
+            
             // 用迴圈跑，但要in ??
-            foreach (var item in dr.Table.Columns)
+            foreach (var item in dr.ItemArray)
             {
                 if (getStatistics.TopicType.ToString() == "CB")
                 {
-                    string s = getStatistics.RDAns;
-                    string[] subs = s.Split(';');
-                    foreach (string sub in subs)
+                    if (getStatistics.TopicNum == 6)
                     {
-                        if (sub == getStatistics.answer1)
+                        string s = getStatistics.RDAns;
+                        string[] subs = s.Split(';');
+                        foreach (string sub in subs)
                         {
-                            getStatistics.answer1Vaule += 1;
+                            if (sub == getStatistics.answer1)
+                            {
+                                getStatistics.answer1Vaule += 1;
+                            }
+                            else if (sub == getStatistics.answer2)
+                            {
+                                getStatistics.answer2Vaule += 1;
+                            }
+                            else if (sub == getStatistics.answer3)
+                            {
+                                getStatistics.answer3Vaule += 1;
+                            }
+                            else if (sub == getStatistics.answer4)
+                            {
+                                getStatistics.answer4Vaule += 1;
+                            }
+                            else if (sub == getStatistics.answer5)
+                            {
+                                getStatistics.answer5Vaule += 1;
+                            }
+                            else if (sub == getStatistics.answer6)
+                            {
+                                getStatistics.answer6Vaule += 1;
+                            }
                         }
-                        else if (sub == getStatistics.answer2)
-                        {
-                            getStatistics.answer2Vaule += 1;
-                        }
-                        else if (sub == getStatistics.answer3)
-                        {
-                            getStatistics.answer3Vaule += 1;
-                        }
-                        else if (sub == getStatistics.answer4)
-                        {
-                            getStatistics.answer4Vaule += 1;
-                        }
-                        else if (sub == getStatistics.answer5)
-                        {
-                            getStatistics.answer5Vaule += 1;
-                        }
-                        else if (sub == getStatistics.answer6)
-                        {
-                            getStatistics.answer6Vaule += 1;
-                        }
-
-                        StatisticsList.Add(getStatistics);
                     }
                 }
             }
@@ -97,8 +98,8 @@ namespace Dynamic_questionnaire_system.ClientSide
             #region 統計圖 - 長條圖
 
             // Define the name and type of the client scripts on the page.
-            String csname11 = "Script1";
-            String csname22 = "Script2";
+            string csname11 = "Script1";
+            string csname22 = "Script2";
             Type cstype1 = this.GetType();
 
             // Get a ClientScriptManager reference from the Page class.
@@ -106,7 +107,7 @@ namespace Dynamic_questionnaire_system.ClientSide
 
             if (!cs1.IsStartupScriptRegistered(cstype1, csname11))
             {
-                String cstext1 = "google.load('visualization', '1.0', { 'packages': ['corechart'] });";
+                string cstext1 = "google.load('visualization', '1.0', { 'packages': ['corechart'] });";
                 cstext1 += "google.setOnLoadCallback(drawChart);";
 
                 cs1.RegisterStartupScript(cstype1, csname11, cstext1, true);
@@ -134,14 +135,14 @@ namespace Dynamic_questionnaire_system.ClientSide
 
             #endregion
 
-            foreach (var item in StatisticsList)
+            foreach (var item_RB in dr.ItemArray)
             {
-                int totalA1Vaule = 0;
-                int totalA2Vaule = 0;
-                int totalA3Vaule = 0;
-                int totalA4Vaule = 0;
-                int totalA5Vaule = 0;
-                int totalA6Vaule = 0;
+                getStatistics.answer1Vaule = 0;
+                getStatistics.answer2Vaule = 0;
+                getStatistics.answer3Vaule = 0;
+                getStatistics.answer4Vaule = 0;
+                getStatistics.answer5Vaule = 0;
+                getStatistics.answer6Vaule = 0;
 
                 if (getStatistics.TopicType.ToString() == "RB")
                 {
@@ -169,22 +170,54 @@ namespace Dynamic_questionnaire_system.ClientSide
                     {
                         getStatistics.answer6Vaule += 1;
                     }
-
-                    StatisticsList.Add(getStatistics);
-                    foreach (var sub in StatisticsList)
-                    {
-                        totalA1Vaule += sub.answer1Vaule;
-                        totalA2Vaule += sub.answer2Vaule;
-                        totalA3Vaule += sub.answer3Vaule;
-                        totalA4Vaule += sub.answer4Vaule;
-                        totalA5Vaule += sub.answer5Vaule;
-                        totalA6Vaule += sub.answer6Vaule;
-                    }
-
                 }
             }
+            #region  統計圖 - 圓餅圖
+            //** 資料來源  http://msdn.microsoft.com/zh-tw/library/z9h4dk8y(v=vs.110).aspx
 
-            foreach (var item in StatisticsList)
+            // Define the name and type of the client scripts on the page.
+            string csname1 = "Script1";
+            string csname2 = "Script2";
+            Type cstype = this.GetType();
+
+            // Get a ClientScriptManager reference from the Page class.
+            ClientScriptManager cs = Page.ClientScript;
+
+            // Check to see if the startup script is already registered.
+            // 呼叫 IsStartupScriptRegistered 方法，判斷特定索引鍵和型別組的啟始指令碼是否已註冊，避免不必要的指令碼加入嘗試。
+
+
+            if (!cs.IsStartupScriptRegistered(cstype, csname1))
+            {
+                string cstext1 = "google.load('visualization', '1.0', { 'packages': ['corechart'] });";
+                cstext1 += "google.setOnLoadCallback(drawChart);";
+
+                cs.RegisterStartupScript(cstype, csname1, cstext1, true);
+                // 使用 addScriptTags (最後一個)參數，指出 script 參數所提供的指令碼是否包裝在 <script> 項目區塊中。 
+                // 最後一個參數 addScriptTags 設為 true，表示<script>指令碼標記會自動加入。
+            }
+
+            // Check to see if the client script is already registered.
+            if (!cs.IsClientScriptBlockRegistered(cstype, csname2))
+            {
+                StringBuilder cstext2 = new StringBuilder();
+                cstext2.Append("<script type=\"text/javascript\">  function drawChart() {");
+                cstext2.Append("var data = new google.visualization.DataTable();");
+                cstext2.Append("data.addColumn('string', 'Topping');");
+                cstext2.Append("data.addColumn('number', 'Slices');");
+                cstext2.Append($"data.addRows([[{getStatistics.answer1}, {getStatistics.answer1Vaule}], [{getStatistics.answer2}, {getStatistics.answer2Vaule}], [{getStatistics.answer3}, {getStatistics.answer3Vaule}], [{getStatistics.answer4}, {getStatistics.answer4Vaule}], [{getStatistics.answer5}, {getStatistics.answer5Vaule}], [{getStatistics.answer6}, {getStatistics.answer6Vaule}]]);");
+                cstext2.Append("var options = { 'title': '圖表的標題--How Much Pizza I Ate Last Night', 'width': 400, 'height': 300 };");
+                cstext2.Append("var chart = new google.visualization.PieChart(document.getElementById('chart_div'));");
+                cstext2.Append("chart.draw(data, options);");
+                cstext2.Append("}</script>");
+
+                cs.RegisterClientScriptBlock(cstype, csname2, cstext2.ToString(), false);
+
+            }
+            #endregion
+
+
+            foreach (var item in dr.ItemArray)
             {
                 if (getStatistics.TopicType.ToString() == "TB")
                 {
@@ -216,49 +249,6 @@ namespace Dynamic_questionnaire_system.ClientSide
             //Response.Write(json);
 
 
-            #region  統計圖 - 圓餅圖
-            //** 資料來源  http://msdn.microsoft.com/zh-tw/library/z9h4dk8y(v=vs.110).aspx
-
-            // Define the name and type of the client scripts on the page.
-            String csname1 = "Script1";
-            String csname2 = "Script2";
-            Type cstype = this.GetType();
-
-            // Get a ClientScriptManager reference from the Page class.
-            ClientScriptManager cs = Page.ClientScript;
-
-            // Check to see if the startup script is already registered.
-            // 呼叫 IsStartupScriptRegistered 方法，判斷特定索引鍵和型別組的啟始指令碼是否已註冊，避免不必要的指令碼加入嘗試。
-
-
-            if (!cs.IsStartupScriptRegistered(cstype, csname1))
-            {
-                String cstext1 = "google.load('visualization', '1.0', { 'packages': ['corechart'] });";
-                cstext1 += "google.setOnLoadCallback(drawChart);";
-
-                cs.RegisterStartupScript(cstype, csname1, cstext1, true);
-                // 使用 addScriptTags (最後一個)參數，指出 script 參數所提供的指令碼是否包裝在 <script> 項目區塊中。 
-                // 最後一個參數 addScriptTags 設為 true，表示<script>指令碼標記會自動加入。
-            }
-
-            // Check to see if the client script is already registered.
-            if (!cs.IsClientScriptBlockRegistered(cstype, csname2))
-            {
-                StringBuilder cstext2 = new StringBuilder();
-                cstext2.Append("<script type=\"text/javascript\">  function drawChart() {");
-                cstext2.Append("var data = new google.visualization.DataTable();");
-                cstext2.Append("data.addColumn('string', 'Topping');");
-                cstext2.Append("data.addColumn('number', 'Slices');");
-                cstext2.Append("data.addRows([['Mushrooms', 3], ['Onions', 1], ['Olives', 1], ['Zucchini', 1], ['Pepperoni', 2]]);");
-                cstext2.Append("var options = { 'title': '圖表的標題--How Much Pizza I Ate Last Night', 'width': 400, 'height': 300 };");
-                cstext2.Append("var chart = new google.visualization.PieChart(document.getElementById('chart_div'));");
-                cstext2.Append("chart.draw(data, options);");
-                cstext2.Append("}</script>");
-
-                cs.RegisterClientScriptBlock(cstype, csname2, cstext2.ToString(), false);
-
-            }
-            #endregion
 
             
         }

@@ -19,7 +19,7 @@ using Button = System.Web.UI.WebControls.Button;
 
 namespace Dynamic_questionnaire_system.UserSide
 {
-    public partial class USPage : System.Web.UI.Page
+    public partial class USDetail : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -69,7 +69,7 @@ namespace Dynamic_questionnaire_system.UserSide
             //後台內頁3-填寫資料
             this.givExport.DataSource = ContextManager.GetRecordData();  //做方法
             this.givExport.DataBind();
-            var dt = ContextManager.GetRecordData(); 
+            var dt = ContextManager.GetRecordData();
             DataSearch(dt);
 
 
@@ -244,7 +244,7 @@ namespace Dynamic_questionnaire_system.UserSide
         {
             Response.Redirect("/UserSide/USList.aspx");
         }
-        
+
         #endregion
 
         #region 問題
@@ -619,7 +619,5 @@ namespace Dynamic_questionnaire_system.UserSide
         }
 
         #endregion
-
-
     }
 }

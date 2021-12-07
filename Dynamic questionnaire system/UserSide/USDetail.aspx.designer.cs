@@ -11,7 +11,7 @@ namespace Dynamic_questionnaire_system.UserSide
 {
 
 
-    public partial class USPage
+    public partial class USDetail
     {
 
         /// <summary>

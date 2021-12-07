@@ -31,7 +31,7 @@
             <asp:BoundField HeaderText="#" DataField="QuestionnaireID" />
             <asp:TemplateField HeaderText="問卷">
                 <ItemTemplate>
-                    <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("QuestionnaireID", "USPage.aspx?ID={0}") %>' Text='<%# Eval("Heading") %>' ToolTip="更新問卷內容"></asp:HyperLink>
+                    <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("QuestionnaireID", "USDetail.aspx?ID={0}") %>' Text='<%# Eval("Heading") %>' ToolTip="更新問卷內容"></asp:HyperLink>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField HeaderText="狀態" DataField="Vote"/>
@@ -44,6 +44,6 @@
             </asp:TemplateField>
         </Columns>
     </asp:GridView>
-    <asp:SqlDataSource ID="SqlDataSource1" runat="server"></asp:SqlDataSource>
+    <%--<asp:SqlDataSource ID="SqlDataSource1" runat="server"></asp:SqlDataSource>--%>
     <uc1:ucPager runat="server" ID="ucPager" PageSize ="10" Url="/UserSide/USList.aspx"/>
 </asp:Content>
