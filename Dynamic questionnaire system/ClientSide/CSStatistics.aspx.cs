@@ -36,221 +36,146 @@ namespace Dynamic_questionnaire_system.ClientSide
             this.reTopicDescription.DataBind();
 
             // todo: 這裡卡著  1203
-            //var tb = GetStatisticsDBSourceTB(IDNum);
-            var dr = GetStatisticsDBSource(IDNum);
-            Response.Write(dr.ItemArray.ToString());
+            var tb = GetStatisticsDBSourceTB(IDNum);
+            GetStatistics getStatistics;
+            Dictionary<int, GetStatistics> dict = new Dictionary<int, GetStatistics>();
 
-            var getStatistics = new GetStatistics
+            foreach (DataRow dr in tb.Rows)
             {
-                TopicNum = (int)dr["TopicNum"],
-                TopicDescription = (string)dr["TopicDescription"],
-                TopicType = (string)dr["TopicType"],
-                answer1 = dr["answer1"] as string,
-                answer2 = dr["answer2"] as string,
-                answer3 = dr["answer3"] as string,
-                answer4 = dr["answer4"] as string,
-                answer5 = dr["answer5"] as string,
-                answer6 = dr["answer6"] as string,
-                OptionsAll = (int)dr["OptionsAll"],
-                RDAns = (string)dr["RDAns"],
-            };
-            
-            // 用迴圈跑，但要in ??
-            foreach (var item in dr.ItemArray)
-            {
-                if (getStatistics.TopicType.ToString() == "CB")
+                int TopicNum = (int)dr["TopicNum"];
+                if (!dict.ContainsKey(TopicNum))
                 {
-                    if (getStatistics.TopicNum == 6)
+                    getStatistics = new GetStatistics
                     {
-                        string s = getStatistics.RDAns;
-                        string[] subs = s.Split(';');
-                        foreach (string sub in subs)
+                        TopicNum = (int)dr["TopicNum"],
+                        TopicDescription = (string)dr["TopicDescription"],
+                        TopicType = (string)dr["TopicType"],
+                        answer1 = dr["answer1"] as string,
+                        answer2 = dr["answer2"] as string,
+                        answer3 = dr["answer3"] as string,
+                        answer4 = dr["answer4"] as string,
+                        answer5 = dr["answer5"] as string,
+                        answer6 = dr["answer6"] as string,
+                        OptionsAll = (int)dr["OptionsAll"],
+                        RDAns = (string)dr["RDAns"],
+                        answer1Vaule = 0,
+                        answer2Vaule = 0,
+                        answer3Vaule = 0,
+                        answer4Vaule = 0,
+                        answer5Vaule = 0,
+                        answer6Vaule = 0
+                    };
+                    dict[TopicNum] = getStatistics;
+                }
+
+                if (dict[TopicNum].TopicType == "CB") //複選題
+                {
+                    string s = (string)dr["RDAns"];
+                    string[] subs = s.Split(';');
+                    foreach (string sub in subs)
+                    {
+                        if (sub == dict[TopicNum].answer1)
                         {
-                            if (sub == getStatistics.answer1)
-                            {
-                                getStatistics.answer1Vaule += 1;
-                            }
-                            else if (sub == getStatistics.answer2)
-                            {
-                                getStatistics.answer2Vaule += 1;
-                            }
-                            else if (sub == getStatistics.answer3)
-                            {
-                                getStatistics.answer3Vaule += 1;
-                            }
-                            else if (sub == getStatistics.answer4)
-                            {
-                                getStatistics.answer4Vaule += 1;
-                            }
-                            else if (sub == getStatistics.answer5)
-                            {
-                                getStatistics.answer5Vaule += 1;
-                            }
-                            else if (sub == getStatistics.answer6)
-                            {
-                                getStatistics.answer6Vaule += 1;
-                            }
+                            dict[TopicNum].answer1Vaule += 1;
+                        }
+                        else if (sub == dict[TopicNum].answer2)
+                        {
+                            dict[TopicNum].answer2Vaule += 1;
+                        }
+                        else if (sub == dict[TopicNum].answer3)
+                        {
+                            dict[TopicNum].answer3Vaule += 1;
+                        }
+                        else if (sub == dict[TopicNum].answer4)
+                        {
+                            dict[TopicNum].answer4Vaule += 1;
+                        }
+                        else if (sub == dict[TopicNum].answer5)
+                        {
+                            dict[TopicNum].answer5Vaule += 1;
+                        }
+                        else if (sub == dict[TopicNum].answer6)
+                        {
+                            dict[TopicNum].answer6Vaule += 1;
                         }
                     }
                 }
+                else //單選題
+                {
+                    string s = (string)dr["RDAns"];
+                    if (s == dict[TopicNum].answer1)
+                    {
+                        dict[TopicNum].answer1Vaule += 1;
+                    }
+                    else if (s == dict[TopicNum].answer2)
+                    {
+                        dict[TopicNum].answer2Vaule += 1;
+                    }
+                    else if (s == dict[TopicNum].answer3)
+                    {
+                        dict[TopicNum].answer3Vaule += 1;
+                    }
+                    else if (s == dict[TopicNum].answer4)
+                    {
+                        dict[TopicNum].answer4Vaule += 1;
+                    }
+                    else if (s == dict[TopicNum].answer5)
+                    {
+                        dict[TopicNum].answer5Vaule += 1;
+                    }
+                    else if (s == dict[TopicNum].answer6)
+                    {
+                        dict[TopicNum].answer6Vaule += 1;
+                    }
+                }
             }
-            
-            #region 統計圖 - 長條圖
+
+            #region 統計圖
 
             // Define the name and type of the client scripts on the page.
-            string csname11 = "Script1";
-            string csname22 = "Script2";
+            string csname1 = "Script1";
+            string csname2 = "Script2";
             Type cstype1 = this.GetType();
 
             // Get a ClientScriptManager reference from the Page class.
             ClientScriptManager cs1 = Page.ClientScript;
 
-            if (!cs1.IsStartupScriptRegistered(cstype1, csname11))
+            if (!cs1.IsStartupScriptRegistered(cstype1, csname1))
             {
                 string cstext1 = "google.load('visualization', '1.0', { 'packages': ['corechart'] });";
                 cstext1 += "google.setOnLoadCallback(drawChart);";
 
-                cs1.RegisterStartupScript(cstype1, csname11, cstext1, true);
+                cs1.RegisterStartupScript(cstype1, csname1, cstext1, true);
                 // 使用 addScriptTags (最後一個)參數，指出 script 參數所提供的指令碼是否包裝在 <script> 項目區塊中。 
                 // 最後一個參數 addScriptTags 設為 true，表示<script>指令碼標記會自動加入。
             }
 
             // Check to see if the client script is already registered.
-            if (!cs1.IsClientScriptBlockRegistered(cstype1, csname22))
+            if (!cs1.IsClientScriptBlockRegistered(cstype1, csname2))
             {
                 StringBuilder cstext2 = new StringBuilder();
                 cstext2.Append("<script type=\"text/javascript\">  function drawChart() {");
-                cstext2.Append("var data = new google.visualization.DataTable();");
-                cstext2.Append("data.addColumn('string', 'Topping');");
-                cstext2.Append("data.addColumn('number', 'Slices');");
-                cstext2.Append($"data.addRows([[{getStatistics.answer1}, {getStatistics.answer1Vaule}], [{getStatistics.answer2}, {getStatistics.answer2Vaule}], [{getStatistics.answer3}, {getStatistics.answer3Vaule}], [{getStatistics.answer4}, {getStatistics.answer4Vaule}], [{getStatistics.answer5}, {getStatistics.answer5Vaule}], [{getStatistics.answer6}, {getStatistics.answer6Vaule}]]);");
-                cstext2.Append("var options = { 'title': '圖表的標題--How Much Pizza I Ate Last Night', 'width': 400, 'height': 300 };");
-                cstext2.Append("var chart = new google.visualization.BarChart(document.getElementById('Barchart_div'));");
-                cstext2.Append("chart.draw(data, options);");
-                cstext2.Append("}</script>");
-
-                cs1.RegisterClientScriptBlock(cstype1, csname22, cstext2.ToString(), false);
-
-            }
-
-            #endregion
-
-            foreach (var item_RB in dr.ItemArray)
-            {
-                getStatistics.answer1Vaule = 0;
-                getStatistics.answer2Vaule = 0;
-                getStatistics.answer3Vaule = 0;
-                getStatistics.answer4Vaule = 0;
-                getStatistics.answer5Vaule = 0;
-                getStatistics.answer6Vaule = 0;
-
-                if (getStatistics.TopicType.ToString() == "RB")
+                cstext2.Append("var data,options,chart;\n");
+                foreach (KeyValuePair<int, GetStatistics> kvp in dict)
                 {
-                    if (getStatistics.RDAns == getStatistics.answer1)
-                    {
-                        getStatistics.answer1Vaule += 1;
-                    }
-                    else if (getStatistics.RDAns == getStatistics.answer2)
-                    {
-                        getStatistics.answer2Vaule += 1;
-                    }
-                    else if (getStatistics.RDAns == getStatistics.answer3)
-                    {
-                        getStatistics.answer3Vaule += 1;
-                    }
-                    else if (getStatistics.RDAns == getStatistics.answer4)
-                    {
-                        getStatistics.answer4Vaule += 1;
-                    }
-                    else if (getStatistics.RDAns == getStatistics.answer5)
-                    {
-                        getStatistics.answer5Vaule += 1;
-                    }
-                    else if (getStatistics.RDAns == getStatistics.answer6)
-                    {
-                        getStatistics.answer6Vaule += 1;
-                    }
+                    cstext2.Append("data = new google.visualization.DataTable();\n");
+                    cstext2.Append("data.addColumn('string', 'Topping');\n");
+                    cstext2.Append("data.addColumn('number', 'Slices');\n");
+                    cstext2.Append($"data.addRows([['{kvp.Value.answer1}', {kvp.Value.answer1Vaule}], ['{kvp.Value.answer2}', {kvp.Value.answer2Vaule}], ['{kvp.Value.answer3}', {kvp.Value.answer3Vaule}], ['{kvp.Value.answer4}', {kvp.Value.answer4Vaule}], ['{kvp.Value.answer5}', {kvp.Value.answer5Vaule}], ['{kvp.Value.answer6}', {kvp.Value.answer6Vaule}]]);\n");
+                    cstext2.Append($"options = {{ 'title': '{kvp.Key}.{kvp.Value.TopicDescription}', 'width': 500, 'height': 300 }};\n");
+                    cstext2.Append($"document.write(\"<div id='chart_div{kvp.Key}'></div>\");\n");
+                    if (kvp.Value.TopicType == "RB")
+                        cstext2.Append($"chart = new google.visualization.PieChart(document.getElementById('chart_div{kvp.Key}'));\n"); //圓餅圖
+                    else
+                        cstext2.Append($"chart = new google.visualization.BarChart(document.getElementById('chart_div{kvp.Key}'));\n"); //長條圖
+                    cstext2.Append("chart.draw(data, options);\n");
                 }
-            }
-            #region  統計圖 - 圓餅圖
-            //** 資料來源  http://msdn.microsoft.com/zh-tw/library/z9h4dk8y(v=vs.110).aspx
-
-            // Define the name and type of the client scripts on the page.
-            string csname1 = "Script1";
-            string csname2 = "Script2";
-            Type cstype = this.GetType();
-
-            // Get a ClientScriptManager reference from the Page class.
-            ClientScriptManager cs = Page.ClientScript;
-
-            // Check to see if the startup script is already registered.
-            // 呼叫 IsStartupScriptRegistered 方法，判斷特定索引鍵和型別組的啟始指令碼是否已註冊，避免不必要的指令碼加入嘗試。
-
-
-            if (!cs.IsStartupScriptRegistered(cstype, csname1))
-            {
-                string cstext1 = "google.load('visualization', '1.0', { 'packages': ['corechart'] });";
-                cstext1 += "google.setOnLoadCallback(drawChart);";
-
-                cs.RegisterStartupScript(cstype, csname1, cstext1, true);
-                // 使用 addScriptTags (最後一個)參數，指出 script 參數所提供的指令碼是否包裝在 <script> 項目區塊中。 
-                // 最後一個參數 addScriptTags 設為 true，表示<script>指令碼標記會自動加入。
-            }
-
-            // Check to see if the client script is already registered.
-            if (!cs.IsClientScriptBlockRegistered(cstype, csname2))
-            {
-                StringBuilder cstext2 = new StringBuilder();
-                cstext2.Append("<script type=\"text/javascript\">  function drawChart() {");
-                cstext2.Append("var data = new google.visualization.DataTable();");
-                cstext2.Append("data.addColumn('string', 'Topping');");
-                cstext2.Append("data.addColumn('number', 'Slices');");
-                cstext2.Append($"data.addRows([[{getStatistics.answer1}, {getStatistics.answer1Vaule}], [{getStatistics.answer2}, {getStatistics.answer2Vaule}], [{getStatistics.answer3}, {getStatistics.answer3Vaule}], [{getStatistics.answer4}, {getStatistics.answer4Vaule}], [{getStatistics.answer5}, {getStatistics.answer5Vaule}], [{getStatistics.answer6}, {getStatistics.answer6Vaule}]]);");
-                cstext2.Append("var options = { 'title': '圖表的標題--How Much Pizza I Ate Last Night', 'width': 400, 'height': 300 };");
-                cstext2.Append("var chart = new google.visualization.PieChart(document.getElementById('chart_div'));");
-                cstext2.Append("chart.draw(data, options);");
-                cstext2.Append("}</script>");
-
-                cs.RegisterClientScriptBlock(cstype, csname2, cstext2.ToString(), false);
+                cstext2.Append("}</script>\n");
+                cs1.RegisterClientScriptBlock(cstype1, csname2, cstext2.ToString(), false);
 
             }
-            #endregion
 
-
-            foreach (var item in dr.ItemArray)
-            {
-                if (getStatistics.TopicType.ToString() == "TB")
-                {
-                    Label label = new Label();
-                    label.Text = "文字不做統計";
-                }
-            }
-
-
-            //int totalA1Vaule_CB = 0;
-            //int totalA2Vaule_CB = 0;
-            //int totalA3Vaule_CB = 0;
-            //int totalA4Vaule_CB = 0;
-            //int totalA5Vaule_CB = 0;
-            //int totalA6Vaule_CB = 0;
-
-            //foreach (var sub in StatisticsList)
-            //{
-            //    totalA1Vaule_CB += sub.answer1Vaule;
-            //    totalA2Vaule_CB += sub.answer2Vaule;
-            //    totalA3Vaule_CB += sub.answer3Vaule;
-            //    totalA4Vaule_CB += sub.answer4Vaule;
-            //    totalA5Vaule_CB += sub.answer5Vaule;
-            //    totalA6Vaule_CB += sub.answer6Vaule;
-            //}
-
-            // todo: 這裡先寫顯示結果，再思考下一步如何處理，但因為上面卡著所以還沒跑出來
-            //string json = JsonConvert.SerializeObject(StatisticsList, Formatting.Indented);
-            //Response.Write(json);
-
-
-
-            
+            #endregion            
         }
 
         /// <summary>
