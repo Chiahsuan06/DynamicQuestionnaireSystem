@@ -744,6 +744,14 @@ namespace Dynamic_questionnaire_system.UserSide
                             {
                                 string answer_item = "answer" + i;
                                 CB_Q2.Items.Add(dr3[answer_item].ToString());
+
+                                foreach (DataRow dr in tb.Rows)
+                                {
+                                    ListItem newItme = (ListItem)CB_Q2.Items.FindByText(dr3[answer_item].ToString());
+                                    if (newItme != null)
+                                        if(dr["RDAns"] as string == newItme.ToString())
+                                        newItme.Selected = true;
+                                }                                   
                             }
                             //---------------------------------------------------------------------------(end)
 
