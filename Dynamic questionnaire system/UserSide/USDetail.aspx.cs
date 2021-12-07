@@ -767,7 +767,13 @@ namespace Dynamic_questionnaire_system.UserSide
                         default:  //-- 其他 文字輸入（TB，TextBox）
                             System.Web.UI.WebControls.TextBox CB_Q3 = new System.Web.UI.WebControls.TextBox();
                             CB_Q3.ID = "D1_" + D1_ID;
-                            AnsDetail.Controls.Add(CB_Q3);  //-- 動態加入畫面（PlaceHolder1）之中
+
+                            foreach (DataRow dr in tb.Rows)
+                            {
+                                if (dr["RDAns"] as string == CB_Q3.ToString())
+                                    AnsDetail.Controls.Add(CB_Q3);  //-- 動態加入畫面（PlaceHolder1）之中
+                            }
+                            
 
                             Label Label_br2 = new Label();
                             Label_br2.Text = "<br /><br />";
