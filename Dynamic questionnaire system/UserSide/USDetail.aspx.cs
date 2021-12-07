@@ -486,7 +486,7 @@ namespace Dynamic_questionnaire_system.UserSide
             string dbcommand =
                 $@"SELECT [Questionnaires].[TopicNum],[TopicDescription],[TopicSummary],[TopicType],[TopicMustKeyIn]
                    	     ,[Question].[answer1],[Question].[answer2],[Question].[answer3],[Question].[answer4],[Question].[answer5]
-                         ,[Question].[answer6],[Question].[answer7],[Question].[answer8],[Question].[answer9],[Question].[answer10]
+                         ,[Question].[answer6]
                    	     ,[Question].[OptionsAll]
                      FROM [Questionnaire].[dbo].[Questionnaires]
                      RIGHT JOIN [Question] ON [Questionnaires].[TopicNum] = [Question].[TopicNum]
@@ -513,7 +513,7 @@ namespace Dynamic_questionnaire_system.UserSide
             string dbcommand =
                 $@"SELECT [Questionnaires].[TopicNum],[TopicDescription],[TopicSummary],[TopicType],[TopicMustKeyIn]
                    	     ,[Question].[answer1],[Question].[answer2],[Question].[answer3],[Question].[answer4],[Question].[answer5]
-                         ,[Question].[answer6],[Question].[answer7],[Question].[answer8],[Question].[answer9],[Question].[answer10]
+                         ,[Question].[answer6]
                    	     ,[Question].[OptionsAll]
                      FROM [Questionnaire].[dbo].[Questionnaires]
                      RIGHT JOIN [Question] ON [Questionnaires].[TopicNum] = [Question].[TopicNum]
@@ -540,7 +540,7 @@ namespace Dynamic_questionnaire_system.UserSide
             string dbcommand =
                 $@"SELECT [Questionnaires].[TopicNum],[TopicDescription],[TopicSummary],[TopicType],[TopicMustKeyIn]
                    	     ,[Question].[answer1],[Question].[answer2],[Question].[answer3],[Question].[answer4],[Question].[answer5]
-                         ,[Question].[answer6],[Question].[answer7],[Question].[answer8],[Question].[answer9],[Question].[answer10]
+                         ,[Question].[answer6]
                    	     ,[Question].[OptionsAll]
                      FROM [Questionnaire].[dbo].[Questionnaires]
                      RIGHT JOIN [Question] ON [Questionnaires].[TopicNum] = [Question].[TopicNum]
