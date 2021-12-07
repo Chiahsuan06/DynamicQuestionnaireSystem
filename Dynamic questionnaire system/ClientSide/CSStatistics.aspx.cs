@@ -36,7 +36,7 @@ namespace Dynamic_questionnaire_system.ClientSide
             this.reTopicDescription.DataBind();
 
             // todo: 這裡卡著  1203
-            var tb = GetStatisticsDBSourceTB(IDNum);
+            var tb = ContextManager.GetStatisticsDBSourceTB(IDNum);
             GetStatistics getStatistics;
             Dictionary<int, GetStatistics> dict = new Dictionary<int, GetStatistics>();
 
@@ -178,100 +178,40 @@ namespace Dynamic_questionnaire_system.ClientSide
             #endregion            
         }
 
-        /// <summary>
-        /// 取得 統計所需資料
-        /// </summary>
-        /// <param name="IDNumber"></param>
-        /// <returns></returns>
-        public static DataRow GetStatisticsDBSource(int IDNumber)
-        {
-            string connStr = DBHelper.GetConnectionString();
-            string dbcommand =
-                $@"SELECT [Record Details].[TopicNum], [Questionnaires].[TopicDescription], [Questionnaires].[TopicType], 
-                          [Question].[answer1], [Question].[answer2],[Question].[answer3], [Question].[answer4], [Question].[answer5],
-		                  [Question].[answer6], [Question].[OptionsAll],[RDAns]
-                    FROM [Record Details]
-                    JOIN [Questionnaires] 
-                    ON [Questionnaires].TopicNum = [Record Details].TopicNum
-                    JOIN [Question] 
-                    ON [Question].TopicNum = [Record Details].TopicNum
-                    WHERE [Record Details].[QuestionnaireID] = @QuestionnaireID
-                ";
+        ///// <summary>
+        ///// 取得 統計所需資料
+        ///// </summary>
+        ///// <param name="IDNumber"></param>
+        ///// <returns></returns>
+        //public static DataTable GetStatisticsDBSourceTB(int IDNumber)
+        //{
+        //    string connStr = DBHelper.GetConnectionString();
+        //    string dbcommand =
+        //        $@"SELECT [Record Details].[TopicNum], [Questionnaires].[TopicDescription], [Questionnaires].[TopicType], 
+        //                  [Question].[answer1], [Question].[answer2],[Question].[answer3], [Question].[answer4], [Question].[answer5],
+		      //            [Question].[answer6], [Question].[OptionsAll],[RDAns]
+        //            FROM [Record Details]
+        //            JOIN [Questionnaires] 
+        //            ON [Questionnaires].TopicNum = [Record Details].TopicNum
+        //            JOIN [Question] 
+        //            ON [Question].TopicNum = [Record Details].TopicNum
+        //            WHERE [Record Details].[QuestionnaireID] = @QuestionnaireID
+        //        ";
 
-            List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
+        //    List<SqlParameter> list = new List<SqlParameter>();
+        //    list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
 
-            try
-            {
-                return DBHelper.ReadDataRow(connStr, dbcommand, list);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog(ex);
-                return null;
-            }
-        }
-        public static DataTable GetStatisticsDBSourceTB(int IDNumber)
-        {
-            string connStr = DBHelper.GetConnectionString();
-            string dbcommand =
-                $@"SELECT [Record Details].[TopicNum], [Questionnaires].[TopicDescription], [Questionnaires].[TopicType], 
-                          [Question].[answer1], [Question].[answer2],[Question].[answer3], [Question].[answer4], [Question].[answer5],
-		                  [Question].[answer6], [Question].[OptionsAll],[RDAns]
-                    FROM [Record Details]
-                    JOIN [Questionnaires] 
-                    ON [Questionnaires].TopicNum = [Record Details].TopicNum
-                    JOIN [Question] 
-                    ON [Question].TopicNum = [Record Details].TopicNum
-                    WHERE [Record Details].[QuestionnaireID] = @QuestionnaireID
-                ";
+        //    try
+        //    {
+        //        return DBHelper.ReadDataTable(connStr, dbcommand, list);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logger.WriteLog(ex);
+        //        return null;
+        //    }
+        //}
 
-            List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
-
-            try
-            {
-                return DBHelper.ReadDataTable(connStr, dbcommand, list);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog(ex);
-                return null;
-            }
-        }
-        public string DataTableToJson(DataTable table)
-        {
-            var JsonString = new StringBuilder();
-            if (table.Rows.Count > 0)
-            {
-                JsonString.Append("[");
-                for (int i = 0; i < table.Rows.Count; i++)
-                {
-                    JsonString.Append("{");
-                    for (int j = 0; j < table.Columns.Count; j++)
-                    {
-                        if (j < table.Columns.Count - 1)
-                        {
-                            JsonString.Append("\"" + table.Columns[j].ColumnName.ToString() + "\":" + "\"" + table.Rows[i][j].ToString() + "\",");
-                        }
-                        else if (j == table.Columns.Count - 1)
-                        {
-                            JsonString.Append("\"" + table.Columns[j].ColumnName.ToString() + "\":" + "\"" + table.Rows[i][j].ToString() + "\"");
-                        }
-                    }
-                    if (i == table.Rows.Count - 1)
-                    {
-                        JsonString.Append("}");
-                    }
-                    else
-                    {
-                        JsonString.Append("},");
-                    }
-                }
-                JsonString.Append("]");
-            }
-            return JsonString.ToString();
-        }
 
 
     }

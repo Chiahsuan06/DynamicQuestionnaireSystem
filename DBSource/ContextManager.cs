@@ -165,6 +165,71 @@ namespace DBSource
             }
         }
 
+        /// <summary>
+        /// 取得 統計所需資料
+        /// </summary>
+        /// <param name="IDNumber"></param>
+        /// <returns></returns>
+        public static DataTable GetStatisticsDBSourceTB(int IDNumber)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@"SELECT [Record Details].[TopicNum], [Questionnaires].[TopicDescription], [Questionnaires].[TopicType], 
+                          [Question].[answer1], [Question].[answer2],[Question].[answer3], [Question].[answer4], [Question].[answer5],
+		                  [Question].[answer6], [Question].[OptionsAll],[RDAns]
+                    FROM [Record Details]
+                    JOIN [Questionnaires] 
+                    ON [Questionnaires].TopicNum = [Record Details].TopicNum
+                    JOIN [Question] 
+                    ON [Question].TopicNum = [Record Details].TopicNum
+                    WHERE [Record Details].[QuestionnaireID] = @QuestionnaireID
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
+
+            try
+            {
+                return DBHelper.ReadDataTable(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
+        }
+
+        public static DataTable USGetStatisticsDBSourceTB(int IDNumber, int RecordNum)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@"SELECT [Record Details].[TopicNum], [Questionnaires].[TopicDescription], [Questionnaires].[TopicType], 
+                          [Question].[answer1], [Question].[answer2],[Question].[answer3], [Question].[answer4], [Question].[answer5],
+		                  [Question].[answer6], [Question].[OptionsAll],[RDAns]
+                    FROM [Record Details]
+                    JOIN [Questionnaires] 
+                    ON [Questionnaires].TopicNum = [Record Details].TopicNum
+                    JOIN [Question] 
+                    ON [Question].TopicNum = [Record Details].TopicNum
+                    WHERE [Record Details].[QuestionnaireID] = @QuestionnaireID
+                     AND  [Record Details].[RecordNum] = @RecordNum
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
+            list.Add(new SqlParameter("@RecordNum", RecordNum));
+
+            try
+            {
+                return DBHelper.ReadDataTable(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
+        }
+
         #region 後台
 
         //問卷
