@@ -713,6 +713,7 @@ namespace Dynamic_questionnaire_system.UserSide
                                         if (newItme != null)
                                             if(sub == newItme.ToString())
                                             newItme.Selected = true;
+                                        newItme.Enabled = false;
                                     }
                                 }
                             }
@@ -751,6 +752,7 @@ namespace Dynamic_questionnaire_system.UserSide
                                     if (newItme != null)
                                         if(dr["RDAns"] as string == newItme.ToString())
                                         newItme.Selected = true;
+                                    newItme.Enabled = false;
                                 }                                   
                             }
                             //---------------------------------------------------------------------------(end)
@@ -764,7 +766,7 @@ namespace Dynamic_questionnaire_system.UserSide
                             AnsDetail.Controls.Add(Label_br1);
                             break;
 
-                        default:  //-- 其他 文字輸入（TB，TextBox）
+                        default:  //-- 其他 文字輸入（TB，TextBox）=>待驗證
                             System.Web.UI.WebControls.TextBox CB_Q3 = new System.Web.UI.WebControls.TextBox();
                             CB_Q3.ID = "D1_" + D1_ID;
 
