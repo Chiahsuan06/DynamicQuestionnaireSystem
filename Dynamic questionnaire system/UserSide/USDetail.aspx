@@ -6,7 +6,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-        <%--<style>
+        <style>
             body {font-family: Arial;}
 
             .tab {
@@ -60,7 +60,7 @@
             }
 
             document.getElementById("defaultOpen").click();
-        </script>--%>
+        </script>
 
         <div class="tab">
           <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'Questionnaire')" id="defaultOpen">問卷</button>
@@ -143,12 +143,7 @@
                 <Columns>
                     <asp:BoundField HeaderText="#" DataField="RecordNum"/>
                     <asp:BoundField HeaderText="姓名" DataField="AnsName" />
-                    <asp:BoundField HeaderText="填寫時間" DataField="AnsTime"/>
-                    <asp:TemplateField HeaderText="觀看細節">
-                        <ItemTemplate>
-                            <asp:Button ID="btnDetail" runat="server" Text="前往" CommandName="GoDetail" />
-                        </ItemTemplate>
-                    </asp:TemplateField>
+                    <asp:BoundField HeaderText="填寫時間" DataField="AnsTime" DataFormatString="{0:yyyy-MM-dd HH:mm:ss}"/>
                     <asp:HyperLinkField DataNavigateUrlFields="QuestionnaireID,RecordNum" DataNavigateUrlFormatString="USDetail.aspx?ID={0}&amp;RN={1}" HeaderText="觀看細節" Text="前往" />
                 </Columns>
             </asp:GridView>
@@ -158,15 +153,15 @@
            
             <asp:PlaceHolder ID="PlaceHolderDetail" runat="server" Visible="False">
                 <div>
-                    <asp:Label ID="plblName" runat="server" Text="姓名："></asp:Label>&nbsp;&nbsp;
-                    <asp:TextBox ID="txtName" runat="server" ReadOnly="True"></asp:TextBox><br />
-                    <asp:Label ID="plblPhone" runat="server" Text="手機："></asp:Label>&nbsp;&nbsp;
-                    <asp:TextBox ID="txtPhone" runat="server" ReadOnly="True"></asp:TextBox><br />
-                    <asp:Label ID="plblEmail" runat="server" Text="Email："></asp:Label>&nbsp;
-                    <asp:TextBox ID="txtEmail" runat="server" ReadOnly="True"></asp:TextBox><br />
-                    <asp:Label ID="plblAge" runat="server" Text="年齡："></asp:Label>&nbsp;&nbsp;
-                    <asp:TextBox ID="txtAge" runat="server" ReadOnly="True"></asp:TextBox>&nbsp;&nbsp;
-                    <asp:Label ID="lblWriteT" runat="server" Text="填寫時間："></asp:Label><asp:Label ID="lblAnsT" runat="server" ></asp:Label>
+                    <asp:Label ID="plblName" runat="server" Text="姓名：" Visible="False"></asp:Label>&nbsp;&nbsp;
+                    <asp:TextBox ID="txtName" runat="server" ReadOnly="True" Visible="False"></asp:TextBox><br />
+                    <asp:Label ID="plblPhone" runat="server" Text="手機：" Visible="False"></asp:Label>&nbsp;&nbsp;
+                    <asp:TextBox ID="txtPhone" runat="server" ReadOnly="True" Visible="False"></asp:TextBox><br />
+                    <asp:Label ID="plblEmail" runat="server" Text="Email：" Visible="False"></asp:Label>&nbsp;
+                    <asp:TextBox ID="txtEmail" runat="server" ReadOnly="True" Visible="False"></asp:TextBox><br />
+                    <asp:Label ID="plblAge" runat="server" Text="年齡：" Visible="False"></asp:Label>&nbsp;&nbsp;
+                    <asp:TextBox ID="txtAge" runat="server" ReadOnly="True" Visible="False"></asp:TextBox>&nbsp;&nbsp;
+                    <asp:Label ID="lblWriteT" runat="server" Text="填寫時間：" Visible="False"></asp:Label><asp:Label ID="lblAnsT" runat="server" ></asp:Label>
                 </div>
                 <div>
                     <%--跳出填答問卷--%>
@@ -178,5 +173,23 @@
 
         <div id="Statistics" class="tabcontent">  <%--統計--%>
           <h3>統計</h3>
+            <asp:Repeater ID="reTopicDescription" runat="server" OnItemDataBound="reTopicDescription_ItemDataBound">
+                <ItemTemplate>
+                     <h3>
+                         <%#Eval("TopicDescription") %>
+                         <asp:Repeater ID="reAnswers" runat="server">
+                             <ItemTemplate>
+                                 <h4><%#Eval("answer1") %></h4>
+                                 <h4><%#Eval("answer2") %></h4>
+                                 <h4><%#Eval("answer3") %></h4>
+                                 <h4><%#Eval("answer4") %></h4>
+                                 <h4><%#Eval("answer5") %></h4>
+                                 <h4><%#Eval("answer6") %></h4>
+                             </ItemTemplate>
+                         </asp:Repeater>
+                     </h3>
+                </ItemTemplate>
+                
+            </asp:Repeater>
         </div>
 </asp:Content>

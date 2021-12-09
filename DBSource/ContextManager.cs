@@ -113,8 +113,6 @@ namespace DBSource
                 return null;
             }
         }
-
-
         //前台內頁(標題、內容)、前台統計
         public static DataTable GetHeadingContent(int IDNumber)
         {
@@ -139,8 +137,6 @@ namespace DBSource
                 return null;
             }
         }
-
-
         //前台統計
         public static DataTable GetTopicDescription(int IDNumber)
         {
@@ -149,6 +145,32 @@ namespace DBSource
                 $@"SELECT [TopicNum],[TopicDescription],[TopicSummary],[TopicType],[TopicMustKeyIn]
                     FROM [Questionnaire].[dbo].[Questionnaires]
                     WHERE [QuestionnaireID] = @QuestionnaireID
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
+
+            try
+            {
+                return DBHelper.ReadDataTable(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
+        }
+
+        public static DataTable GetQuestion(int IDNumber)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@"SELECT [Question].[QuestionnaireID],[Question].[TopicNum],[Questionnaires].[TopicDescription],[answer1],[answer2],[answer3]
+		                    ,[answer4],[answer5] ,[answer6],[OptionsAll]
+                    FROM [Questionnaire].[dbo].[Question]
+                    JOIN [Questionnaire].[dbo].[Questionnaires]
+                    ON  [Question].[TopicNum] = [Questionnaires].[TopicNum]
+                    WHERE [Question].[QuestionnaireID] = @QuestionnaireID
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
@@ -238,7 +260,7 @@ namespace DBSource
         /// </summary>
         /// <param name="Account"></param>
         /// <returns></returns>
-        public static DataRow GetDBData(int QuestionnaireID)
+        public static DataRow GetDBData(int IDNumber)
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
@@ -248,7 +270,7 @@ namespace DBSource
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@QuestionnaireID", QuestionnaireID));
+            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
 
             try
             {

@@ -25,47 +25,11 @@
         <asp:Repeater ID="reTopicDescription" runat="server">
             <ItemTemplate>
                 <p><%# Container.ItemIndex + 1 %>.<%#Eval("TopicDescription") %></p>
-                <asp:Chart ID="Chart1" runat="server">
-                            <Series>
-                                <asp:Series Name="Series1"></asp:Series>
-                            </Series>
-                            <ChartAreas>
-                                <asp:ChartArea Name="ChartArea1"></asp:ChartArea>
-                            </ChartAreas>
-                        </asp:Chart>
-                        <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:QuestionnaireConnectionString2 %>" SelectCommand="SELECT [Record Details].[RDAns], COUNT([Record Details].[RDAns]) AS COUNT
-	                                     FROM [Questionnaire].[dbo].[Record Details]
-	                                     WHERE [QuestionnaireID] = @QuestionnaireID AND [TopicNum] = @TopicNum
-	                                     GROUP BY [RDAns];">
-                                        <SelectParameters>
-                                            <asp:QueryStringParameter  Name="QuestionnaireID" QueryStringField="StatisticsID" />
-                                            <asp:QueryStringParameter DefaultValue="1" Name="TopicNum" QueryStringField="TopicNum" />
-                                        </SelectParameters>
-                        </asp:SqlDataSource>
+                <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+                <div id="chart_div"></div>
             </ItemTemplate>
         </asp:Repeater>
-        <div id="Barchart_div"></div>
 
-        <div id="chart_div"></div>
-        <%--<div>
-            <asp:Chart ID="Chart1" runat="server" DataSourceID="SqlDataSource1">
-                <Series>
-                    <asp:Series Name="Series1" XValueMember="RDAns" YValueMembers="COUNT" ChartType="Bar"></asp:Series>
-                </Series>
-                <ChartAreas>
-                    <asp:ChartArea Name="ChartArea1"></asp:ChartArea>
-                </ChartAreas>
-            </asp:Chart>
-            <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:QuestionnaireConnectionString2 %>" SelectCommand="  SELECT [Record Details].[RDAns], COUNT([Record Details].[RDAns]) AS COUNT
-	            FROM [Questionnaire].[dbo].[Record Details]
-	            WHERE [QuestionnaireID] = @QuestionnaireID
-	            GROUP BY [RDAns];">
-                <SelectParameters>
-                    <asp:QueryStringParameter Name="QuestionnaireID" QueryStringField="StatisticsID" />
-
-                </SelectParameters>
-            </asp:SqlDataSource>
-        </div>--%>
     </form>
 </body>
 </html>

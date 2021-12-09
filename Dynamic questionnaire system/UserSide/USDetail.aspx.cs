@@ -28,6 +28,8 @@ namespace Dynamic_questionnaire_system.UserSide
         private string D1_TITLE, D1_MustKeyIn, D1_SUMMARY;
         protected void Page_Load(object sender, EventArgs e)
         {
+            int IDNumber = Convert.ToInt32(this.Request.QueryString["ID"]);
+
             // check is logined
             if (!AuthManager.IsLogined())
             {
@@ -40,7 +42,6 @@ namespace Dynamic_questionnaire_system.UserSide
             }
             else //既有問卷
             {
-                int IDNumber = Convert.ToInt32(this.Request.QueryString["ID"]);
                 var dr = ContextManager.GetDBData(IDNumber);
                 this.txtQuestaireName.Text = dr["Heading"].ToString();
                 this.txtContent.Text = dr["Content"].ToString();
@@ -85,22 +86,145 @@ namespace Dynamic_questionnaire_system.UserSide
 
                 if (Request.QueryString["ID"] != null && Request.QueryString["RN"] != null)
                 {
-                    int IDNumber = Convert.ToInt32(this.Request.QueryString["ID"]);
                     int RecordNum = Convert.ToInt32(Request.QueryString["RN"].ToString());
                     var gdd = ContextManager.GetRecordDetailsData(RecordNum);
+
+                    this.plblName.Visible = true;
+                    this.plblPhone.Visible = true;
+                    this.plblEmail.Visible = true;
+                    this.plblAge.Visible = true;
+                    this.lblWriteT.Visible = true;
+
+                    this.txtName.Visible = true;
+                    this.txtPhone.Visible = true;
+                    this.txtEmail.Visible = true;
+                    this.txtAge.Visible = true;
+                    this.lblAnsT.Visible = true;
 
                     this.txtName.Text = gdd["AnsName"].ToString();
                     this.txtPhone.Text = gdd["AnsPhone"].ToString();
                     this.txtEmail.Text = gdd["AnsEmail"].ToString();
                     this.txtAge.Text = gdd["AnsAge"].ToString();
-                    this.lblAnsT.Text = Convert.ToDateTime(gdd["AnsTime"]).ToString("yyyy/MM/dd");
-
-                    // todo: 這裡還沒完成 =>顯示問卷內容
+                    this.lblAnsT.Text = Convert.ToDateTime(gdd["AnsTime"]).ToString("yyyy/MM/dd HH:mm:ss");
                     Generate_Page(IDNumber, RecordNum);
                 }
             }
 
+            #region 統計資料
+
+
+            this.reTopicDescription.DataSource = ContextManager.GetTopicDescription(IDNumber);           
+            this.reTopicDescription.DataBind();
+            #endregion
         }
+        protected void reTopicDescription_ItemDataBound(object sender, RepeaterItemEventArgs e)
+        {
+            int IDNumber = Convert.ToInt32(this.Request.QueryString["ID"]);
+            var tb = ContextManager.GetStatisticsDBSourceTB(IDNumber);
+            GetStatistics getStatistics;
+            Dictionary<int, GetStatistics> dict = new Dictionary<int, GetStatistics>();
+
+            foreach (DataRow dr in tb.Rows)
+            {
+                int TopicNum = (int)dr["TopicNum"];
+                if (!dict.ContainsKey(TopicNum))
+                {
+                    getStatistics = new GetStatistics
+                    {
+                        TopicNum = (int)dr["TopicNum"],
+                        TopicDescription = (string)dr["TopicDescription"],
+                        TopicType = (string)dr["TopicType"],
+                        answer1 = dr["answer1"] as string,
+                        answer2 = dr["answer2"] as string,
+                        answer3 = dr["answer3"] as string,
+                        answer4 = dr["answer4"] as string,
+                        answer5 = dr["answer5"] as string,
+                        answer6 = dr["answer6"] as string,
+                        OptionsAll = (int)dr["OptionsAll"],
+                        RDAns = (string)dr["RDAns"],
+                        answer1Vaule = 0,
+                        answer2Vaule = 0,
+                        answer3Vaule = 0,
+                        answer4Vaule = 0,
+                        answer5Vaule = 0,
+                        answer6Vaule = 0
+                    };
+                    dict[TopicNum] = getStatistics;
+                }
+                if (dict[TopicNum].TopicType == "CB") //複選題
+                {
+                    string s = (string)dr["RDAns"];
+                    string[] subs = s.Split(';');
+                    foreach (string sub in subs)
+                    {
+                        if (sub == dict[TopicNum].answer1)
+                        {
+                            dict[TopicNum].answer1Vaule += 1;
+                        }
+                        else if (sub == dict[TopicNum].answer2)
+                        {
+                            dict[TopicNum].answer2Vaule += 1;
+                        }
+                        else if (sub == dict[TopicNum].answer3)
+                        {
+                            dict[TopicNum].answer3Vaule += 1;
+                        }
+                        else if (sub == dict[TopicNum].answer4)
+                        {
+                            dict[TopicNum].answer4Vaule += 1;
+                        }
+                        else if (sub == dict[TopicNum].answer5)
+                        {
+                            dict[TopicNum].answer5Vaule += 1;
+                        }
+                        else if (sub == dict[TopicNum].answer6)
+                        {
+                            dict[TopicNum].answer6Vaule += 1;
+                        }
+                    }
+                }
+                else if (dict[TopicNum].TopicType == "RB") //單選題
+                {
+                    string s = (string)dr["RDAns"];
+                    if (s == dict[TopicNum].answer1)
+                    {
+                        dict[TopicNum].answer1Vaule += 1;
+                    }
+                    else if (s == dict[TopicNum].answer2)
+                    {
+                        dict[TopicNum].answer2Vaule += 1;
+                    }
+                    else if (s == dict[TopicNum].answer3)
+                    {
+                        dict[TopicNum].answer3Vaule += 1;
+                    }
+                    else if (s == dict[TopicNum].answer4)
+                    {
+                        dict[TopicNum].answer4Vaule += 1;
+                    }
+                    else if (s == dict[TopicNum].answer5)
+                    {
+                        dict[TopicNum].answer5Vaule += 1;
+                    }
+                    else if (s == dict[TopicNum].answer6)
+                    {
+                        dict[TopicNum].answer6Vaule += 1;
+                    }
+                }
+                else
+                {
+                    Label label = new Label();
+                    label.Text = "文字方塊 不做統計";
+                }
+
+            }
+
+            Repeater TempRep = (Repeater)e.Item.FindControl("reAnswers");
+            TempRep.DataSource = ContextManager.GetQuestion(IDNumber);
+            TempRep.DataBind();
+
+        }
+
 
         #region 分頁
         /// <summary>
@@ -625,7 +749,11 @@ namespace Dynamic_questionnaire_system.UserSide
 
         }
 
-        #region 填寫資料 - 顯示資料
+
+
+
+
+        #region 填寫資料 - 顯示問卷填寫細節
         public void Generate_Page(int IDNumber, int RecordNum)
         {
             var tb = ContextManager.USGetStatisticsDBSourceTB(IDNumber, RecordNum);
@@ -808,7 +936,6 @@ namespace Dynamic_questionnaire_system.UserSide
             }
 
         }
-        
 
         //== 產生每一個問題的共同項目，例如：「標題」、「摘要」、「是否必填？」
         //== Questionnaires資料表。
@@ -829,77 +956,12 @@ namespace Dynamic_questionnaire_system.UserSide
             LB_summary.Text = "<br /><font color='#484848'><small>" + D1_SUMMARY + "</small></font><br />";  //-- 每一個問題的「摘要」
             AnsDetail.Controls.Add(LB_summary);  //-- 動態加入畫面（PlaceHolder1）之中
         }
-
-        //== 計算這個問卷出了幾個題目（Questionnaires）？
-        protected int Compute_QNo(int M_ID)
-        {
-            SqlConnection Conn = new SqlConnection(ConnStr);
-            Conn.Open();   //-- 連結DB
-            SqlCommand cmdQNo = new SqlCommand("SELECT COUNT([TopicNum]) FROM [Questionnaires] WHERE [QuestionnaireID] IN (SELECT [QuestionnaireID] = @QuestionnaireID From [Outline] WHERE [Vote] = '投票中' AND [StartTime] <= GETDATE() AND [EndTime] >= GETDATE())", Conn);
-            cmdQNo.Parameters.Add("@QuestionnaireID", SqlDbType.Int).Value = M_ID;
-            //-- 把 Outline資料表裡面，呈現在網站的首頁上面。
-
-            int x = (int)cmdQNo.ExecuteScalar();  //-- 執行SQL指令。
-            cmdQNo.Cancel();
-            Conn.Close();
-            Conn.Dispose();
-
-            return x; //-- 執行SQL指令。
-        }
-
-        //== 針對這個問卷，每一個題目（Questionnaires）的ID編號 =>TopicNum
-        protected System.Collections.ArrayList Take_D1_ID(int M_ID)
-        {
-            SqlConnection Conn = new SqlConnection(ConnStr);
-            Conn.Open();   //-- 連結DB
-            SqlCommand cmdD1 = new SqlCommand("SELECT [TopicNum] FROM [Questionnaires] WHERE [QuestionnaireID] = @QuestionnaireID", Conn);
-            cmdD1.Parameters.Add("@QuestionnaireID", SqlDbType.Int).Value = M_ID;
-            //-- 把 Outline資料表裡面，最新的一場投票，呈現在網站的首頁上面。
-
-            SqlDataReader drD1 = cmdD1.ExecuteReader();  //-- 執行SQL指令。
-
-            System.Collections.ArrayList D1_array = new System.Collections.ArrayList();
-            if (drD1.HasRows)
-            {
-                while (drD1.Read())
-                    D1_array.Add(drD1["TopicNum"]);
-            }
-            cmdD1.Cancel();
-            Conn.Close();
-            Conn.Dispose();
-
-            return D1_array;
-        }
-
-        //== 針對這個問卷，每一個題目描述 =>TopicDescription
-        protected System.Collections.ArrayList Take_TopicDescription(int M_ID)
-        {
-            SqlConnection Conn = new SqlConnection(ConnStr);
-            Conn.Open();   //-- 連結DB
-            SqlCommand cmdD1 = new SqlCommand("SELECT [TopicDescription] FROM [Questionnaires] WHERE [QuestionnaireID] = @QuestionnaireID", Conn);
-            cmdD1.Parameters.Add("@QuestionnaireID", SqlDbType.Int).Value = M_ID;
-            //-- 把 Outline資料表裡面，最新的一場投票，呈現在網站的首頁上面。
-
-            SqlDataReader drD1 = cmdD1.ExecuteReader();  //-- 執行SQL指令。
-
-            System.Collections.ArrayList D1_array = new System.Collections.ArrayList();
-            if (drD1.HasRows)
-            {
-                while (drD1.Read())
-                    D1_array.Add(drD1["TopicDescription"]);
-            }
-            cmdD1.Cancel();
-            Conn.Close();
-            Conn.Dispose();
-
-            return D1_array;
-        }
         #endregion
 
         #endregion
 
 
-
+        
 
 
     }
