@@ -212,7 +212,7 @@ namespace Dynamic_questionnaire_system.UserSide
 
             }
 
-            this.reTopicDescription.DataSource = dict;
+            this.reTopicDescription.DataSource = dict.Values;
             this.reTopicDescription.DataBind();
             #endregion
         }

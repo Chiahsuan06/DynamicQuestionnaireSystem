@@ -176,12 +176,12 @@
                 <ItemTemplate>
                      <h5>
                          <%#Eval("TopicDescription") %>
-                         <h6><%#Eval("answer1") %></h6><p><%#Eval("answer1Vaule") %></p>
-                         <h6><%#Eval("answer2") %></h6><p><%#Eval("answer2Vaule") %></p>
-                         <h6><%#Eval("answer3") %></h6><p><%#Eval("answer3Vaule") %></p>
-                         <h6><%#Eval("answer4") %></h6><p><%#Eval("answer4Vaule") %></p>
-                         <h6><%#Eval("answer5") %></h6><p><%#Eval("answer5Vaule") %></p>
-                         <h6><%#Eval("answer6") %></h6><p><%#Eval("answer6Vaule") %></p>
+                         <p><%#Eval("answer1") %><%#Eval("answer1Vaule") %></p>
+                         <p><%#Eval("answer2") %><%#Eval("answer2Vaule") %></p>
+                         <p><%#Eval("answer3") %><%#Eval("answer3Vaule") %></p>
+                         <p><%#Eval("answer4") %><%#Eval("answer4Vaule") %></p>
+                         <p><%#Eval("answer5") %><%#Eval("answer5Vaule") %></p>
+                         <p><%#Eval("answer6") %><%#Eval("answer6Vaule") %></p>
                      </h5>
                 </ItemTemplate>               
             </asp:Repeater>
