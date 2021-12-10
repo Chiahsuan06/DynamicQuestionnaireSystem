@@ -112,14 +112,6 @@ namespace Dynamic_questionnaire_system.UserSide
 
             #region 統計資料
 
-
-            this.reTopicDescription.DataSource = ContextManager.GetTopicDescription(IDNumber);           
-            this.reTopicDescription.DataBind();
-            #endregion
-        }
-        protected void reTopicDescription_ItemDataBound(object sender, RepeaterItemEventArgs e)
-        {
-            int IDNumber = Convert.ToInt32(this.Request.QueryString["ID"]);
             var tb = ContextManager.GetStatisticsDBSourceTB(IDNumber);
             GetStatistics getStatistics;
             Dictionary<int, GetStatistics> dict = new Dictionary<int, GetStatistics>();
@@ -182,6 +174,7 @@ namespace Dynamic_questionnaire_system.UserSide
                             dict[TopicNum].answer6Vaule += 1;
                         }
                     }
+
                 }
                 else if (dict[TopicNum].TopicType == "RB") //單選題
                 {
@@ -219,12 +212,10 @@ namespace Dynamic_questionnaire_system.UserSide
 
             }
 
-            Repeater TempRep = (Repeater)e.Item.FindControl("reAnswers");
-            TempRep.DataSource = ContextManager.GetQuestion(IDNumber);
-            TempRep.DataBind();
-
+            this.reTopicDescription.DataSource = dict;
+            this.reTopicDescription.DataBind();
+            #endregion
         }
-
 
         #region 分頁
         /// <summary>
@@ -961,8 +952,14 @@ namespace Dynamic_questionnaire_system.UserSide
         #endregion
 
 
-        
-
-
+        public class AnswerVaule
+        { 
+            public int answer1Vaule { get; set; }
+            public int answer2Vaule { get; set; }
+            public int answer3Vaule { get; set; }
+            public int answer4Vaule { get; set; }
+            public int answer5Vaule { get; set; }
+            public int answer6Vaule { get; set; }
+        }
     }
 }

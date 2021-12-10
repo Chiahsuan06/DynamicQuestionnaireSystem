@@ -6,7 +6,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
+<%--        <style>
             body {font-family: Arial;}
 
             .tab {
@@ -60,7 +60,7 @@
             }
 
             document.getElementById("defaultOpen").click();
-        </script>
+        </script>--%>
 
         <div class="tab">
           <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'Questionnaire')" id="defaultOpen">問卷</button>
@@ -172,24 +172,18 @@
         </div>
 
         <div id="Statistics" class="tabcontent">  <%--統計--%>
-          <h3>統計</h3>
-            <asp:Repeater ID="reTopicDescription" runat="server" OnItemDataBound="reTopicDescription_ItemDataBound">
+            <asp:Repeater ID="reTopicDescription" runat="server" >
                 <ItemTemplate>
-                     <h3>
+                     <h5>
                          <%#Eval("TopicDescription") %>
-                         <asp:Repeater ID="reAnswers" runat="server">
-                             <ItemTemplate>
-                                 <h4><%#Eval("answer1") %></h4>
-                                 <h4><%#Eval("answer2") %></h4>
-                                 <h4><%#Eval("answer3") %></h4>
-                                 <h4><%#Eval("answer4") %></h4>
-                                 <h4><%#Eval("answer5") %></h4>
-                                 <h4><%#Eval("answer6") %></h4>
-                             </ItemTemplate>
-                         </asp:Repeater>
-                     </h3>
-                </ItemTemplate>
-                
+                         <h6><%#Eval("answer1") %></h6><p><%#Eval("answer1Vaule") %></p>
+                         <h6><%#Eval("answer2") %></h6><p><%#Eval("answer2Vaule") %></p>
+                         <h6><%#Eval("answer3") %></h6><p><%#Eval("answer3Vaule") %></p>
+                         <h6><%#Eval("answer4") %></h6><p><%#Eval("answer4Vaule") %></p>
+                         <h6><%#Eval("answer5") %></h6><p><%#Eval("answer5Vaule") %></p>
+                         <h6><%#Eval("answer6") %></h6><p><%#Eval("answer6Vaule") %></p>
+                     </h5>
+                </ItemTemplate>               
             </asp:Repeater>
         </div>
 </asp:Content>
