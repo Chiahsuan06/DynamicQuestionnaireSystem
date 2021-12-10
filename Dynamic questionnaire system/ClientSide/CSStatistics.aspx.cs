@@ -35,7 +35,7 @@ namespace Dynamic_questionnaire_system.ClientSide
             this.reTopicDescription.DataSource = ContextManager.GetTopicDescription(IDNum);
             this.reTopicDescription.DataBind();
 
-            // todo: 這裡卡著  1203
+            // todo: 這裡卡著  1203 我的
             var tb = ContextManager.GetStatisticsDBSourceTB(IDNum);
             GetStatistics getStatistics;
             Dictionary<int, GetStatistics> dict = new Dictionary<int, GetStatistics>();
@@ -162,13 +162,18 @@ namespace Dynamic_questionnaire_system.ClientSide
                     cstext2.Append("data.addColumn('string', 'Topping');\n");
                     cstext2.Append("data.addColumn('number', 'Slices');\n");
                     cstext2.Append($"data.addRows([['{kvp.Value.answer1}', {kvp.Value.answer1Vaule}], ['{kvp.Value.answer2}', {kvp.Value.answer2Vaule}], ['{kvp.Value.answer3}', {kvp.Value.answer3Vaule}], ['{kvp.Value.answer4}', {kvp.Value.answer4Vaule}], ['{kvp.Value.answer5}', {kvp.Value.answer5Vaule}], ['{kvp.Value.answer6}', {kvp.Value.answer6Vaule}]]);\n");
-                    cstext2.Append($"options = {{ 'title': '{kvp.Key}.{kvp.Value.TopicDescription}', 'width': 500, 'height': 300 }};\n");
-                    cstext2.Append($"document.write(\"<div id='chart_div{kvp.Key}'></div>\");\n");
                     if (kvp.Value.TopicType == "RB")
+                    {
+                        cstext2.Append($"options = {{ 'title': '', 'width': 500, 'height': 300 }};\n");
                         cstext2.Append($"chart = new google.visualization.PieChart(document.getElementById('chart_div{kvp.Key}'));\n"); //圓餅圖
-                    else
+                        cstext2.Append("chart.draw(data, options);\n");
+                    }
+                    else if (kvp.Value.TopicType == "CB")
+                    {
+                        cstext2.Append($"options = {{ 'legend':{{'position':'none'}}, 'title': '', 'width': 500, 'height': 300 }};\n");
                         cstext2.Append($"chart = new google.visualization.BarChart(document.getElementById('chart_div{kvp.Key}'));\n"); //長條圖
-                    cstext2.Append("chart.draw(data, options);\n");
+                        cstext2.Append("chart.draw(data, options);\n");
+                    }
                 }
                 cstext2.Append("}</script>\n");
                 cs1.RegisterClientScriptBlock(cstype1, csname2, cstext2.ToString(), false);
