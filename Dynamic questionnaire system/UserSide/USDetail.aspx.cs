@@ -139,7 +139,14 @@ namespace Dynamic_questionnaire_system.UserSide
                         answer3Vaule = 0,
                         answer4Vaule = 0,
                         answer5Vaule = 0,
-                        answer6Vaule = 0
+                        answer6Vaule = 0,
+
+                        answer1percentage = "",
+                        answer2percentage = "",
+                        answer3percentage = "",
+                        answer4percentage = "",
+                        answer5percentage = "",
+                        answer6percentage = "",
                     };
                     dict[TopicNum] = getStatistics;
                 }
@@ -174,7 +181,19 @@ namespace Dynamic_questionnaire_system.UserSide
                             dict[TopicNum].answer6Vaule += 1;
                         }
                     }
-
+                    double percentageA1 = Convert.ToDouble(dict[TopicNum].answer1Vaule) / Convert.ToDouble(dict[TopicNum].answer1Vaule + dict[TopicNum].answer2Vaule + dict[TopicNum].answer3Vaule + dict[TopicNum].answer4Vaule + dict[TopicNum].answer5Vaule + dict[TopicNum].answer6Vaule) * 100;
+                    double percentageA2 = Convert.ToDouble(dict[TopicNum].answer2Vaule) / Convert.ToDouble(dict[TopicNum].answer1Vaule + dict[TopicNum].answer2Vaule + dict[TopicNum].answer3Vaule + dict[TopicNum].answer4Vaule + dict[TopicNum].answer5Vaule + dict[TopicNum].answer6Vaule) * 100;
+                    double percentageA3 = Convert.ToDouble(dict[TopicNum].answer3Vaule) / Convert.ToDouble(dict[TopicNum].answer1Vaule + dict[TopicNum].answer2Vaule + dict[TopicNum].answer3Vaule + dict[TopicNum].answer4Vaule + dict[TopicNum].answer5Vaule + dict[TopicNum].answer6Vaule) * 100;
+                    double percentageA4 = Convert.ToDouble(dict[TopicNum].answer4Vaule) / Convert.ToDouble(dict[TopicNum].answer1Vaule + dict[TopicNum].answer2Vaule + dict[TopicNum].answer3Vaule + dict[TopicNum].answer4Vaule + dict[TopicNum].answer5Vaule + dict[TopicNum].answer6Vaule) * 100;
+                    double percentageA5 = Convert.ToDouble(dict[TopicNum].answer5Vaule) / Convert.ToDouble(dict[TopicNum].answer1Vaule + dict[TopicNum].answer2Vaule + dict[TopicNum].answer3Vaule + dict[TopicNum].answer4Vaule + dict[TopicNum].answer5Vaule + dict[TopicNum].answer6Vaule) * 100;
+                    double percentageA6 = Convert.ToDouble(dict[TopicNum].answer6Vaule) / Convert.ToDouble(dict[TopicNum].answer1Vaule + dict[TopicNum].answer2Vaule + dict[TopicNum].answer3Vaule + dict[TopicNum].answer4Vaule + dict[TopicNum].answer5Vaule + dict[TopicNum].answer6Vaule) * 100;
+                    
+                    dict[TopicNum].answer1percentage = $"{percentageA1}%";
+                    dict[TopicNum].answer2percentage = $"{percentageA2}%";
+                    dict[TopicNum].answer3percentage = $"{percentageA3}%";
+                    dict[TopicNum].answer4percentage = $"{percentageA4}%";
+                    dict[TopicNum].answer5percentage = $"{percentageA5}%";
+                    dict[TopicNum].answer6percentage = $"{percentageA6}%";
                 }
                 else if (dict[TopicNum].TopicType == "RB") //單選題
                 {
@@ -203,6 +222,20 @@ namespace Dynamic_questionnaire_system.UserSide
                     {
                         dict[TopicNum].answer6Vaule += 1;
                     }
+
+                    double percentageA1 = Convert.ToDouble(dict[TopicNum].answer1Vaule) / Convert.ToDouble(dict[TopicNum].answer1Vaule + dict[TopicNum].answer2Vaule + dict[TopicNum].answer3Vaule + dict[TopicNum].answer4Vaule + dict[TopicNum].answer5Vaule + dict[TopicNum].answer6Vaule) * 100;
+                    double percentageA2 = Convert.ToDouble(dict[TopicNum].answer2Vaule) / Convert.ToDouble(dict[TopicNum].answer1Vaule + dict[TopicNum].answer2Vaule + dict[TopicNum].answer3Vaule + dict[TopicNum].answer4Vaule + dict[TopicNum].answer5Vaule + dict[TopicNum].answer6Vaule) * 100;
+                    double percentageA3 = Convert.ToDouble(dict[TopicNum].answer3Vaule) / Convert.ToDouble(dict[TopicNum].answer1Vaule + dict[TopicNum].answer2Vaule + dict[TopicNum].answer3Vaule + dict[TopicNum].answer4Vaule + dict[TopicNum].answer5Vaule + dict[TopicNum].answer6Vaule) * 100;
+                    double percentageA4 = Convert.ToDouble(dict[TopicNum].answer4Vaule) / Convert.ToDouble(dict[TopicNum].answer1Vaule + dict[TopicNum].answer2Vaule + dict[TopicNum].answer3Vaule + dict[TopicNum].answer4Vaule + dict[TopicNum].answer5Vaule + dict[TopicNum].answer6Vaule) * 100;
+                    double percentageA5 = Convert.ToDouble(dict[TopicNum].answer5Vaule) / Convert.ToDouble(dict[TopicNum].answer1Vaule + dict[TopicNum].answer2Vaule + dict[TopicNum].answer3Vaule + dict[TopicNum].answer4Vaule + dict[TopicNum].answer5Vaule + dict[TopicNum].answer6Vaule) * 100;
+                    double percentageA6 = Convert.ToDouble(dict[TopicNum].answer6Vaule) / Convert.ToDouble(dict[TopicNum].answer1Vaule + dict[TopicNum].answer2Vaule + dict[TopicNum].answer3Vaule + dict[TopicNum].answer4Vaule + dict[TopicNum].answer5Vaule + dict[TopicNum].answer6Vaule) * 100;
+
+                    dict[TopicNum].answer1percentage = $"{percentageA1}%";
+                    dict[TopicNum].answer2percentage = $"{percentageA2}%";
+                    dict[TopicNum].answer3percentage = $"{percentageA3}%";
+                    dict[TopicNum].answer4percentage = $"{percentageA4}%";
+                    dict[TopicNum].answer5percentage = $"{percentageA5}%";
+                    dict[TopicNum].answer6percentage = $"{percentageA6}%";
                 }
                 else
                 {
