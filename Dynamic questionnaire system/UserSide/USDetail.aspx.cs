@@ -984,15 +984,5 @@ namespace Dynamic_questionnaire_system.UserSide
 
         #endregion
 
-
-        public class AnswerVaule
-        { 
-            public int answer1Vaule { get; set; }
-            public int answer2Vaule { get; set; }
-            public int answer3Vaule { get; set; }
-            public int answer4Vaule { get; set; }
-            public int answer5Vaule { get; set; }
-            public int answer6Vaule { get; set; }
-        }
     }
 }
