@@ -57,12 +57,12 @@ namespace Dynamic_questionnaire_system.ClientSide
                         answer6 = dr["answer6"] as string,
                         OptionsAll = (int)dr["OptionsAll"],
                         RDAns = (string)dr["RDAns"],
-                        answer1Vaule = 0,
-                        answer2Vaule = 0,
-                        answer3Vaule = 0,
-                        answer4Vaule = 0,
-                        answer5Vaule = 0,
-                        answer6Vaule = 0
+                        answer1Value = 0,
+                        answer2Value = 0,
+                        answer3Value = 0,
+                        answer4Value = 0,
+                        answer5Value = 0,
+                        answer6Value = 0
                     };
                     dict[TopicNum] = getStatistics;
                 }
@@ -75,27 +75,27 @@ namespace Dynamic_questionnaire_system.ClientSide
                     {
                         if (sub == dict[TopicNum].answer1)
                         {
-                            dict[TopicNum].answer1Vaule += 1;
+                            dict[TopicNum].answer1Value += 1;
                         }
                         else if (sub == dict[TopicNum].answer2)
                         {
-                            dict[TopicNum].answer2Vaule += 1;
+                            dict[TopicNum].answer2Value += 1;
                         }
                         else if (sub == dict[TopicNum].answer3)
                         {
-                            dict[TopicNum].answer3Vaule += 1;
+                            dict[TopicNum].answer3Value += 1;
                         }
                         else if (sub == dict[TopicNum].answer4)
                         {
-                            dict[TopicNum].answer4Vaule += 1;
+                            dict[TopicNum].answer4Value += 1;
                         }
                         else if (sub == dict[TopicNum].answer5)
                         {
-                            dict[TopicNum].answer5Vaule += 1;
+                            dict[TopicNum].answer5Value += 1;
                         }
                         else if (sub == dict[TopicNum].answer6)
                         {
-                            dict[TopicNum].answer6Vaule += 1;
+                            dict[TopicNum].answer6Value += 1;
                         }
                     }
                 }
@@ -104,27 +104,27 @@ namespace Dynamic_questionnaire_system.ClientSide
                     string s = (string)dr["RDAns"];
                     if (s == dict[TopicNum].answer1)
                     {
-                        dict[TopicNum].answer1Vaule += 1;
+                        dict[TopicNum].answer1Value += 1;
                     }
                     else if (s == dict[TopicNum].answer2)
                     {
-                        dict[TopicNum].answer2Vaule += 1;
+                        dict[TopicNum].answer2Value += 1;
                     }
                     else if (s == dict[TopicNum].answer3)
                     {
-                        dict[TopicNum].answer3Vaule += 1;
+                        dict[TopicNum].answer3Value += 1;
                     }
                     else if (s == dict[TopicNum].answer4)
                     {
-                        dict[TopicNum].answer4Vaule += 1;
+                        dict[TopicNum].answer4Value += 1;
                     }
                     else if (s == dict[TopicNum].answer5)
                     {
-                        dict[TopicNum].answer5Vaule += 1;
+                        dict[TopicNum].answer5Value += 1;
                     }
                     else if (s == dict[TopicNum].answer6)
                     {
-                        dict[TopicNum].answer6Vaule += 1;
+                        dict[TopicNum].answer6Value += 1;
                     }
                 }
             }
@@ -160,7 +160,7 @@ namespace Dynamic_questionnaire_system.ClientSide
                     cstext2.Append("data = new google.visualization.DataTable();\n");
                     cstext2.Append("data.addColumn('string', 'Topping');\n");
                     cstext2.Append("data.addColumn('number', 'Slices');\n");
-                    cstext2.Append($"data.addRows([['{kvp.Value.answer1}', {kvp.Value.answer1Vaule}], ['{kvp.Value.answer2}', {kvp.Value.answer2Vaule}], ['{kvp.Value.answer3}', {kvp.Value.answer3Vaule}], ['{kvp.Value.answer4}', {kvp.Value.answer4Vaule}], ['{kvp.Value.answer5}', {kvp.Value.answer5Vaule}], ['{kvp.Value.answer6}', {kvp.Value.answer6Vaule}]]);\n");
+                    cstext2.Append($"data.addRows([['{kvp.Value.answer1}', {kvp.Value.answer1Value}], ['{kvp.Value.answer2}', {kvp.Value.answer2Value}], ['{kvp.Value.answer3}', {kvp.Value.answer3Value}], ['{kvp.Value.answer4}', {kvp.Value.answer4Value}], ['{kvp.Value.answer5}', {kvp.Value.answer5Value}], ['{kvp.Value.answer6}', {kvp.Value.answer6Value}]]);\n");
                     if (kvp.Value.TopicType == "RB")
                     {
                         cstext2.Append($"options = {{ 'title': '', 'width': 500, 'height': 300 }};\n");

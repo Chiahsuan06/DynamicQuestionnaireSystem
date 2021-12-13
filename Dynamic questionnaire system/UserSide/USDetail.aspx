@@ -171,19 +171,19 @@
 
         </div>
 
-    <%--todo: 動態顯示選項--%>
         <div id="Statistics" class="tabcontent">  <%--統計--%>
             <asp:Repeater ID="reTopicDescription" runat="server" >
                 <ItemTemplate>
-                     <h5>
+                    <h5>
                          <%#Eval("TopicDescription") %>
-                         <p><%#Eval("answer1") %><%#Eval("answer1percentage") %>(<%#Eval("answer1Vaule") %>)</p>
-                         <p><%#Eval("answer2") %><%#Eval("answer2percentage") %>(<%#Eval("answer2Vaule") %>)</p>
-                         <p><%#Eval("answer3") %><%#Eval("answer3percentage") %>(<%#Eval("answer3Vaule") %>)</p>
-                         <p><%#Eval("answer4") %><%#Eval("answer4percentage") %>(<%#Eval("answer4Vaule") %>)</p>
-                         <p><%#Eval("answer5") %><%#Eval("answer5percentage") %>(<%#Eval("answer5Vaule") %>)</p>
-                         <p><%#Eval("answer6") %><%#Eval("answer6percentage") %>(<%#Eval("answer6Vaule") %>)</p>
-                     </h5>
+
+                         <%#Eval("answer1")==null ? "": "<p>"+Eval("answer1") +Eval("answer1percentage") + "("+Eval("answer1Value")+")</p>" %>
+                         <%#Eval("answer2")==null ? "": "<p>"+Eval("answer2") +Eval("answer2percentage") + "("+Eval("answer2Value")+")</p>" %>
+                         <%#Eval("answer3")==null ? "": "<p>"+Eval("answer3") +Eval("answer3percentage") + "("+Eval("answer3Value")+")</p>" %>
+                         <%#Eval("answer4")==null ? "": "<p>"+Eval("answer4") +Eval("answer4percentage") + "("+Eval("answer4Value")+")</p>" %>
+                         <%#Eval("answer5")==null ? "": "<p>"+Eval("answer5") +Eval("answer5percentage") + "("+Eval("answer5Value")+")</p>" %>
+                         <%#Eval("answer6")==null ? "": "<p>"+Eval("answer6") +Eval("answer6percentage") + "("+Eval("answer6Value")+")</p>" %>                          
+                </h5>
                 </ItemTemplate>               
             </asp:Repeater>
         </div>
