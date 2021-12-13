@@ -39,11 +39,10 @@
             <asp:BoundField HeaderText="結束時間" DataField="EndTime" DataFormatString="{0:yyyy-MM-dd}"/>
             <asp:TemplateField HeaderText="觀看統計">
                 <ItemTemplate>
-                    <a href="CSStatistics.aspx?Number=<%# Eval("QuestionnaireID") %>">前往</a>
+                    <a href="http://localhost:57265/ClientSide/CSStatistics.aspx?StatisticsID=<%# Eval("QuestionnaireID") %>">前往</a>
                 </ItemTemplate>
             </asp:TemplateField>
         </Columns>
     </asp:GridView>
-    <%--<asp:SqlDataSource ID="SqlDataSource1" runat="server"></asp:SqlDataSource>--%>
     <uc1:ucPager runat="server" ID="ucPager" PageSize ="10" Url="/UserSide/USList.aspx"/>
 </asp:Content>

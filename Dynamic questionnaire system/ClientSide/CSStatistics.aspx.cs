@@ -19,7 +19,7 @@ namespace Dynamic_questionnaire_system.ClientSide
 {
     public partial class CSStatistics : System.Web.UI.Page
     {
-        // todo: 這裡還沒完成
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (this.Request.QueryString["StatisticsID"] == null)
@@ -35,7 +35,6 @@ namespace Dynamic_questionnaire_system.ClientSide
             this.reTopicDescription.DataSource = ContextManager.GetTopicDescription(IDNum);
             this.reTopicDescription.DataBind();
 
-            // todo: 這裡卡著  1203 我的
             var tb = ContextManager.GetStatisticsDBSourceTB(IDNum);
             GetStatistics getStatistics;
             Dictionary<int, GetStatistics> dict = new Dictionary<int, GetStatistics>();

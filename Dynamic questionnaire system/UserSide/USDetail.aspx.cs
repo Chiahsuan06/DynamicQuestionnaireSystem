@@ -47,6 +47,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 this.txtContent.Text = dr["Content"].ToString();
                 this.txtStartT.Text = Convert.ToDateTime(dr["StartTime"]).ToString("yyyy/MM/dd");
                 this.txtEndT.Text = Convert.ToDateTime(dr["EndTime"]).ToString("yyyy/MM/dd");
+
                 if (dr["Vote"].ToString() == "投票中")
                 {
                     this.ckbActivated.Checked = true;
@@ -57,7 +58,6 @@ namespace Dynamic_questionnaire_system.UserSide
                 }
 
                 //後台內頁2-問題
-                //this.givQuestion.DataSource = this.Session["GivQuestionList"] as DataTable;
                 this.givQuestion.DataSource = GetGivDBData(IDNumber);
                 this.givQuestion.DataBind();
 
@@ -150,6 +150,7 @@ namespace Dynamic_questionnaire_system.UserSide
                     };
                     dict[TopicNum] = getStatistics;
                 }
+                // todo: 動態顯示選項
                 if (dict[TopicNum].TopicType == "CB") //複選題
                 {
                     string s = (string)dr["RDAns"];
@@ -193,7 +194,7 @@ namespace Dynamic_questionnaire_system.UserSide
                     dict[TopicNum].answer3percentage = $"{percentageA3}%";
                     dict[TopicNum].answer4percentage = $"{percentageA4}%";
                     dict[TopicNum].answer5percentage = $"{percentageA5}%";
-                    dict[TopicNum].answer6percentage = $"{percentageA6}%";
+                    dict[TopicNum].answer6percentage = $"{percentageA6}%";                    
                 }
                 else if (dict[TopicNum].TopicType == "RB") //單選題
                 {
@@ -244,7 +245,6 @@ namespace Dynamic_questionnaire_system.UserSide
                 }
 
             }
-
             this.reTopicDescription.DataSource = dict.Values;
             this.reTopicDescription.DataBind();
             #endregion

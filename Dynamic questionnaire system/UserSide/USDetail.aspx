@@ -6,7 +6,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-<%--        <style>
+        <style>
             body {font-family: Arial;}
 
             .tab {
@@ -60,7 +60,7 @@
             }
 
             document.getElementById("defaultOpen").click();
-        </script>--%>
+        </script>
 
         <div class="tab">
           <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'Questionnaire')" id="defaultOpen">問卷</button>
@@ -123,7 +123,7 @@
                     <asp:BoundField HeaderText="種類" DataField="TopicType"/>
                     <asp:TemplateField HeaderText="必填">
                         <ItemTemplate>
-                            <asp:CheckBox ID="chbMustKeyIn" runat="server" />
+                            <asp:CheckBox ID="chbMustKeyIn" runat="server" Enabled="False" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:BoundField DataField="TopicMustKeyIn" />
@@ -171,6 +171,7 @@
 
         </div>
 
+    <%--todo: 動態顯示選項--%>
         <div id="Statistics" class="tabcontent">  <%--統計--%>
             <asp:Repeater ID="reTopicDescription" runat="server" >
                 <ItemTemplate>
