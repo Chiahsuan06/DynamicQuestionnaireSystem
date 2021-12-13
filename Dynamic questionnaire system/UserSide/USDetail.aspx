@@ -41,26 +41,6 @@
               border-top: none;
             }
         </style>
-        <script>
-            function openQuestionnaire(evt, idName) {
-
-                var i, tabcontent, tablinks;
-                tabcontent = document.getElementsByClassName("tabcontent");
-                for (i = 0; i < tabcontent.length; i++) {
-                    tabcontent[i].style.display = "none";
-                }
-
-                tablinks = document.getElementsByClassName("tablinks");
-                for (i = 0; i < tablinks.length; i++) {
-                    tablinks[i].className = tablinks[i].className.replace(" active", "");
-                }
-
-                document.getElementById(idName).style.display = "block";
-                evt.currentTarget.className += " active";
-            }
-
-            document.getElementById("defaultOpen").click();
-        </script>
 
         <div class="tab">
           <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'Questionnaire')" id="defaultOpen">問卷</button>
@@ -107,11 +87,11 @@
             <br />
             <asp:Label ID="lblOptions" runat="server" Text="回答"></asp:Label>&nbsp;&nbsp;
             <asp:TextBox ID="txtOptions" runat="server"></asp:TextBox>(多個答案以；分隔)&nbsp;&nbsp;
-            <asp:Button ID="btnAddIn" runat="server" Text="加入" OnClick="btnAddIn_Click" />
+            <asp:Button ID="btnAddIn" runat="server" Text="加入" />
             <asp:HiddenField ID="HiddenField1" runat="server" />
             <br /><br />
-            <asp:ImageButton ID="ImgbtnBin" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" OnClick="ImgbtnBin_Click"/>&nbsp;&nbsp;<asp:Label ID="lblAddMessage" runat="server" ForeColor="Red"></asp:Label>
-            <asp:GridView ID="givQuestion" runat="server" AutoGenerateColumns="False" OnRowCommand="givQuestion_RowCommand" OnRowDataBound="givQuestion_RowDataBound" OnRowUpdating="givQuestion_RowUpdating">
+            <asp:ImageButton ID="ImgbtnBin" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" />&nbsp;&nbsp;<asp:Label ID="lblAddMessage" runat="server" ForeColor="Red"></asp:Label>
+            <asp:GridView ID="givQuestion" runat="server" AutoGenerateColumns="False" OnRowDataBound="givQuestion_RowDataBound" OnRowUpdating="givQuestion_RowUpdating">
                 <Columns>
                     <asp:TemplateField>
                         <ItemTemplate>
@@ -131,8 +111,8 @@
                 </Columns>
             </asp:GridView>
             <div>
-                <asp:Button ID="btngivCancel" runat="server" Text="取消" OnClick="btngivCancel_Click"/>&nbsp;&nbsp;&nbsp;&nbsp;
-                <asp:Button ID="btngivSent" runat="server" Text="送出" OnClick="btngivSent_Click"/>
+                <asp:Button ID="btngivCancel" runat="server" Text="取消" />&nbsp;&nbsp;&nbsp;&nbsp;
+                <asp:Button ID="btngivSent" runat="server" Text="送出" />
             </div>
 
         </div>
@@ -190,4 +170,26 @@
                 </ItemTemplate>               
             </asp:Repeater>
         </div>
+
+        <script>
+            function openQuestionnaire(evt, idName) {
+
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+
+                document.getElementById(idName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+
+            document.getElementById("defaultOpen").click();
+        </script>          
+
 </asp:Content>

@@ -37,6 +37,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 Response.Redirect("/UserSide/USLogin.aspx");
                 return;
             }
+
             if (this.Request.QueryString["ID"] == null)  //全新問卷
             {
                 this.txtStartT.Text = DateTime.Now.ToString("yyyy-MM-dd");  //預設為當日
@@ -70,6 +71,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 }
             }
 
+            #region 後台內頁3 填寫資料+顯示詳細資料
             //後台內頁3-填寫資料
             this.givExport.DataSource = ContextManager.GetRecordData();  //做方法
             this.givExport.DataBind();
@@ -113,7 +115,9 @@ namespace Dynamic_questionnaire_system.UserSide
                 }
             }
 
-            #region 統計資料
+            #endregion
+
+            #region 後台內頁4 統計資料
 
             var tb = ContextManager.GetStatisticsDBSourceTB(IDNumber);
             GetStatistics getStatistics;
@@ -516,120 +520,8 @@ namespace Dynamic_questionnaire_system.UserSide
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        //沒有顯示
-        protected void btnAddIn_Click(object sender, EventArgs e)
-        {
-            string QuestionType;
-            if (ddlType.SelectedIndex == 1)   //要從資料庫呼出來
-            {
-
-                QuestionType = "常用問題1";
-            }
-            else
-            {
-                QuestionType = "自訂問題";
-
-                if (string.IsNullOrEmpty(txtQuestion.Text) || string.IsNullOrEmpty(txtOptions.Text))
-                {
-                    this.lblAddMessage.Text = "問題 和 回答 不得空白";
-                    return;
-                }
-
-                List<AddInGivQuestionList> gpList;
-
-                if (this.Session["GivQuestion"] != null)
-                {
-                    gpList = this.Session["GivQuestion"] as List<AddInGivQuestionList>;
-                }
-                else
-                {
-                    gpList = new List<AddInGivQuestionList>();
-                    this.Session["GivQuestion"] = gpList;
-                }
-
-                int Num = 1;
-                if (Num != 1)
-                {
-                    Num += 1;
-                }
-
-                string Question = this.txtQuestion.Text;
-
-                string QuestChoose;
-                if (ddlChoose.SelectedIndex == 0)
-                {
-                    QuestChoose = "單選方塊";
-                }
-                else if (ddlChoose.SelectedIndex == 1)
-                {
-                    QuestChoose = "複選方塊";
-                }
-                else
-                {
-                    QuestChoose = "文字";
-                }
-
-                bool ckbRe;
-                if (ckbRequired.Checked)
-                {
-                    ckbRe = true;
-                }
-                else
-                {
-                    ckbRe = false;
-                }
-
-                string Options = this.txtOptions.Text;
-
-                //var gpList = new AddInGivQuestionList()
-                //{
-                //   TopicNum = Num,
-                //   TopicDescription = Question,
-                //   TopicType = QuestChoose,
-                //   TopicMustKeyIn = ckbRe,
-                //   Options = Options
-                //};
 
 
-                this.givQuestion.DataSource = gpList;
-                this.givQuestion.DataBind();
-            }
-
-        }
-
-        protected void givQuestion_RowCommand(object sender, GridViewCommandEventArgs e)
-        {
-
-        }
-
-        /// <summary>
-        /// 問題 - 刪除紐
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected void ImgbtnBin_Click(object sender, ImageClickEventArgs e)
-        {
-
-        }
-        /// <summary>
-        /// 問題 - giv 取消
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected void btngivCancel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        /// <summary>
-        /// 問題 - giv送出
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected void btngivSent_Click(object sender, EventArgs e)
-        {
-            Response.Redirect($"USDetail.aspx?ID={Request.QueryString["ID"]}");
-        }
 
 
 
@@ -776,18 +668,13 @@ namespace Dynamic_questionnaire_system.UserSide
 
         }
 
+        #region 填寫資料 - 顯示問卷填寫細節
         protected void btnreturn_Click(object sender, EventArgs e)
         {
             Response.Redirect($"USDetail.aspx?ID={Request.QueryString["ID"]}");
             this.PlaceHolderExport.Visible = true;
             this.PlaceHolderDetail.Visible = false;
         }
-
-
-
-
-
-        #region 填寫資料 - 顯示問卷填寫細節
         public void Generate_Page(int IDNumber, int RecordNum)
         {
             var tb = ContextManager.USGetStatisticsDBSourceTB(IDNumber, RecordNum);
