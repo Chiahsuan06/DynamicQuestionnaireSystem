@@ -138,7 +138,8 @@
         </div>
 
         <div id="WriteInformation" class="tabcontent">  <%--填寫資料--%>
-            <asp:Button ID="btnExport" runat="server" Text="匯出" OnClick="btnExport_Click" />
+            <asp:PlaceHolder ID="PlaceHolderExport" runat="server" Visible="true">
+                <asp:Button ID="btnExport" runat="server" Text="匯出" OnClick="btnExport_Click" />
             <asp:GridView ID="givExport" runat="server" AutoGenerateColumns="False" DataKeyNames="RecordNum" >
                 <Columns>
                     <asp:BoundField HeaderText="#" DataField="RecordNum"/>
@@ -148,10 +149,12 @@
                 </Columns>
             </asp:GridView>
             <uc1:ucPager runat="server" ID="ucPager" PageSize ="10" Url="/UserSide/USDetail.aspx"/>
+            </asp:PlaceHolder>
 
             <%--分頁--%>
            
             <asp:PlaceHolder ID="PlaceHolderDetail" runat="server" Visible="False">
+                <asp:Button ID="btnreturn" runat="server" Text="回到匯出頁" OnClick="btnreturn_Click" Visible="False" />
                 <div>
                     <asp:Label ID="plblName" runat="server" Text="姓名：" Visible="False"></asp:Label>&nbsp;&nbsp;
                     <asp:TextBox ID="txtName" runat="server" ReadOnly="True" Visible="False"></asp:TextBox><br />

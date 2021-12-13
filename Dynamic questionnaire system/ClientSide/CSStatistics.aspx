@@ -25,7 +25,6 @@
         <asp:Repeater ID="reTopicDescription" runat="server">
             <ItemTemplate>
                 <p><%# Container.ItemIndex + 1 %>.<%#Eval("TopicDescription") %></p>
-                <script type="text/javascript" src="https://www.google.com/jsapi"></script>
                 <div id="chart_div<%#Eval("TopicNum")%>"></div>
             </ItemTemplate>
         </asp:Repeater>

@@ -26,6 +26,7 @@ namespace Dynamic_questionnaire_system.UserSide
         private int M_ID = 0;
         private int D1_ID = 0;
         private string D1_TITLE, D1_MustKeyIn, D1_SUMMARY;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             int IDNumber = Convert.ToInt32(this.Request.QueryString["ID"]);
@@ -69,15 +70,11 @@ namespace Dynamic_questionnaire_system.UserSide
                 }
             }
 
-
-
-
             //後台內頁3-填寫資料
             this.givExport.DataSource = ContextManager.GetRecordData();  //做方法
             this.givExport.DataBind();
             var dt = ContextManager.GetRecordData();
             DataSearch(dt);
-
 
             //顯示詳細資料
             if (!IsPostBack)
@@ -86,6 +83,12 @@ namespace Dynamic_questionnaire_system.UserSide
 
                 if (Request.QueryString["ID"] != null && Request.QueryString["RN"] != null)
                 {
+                    if (this.PlaceHolderDetail.Visible == true)
+                    {
+                        this.PlaceHolderExport.Visible = false;
+                        this.btnreturn.Visible = true;
+                    }
+
                     int RecordNum = Convert.ToInt32(Request.QueryString["RN"].ToString());
                     var gdd = ContextManager.GetRecordDetailsData(RecordNum);
 
@@ -625,7 +628,7 @@ namespace Dynamic_questionnaire_system.UserSide
         /// <param name="e"></param>
         protected void btngivSent_Click(object sender, EventArgs e)
         {
-
+            Response.Redirect($"USDetail.aspx?ID={Request.QueryString["ID"]}");
         }
 
 
@@ -770,6 +773,11 @@ namespace Dynamic_questionnaire_system.UserSide
 
             HttpContext.Current.Response.Write(sw);
             HttpContext.Current.Response.End();
+
+        }
+
+        protected void btnreturn_Click(object sender, EventArgs e)
+        {
 
         }
 
