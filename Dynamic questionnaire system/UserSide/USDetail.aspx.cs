@@ -778,7 +778,9 @@ namespace Dynamic_questionnaire_system.UserSide
 
         protected void btnreturn_Click(object sender, EventArgs e)
         {
-
+            Response.Redirect($"USDetail.aspx?ID={Request.QueryString["ID"]}");
+            this.PlaceHolderExport.Visible = true;
+            this.PlaceHolderDetail.Visible = false;
         }
 
 
