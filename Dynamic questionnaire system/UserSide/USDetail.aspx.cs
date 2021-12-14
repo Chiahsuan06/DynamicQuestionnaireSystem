@@ -73,9 +73,9 @@ namespace Dynamic_questionnaire_system.UserSide
 
             #region 後台內頁3 填寫資料+顯示詳細資料
             //後台內頁3-填寫資料
-            this.givExport.DataSource = ContextManager.GetRecordData();  //做方法
+            this.givExport.DataSource = ContextManager.GetRecordData(IDNumber);  //做方法
             this.givExport.DataBind();
-            var dt = ContextManager.GetRecordData();
+            var dt = ContextManager.GetRecordData(IDNumber);
             DataSearch(dt);
 
             //顯示詳細資料

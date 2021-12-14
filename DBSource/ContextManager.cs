@@ -400,7 +400,7 @@ namespace DBSource
         /// <param name="Start"></param>
         /// <param name="End"></param>
         /// <returns></returns>
-        public static DataTable GetRecordData()
+        public static DataTable GetRecordData(int IDNumber)
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
@@ -409,10 +409,12 @@ namespace DBSource
                           ,[AnsName]
                           ,[AnsTime]
                       FROM [Questionnaire].[dbo].[Record]
+                      WHERE [QuestionnaireID] = @QuestionnaireID
                       ORDER BY [AnsTime] DESC
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
 
             try
             {
