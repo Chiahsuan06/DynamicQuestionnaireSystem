@@ -59,11 +59,11 @@ namespace Dynamic_questionnaire_system.UserSide
                     this.ckbActivated.Checked = false;
                 }
 
-                //後台內頁2-問題
+                // 詢問 後台內頁2-問題
                 this.givQuestion.DataSource = GetGivDBData(IDNumber);
                 this.givQuestion.DataBind();
 
-                //後台內頁2-問題
+                //詢問 後台內頁2-問題
                 if (ddlType.SelectedIndex == 1)   //常用問題1 =>常用問題設定要去常用問題管理，要記得處理
                 {
                     this.txtQuestion.Text = "";
@@ -409,7 +409,7 @@ namespace Dynamic_questionnaire_system.UserSide
 
         #endregion
 
-        #region 問題
+        #region 詢問 後台內頁2-問題
         /// <summary>
         /// 修正問卷顯示 文字
         /// </summary>
