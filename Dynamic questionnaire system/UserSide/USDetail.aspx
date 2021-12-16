@@ -80,9 +80,9 @@
             <asp:Label ID="lblQuestion" runat="server" Text="問題"></asp:Label>&nbsp;&nbsp;
             <asp:TextBox ID="txtQuestion" runat="server"></asp:TextBox>&nbsp;&nbsp;
             <asp:DropDownList ID="ddlChoose" runat="server">
-                <asp:ListItem Value="0">單選方塊</asp:ListItem>
-                <asp:ListItem Value="1">複選方塊</asp:ListItem>
-                <asp:ListItem Value="2">文字</asp:ListItem>
+                <asp:ListItem Value="RB">單選方塊</asp:ListItem>
+                <asp:ListItem Value="CB">複選方塊</asp:ListItem>
+                <asp:ListItem Value="TB">文字</asp:ListItem>
             </asp:DropDownList>&nbsp;&nbsp;
             <asp:CheckBox ID="ckbRequired" runat="server" /><asp:Label ID="lblRequired" runat="server" Text="必填"></asp:Label>
             <br />

@@ -198,15 +198,17 @@ namespace Dynamic_questionnaire_system.UserSide
                         }
                     }
 
-                    //共同變數
-                    double totalValue = Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value);
 
-                    double percentageA1 = Convert.ToDouble(dict[TopicNum].answer1Value) / totalValue * 100;
-                    double percentageA2 = Convert.ToDouble(dict[TopicNum].answer2Value) / totalValue * 100;
-                    double percentageA3 = Convert.ToDouble(dict[TopicNum].answer3Value) / totalValue * 100;
-                    double percentageA4 = Convert.ToDouble(dict[TopicNum].answer4Value) / totalValue * 100;
-                    double percentageA5 = Convert.ToDouble(dict[TopicNum].answer5Value) / totalValue * 100;
-                    double percentageA6 = Convert.ToDouble(dict[TopicNum].answer6Value) / totalValue * 100;
+                    //複選不是除以總選項數，應除以總問卷數
+                    var gaoq = GetAmountofQuestionnaires(IDNumber);
+                    int AmountofQuestionnaires = Convert.ToInt32(gaoq["Amount"]);
+
+                    double percentageA1 = Convert.ToDouble(dict[TopicNum].answer1Value) / AmountofQuestionnaires * 100;
+                    double percentageA2 = Convert.ToDouble(dict[TopicNum].answer2Value) / AmountofQuestionnaires * 100;
+                    double percentageA3 = Convert.ToDouble(dict[TopicNum].answer3Value) / AmountofQuestionnaires * 100;
+                    double percentageA4 = Convert.ToDouble(dict[TopicNum].answer4Value) / AmountofQuestionnaires * 100;
+                    double percentageA5 = Convert.ToDouble(dict[TopicNum].answer5Value) / AmountofQuestionnaires * 100;
+                    double percentageA6 = Convert.ToDouble(dict[TopicNum].answer6Value) / AmountofQuestionnaires * 100;
                     
                     dict[TopicNum].answer1percentage = $"{percentageA1}%";
                     dict[TopicNum].answer2percentage = $"{percentageA2}%";
@@ -244,12 +246,14 @@ namespace Dynamic_questionnaire_system.UserSide
                         dict[TopicNum].answer6Value += 1;
                     }
 
-                    double percentageA1 = Convert.ToDouble(dict[TopicNum].answer1Value) / Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value) * 100;
-                    double percentageA2 = Convert.ToDouble(dict[TopicNum].answer2Value) / Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value) * 100;
-                    double percentageA3 = Convert.ToDouble(dict[TopicNum].answer3Value) / Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value) * 100;
-                    double percentageA4 = Convert.ToDouble(dict[TopicNum].answer4Value) / Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value) * 100;
-                    double percentageA5 = Convert.ToDouble(dict[TopicNum].answer5Value) / Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value) * 100;
-                    double percentageA6 = Convert.ToDouble(dict[TopicNum].answer6Value) / Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value) * 100;
+                    double totalValue = Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value);
+
+                    double percentageA1 = Convert.ToDouble(dict[TopicNum].answer1Value) / totalValue * 100;
+                    double percentageA2 = Convert.ToDouble(dict[TopicNum].answer2Value) / totalValue * 100;
+                    double percentageA3 = Convert.ToDouble(dict[TopicNum].answer3Value) / totalValue * 100;
+                    double percentageA4 = Convert.ToDouble(dict[TopicNum].answer4Value) / totalValue * 100;
+                    double percentageA5 = Convert.ToDouble(dict[TopicNum].answer5Value) / totalValue * 100;
+                    double percentageA6 = Convert.ToDouble(dict[TopicNum].answer6Value) / totalValue * 100;
 
                     dict[TopicNum].answer1percentage = $"{percentageA1}%";
                     dict[TopicNum].answer2percentage = $"{percentageA2}%";
@@ -270,6 +274,31 @@ namespace Dynamic_questionnaire_system.UserSide
             #endregion
         }
 
+        public static DataRow GetAmountofQuestionnaires(int IDNumber)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@"SELECT [QuestionnaireID], 
+                   	   COUNT([RecordNum]) AS [Amount]
+                     FROM [Questionnaire].[dbo].[Record]
+                     WHERE [QuestionnaireID] = @QuestionnaireID
+                     GROUP BY [QuestionnaireID]
+                     ORDER BY COUNT([RecordNum])
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
+
+            try
+            {
+                return DBHelper.ReadDataRow(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
+        }
 
         #region 問卷
 
@@ -468,7 +497,7 @@ namespace Dynamic_questionnaire_system.UserSide
         protected void btnAddIn_Click(object sender, EventArgs e)
         {
             this.dt = (DataTable)ViewState["CurrentTable"];
-            this.dt.Rows.Add(new object[] { });
+            this.dt.Rows.Add(new object[] { "12", txtQuestion.Text, ddlChoose.SelectedValue, ckbRequired.Checked });
             this.givQuestion.DataSource = this.dt;
             this.givQuestion.DataBind();
         }
@@ -480,7 +509,7 @@ namespace Dynamic_questionnaire_system.UserSide
         /// </summary>
         /// <param name="Account"></param>
         /// <returns></returns>
-        public static DataTable GetGivDBData(int QuestionnaireID)
+        public static DataTable GetGivDBData(int IDNumber)
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
@@ -495,7 +524,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@QuestionnaireID", QuestionnaireID));
+            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
 
             try
             {
@@ -507,7 +536,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 return null;
             }
         }
-        public static DataRow GetGivDBDataRow(int QuestionnaireID)
+        public static DataRow GetGivDBDataRow(int IDNumber)
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
@@ -522,7 +551,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@QuestionnaireID", QuestionnaireID));
+            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
 
             try
             {
@@ -534,7 +563,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 return null;
             }
         }
-        public static DataRow GetGivAnsDBDataRow(int QuestionnaireID, int TopicNum)
+        public static DataRow GetGivAnsDBDataRow(int IDNumber, int TopicNum)
         {
             string connStr = DBHelper.GetConnectionString();
             string dbcommand =
@@ -549,7 +578,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 ";
 
             List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@QuestionnaireID", QuestionnaireID));
+            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
             list.Add(new SqlParameter("@TopicNum", TopicNum));
 
             try
@@ -632,7 +661,6 @@ namespace Dynamic_questionnaire_system.UserSide
             this.PlaceHolderExport.Visible = true;
             this.PlaceHolderDetail.Visible = false;
         }
-
 
         public void Generate_Page(int IDNumber, int RecordNum)
         {
