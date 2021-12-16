@@ -200,6 +200,7 @@ namespace Dynamic_questionnaire_system.UserSide
                         }
                     }
 
+                    //共同變數
                     double totalValue = Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value);
 
                     double percentageA1 = Convert.ToDouble(dict[TopicNum].answer1Value) / totalValue * 100;
