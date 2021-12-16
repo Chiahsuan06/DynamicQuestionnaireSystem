@@ -198,24 +198,23 @@ namespace Dynamic_questionnaire_system.UserSide
                         }
                     }
 
-
                     //複選不是除以總選項數，應除以總問卷數
                     var gaoq = GetAmountofQuestionnaires(IDNumber);
                     int AmountofQuestionnaires = Convert.ToInt32(gaoq["Amount"]);
 
-                    double percentageA1 = Convert.ToDouble(dict[TopicNum].answer1Value) / AmountofQuestionnaires * 100;
-                    double percentageA2 = Convert.ToDouble(dict[TopicNum].answer2Value) / AmountofQuestionnaires * 100;
-                    double percentageA3 = Convert.ToDouble(dict[TopicNum].answer3Value) / AmountofQuestionnaires * 100;
-                    double percentageA4 = Convert.ToDouble(dict[TopicNum].answer4Value) / AmountofQuestionnaires * 100;
-                    double percentageA5 = Convert.ToDouble(dict[TopicNum].answer5Value) / AmountofQuestionnaires * 100;
-                    double percentageA6 = Convert.ToDouble(dict[TopicNum].answer6Value) / AmountofQuestionnaires * 100;
+                    double percentageA1 = Convert.ToDouble(dict[TopicNum].answer1Value) / AmountofQuestionnaires;
+                    double percentageA2 = Convert.ToDouble(dict[TopicNum].answer2Value) / AmountofQuestionnaires;
+                    double percentageA3 = Convert.ToDouble(dict[TopicNum].answer3Value) / AmountofQuestionnaires;
+                    double percentageA4 = Convert.ToDouble(dict[TopicNum].answer4Value) / AmountofQuestionnaires;
+                    double percentageA5 = Convert.ToDouble(dict[TopicNum].answer5Value) / AmountofQuestionnaires;
+                    double percentageA6 = Convert.ToDouble(dict[TopicNum].answer6Value) / AmountofQuestionnaires;
                     
-                    dict[TopicNum].answer1percentage = $"{percentageA1}%";
-                    dict[TopicNum].answer2percentage = $"{percentageA2}%";
-                    dict[TopicNum].answer3percentage = $"{percentageA3}%";
-                    dict[TopicNum].answer4percentage = $"{percentageA4}%";
-                    dict[TopicNum].answer5percentage = $"{percentageA5}%";
-                    dict[TopicNum].answer6percentage = $"{percentageA6}%";
+                    dict[TopicNum].answer1percentage = percentageA1.ToString("0.##%");
+                    dict[TopicNum].answer2percentage = percentageA2.ToString("0.##%");
+                    dict[TopicNum].answer3percentage = percentageA3.ToString("0.##%");
+                    dict[TopicNum].answer4percentage = percentageA4.ToString("0.##%");
+                    dict[TopicNum].answer5percentage = percentageA5.ToString("0.##%");
+                    dict[TopicNum].answer6percentage = percentageA6.ToString("0.##%");
 
                 }
                 else if (dict[TopicNum].TopicType == "RB") //單選題
@@ -248,19 +247,19 @@ namespace Dynamic_questionnaire_system.UserSide
 
                     double totalValue = Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value);
 
-                    double percentageA1 = Convert.ToDouble(dict[TopicNum].answer1Value) / totalValue * 100;
-                    double percentageA2 = Convert.ToDouble(dict[TopicNum].answer2Value) / totalValue * 100;
-                    double percentageA3 = Convert.ToDouble(dict[TopicNum].answer3Value) / totalValue * 100;
-                    double percentageA4 = Convert.ToDouble(dict[TopicNum].answer4Value) / totalValue * 100;
-                    double percentageA5 = Convert.ToDouble(dict[TopicNum].answer5Value) / totalValue * 100;
-                    double percentageA6 = Convert.ToDouble(dict[TopicNum].answer6Value) / totalValue * 100;
+                    double percentageA1 = Convert.ToDouble(dict[TopicNum].answer1Value) / totalValue;
+                    double percentageA2 = Convert.ToDouble(dict[TopicNum].answer2Value) / totalValue;
+                    double percentageA3 = Convert.ToDouble(dict[TopicNum].answer3Value) / totalValue;
+                    double percentageA4 = Convert.ToDouble(dict[TopicNum].answer4Value) / totalValue;
+                    double percentageA5 = Convert.ToDouble(dict[TopicNum].answer5Value) / totalValue;
+                    double percentageA6 = Convert.ToDouble(dict[TopicNum].answer6Value) / totalValue;
 
-                    dict[TopicNum].answer1percentage = $"{percentageA1}%";
-                    dict[TopicNum].answer2percentage = $"{percentageA2}%";
-                    dict[TopicNum].answer3percentage = $"{percentageA3}%";
-                    dict[TopicNum].answer4percentage = $"{percentageA4}%";
-                    dict[TopicNum].answer5percentage = $"{percentageA5}%";
-                    dict[TopicNum].answer6percentage = $"{percentageA6}%";
+                    dict[TopicNum].answer1percentage = percentageA1.ToString("0.##%");
+                    dict[TopicNum].answer2percentage = percentageA2.ToString("0.##%");
+                    dict[TopicNum].answer3percentage = percentageA3.ToString("0.##%");
+                    dict[TopicNum].answer4percentage = percentageA4.ToString("0.##%");
+                    dict[TopicNum].answer5percentage = percentageA5.ToString("0.##%");
+                    dict[TopicNum].answer6percentage = percentageA6.ToString("0.##%");
                 }
                 else
                 {
@@ -272,32 +271,6 @@ namespace Dynamic_questionnaire_system.UserSide
             this.reTopicDescription.DataSource = dict.Values;
             this.reTopicDescription.DataBind();
             #endregion
-        }
-
-        public static DataRow GetAmountofQuestionnaires(int IDNumber)
-        {
-            string connStr = DBHelper.GetConnectionString();
-            string dbcommand =
-                $@"SELECT [QuestionnaireID], 
-                   	   COUNT([RecordNum]) AS [Amount]
-                     FROM [Questionnaire].[dbo].[Record]
-                     WHERE [QuestionnaireID] = @QuestionnaireID
-                     GROUP BY [QuestionnaireID]
-                     ORDER BY COUNT([RecordNum])
-                ";
-
-            List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
-
-            try
-            {
-                return DBHelper.ReadDataRow(connStr, dbcommand, list);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog(ex);
-                return null;
-            }
         }
 
         #region 問卷
@@ -867,6 +840,37 @@ namespace Dynamic_questionnaire_system.UserSide
         #endregion
 
         #endregion
+
+        /// <summary>
+        /// 總問卷數
+        /// </summary>
+        /// <param name="IDNumber"></param>
+        /// <returns></returns>
+        public static DataRow GetAmountofQuestionnaires(int IDNumber)
+        {
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand =
+                $@"SELECT [QuestionnaireID], 
+                   	   COUNT([RecordNum]) AS [Amount]
+                     FROM [Questionnaire].[dbo].[Record]
+                     WHERE [QuestionnaireID] = @QuestionnaireID
+                     GROUP BY [QuestionnaireID]
+                     ORDER BY COUNT([RecordNum])
+                ";
+
+            List<SqlParameter> list = new List<SqlParameter>();
+            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
+
+            try
+            {
+                return DBHelper.ReadDataRow(connStr, dbcommand, list);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog(ex);
+                return null;
+            }
+        }
 
     }
 }
