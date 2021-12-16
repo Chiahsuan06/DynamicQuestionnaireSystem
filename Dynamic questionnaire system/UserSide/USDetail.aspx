@@ -120,15 +120,16 @@
         <div id="WriteInformation" class="tabcontent">  <%--填寫資料--%>
             <asp:PlaceHolder ID="PlaceHolderExport" runat="server" Visible="true">
                 <asp:Button ID="btnExport" runat="server" Text="匯出" OnClick="btnExport_Click" />
-            <asp:GridView ID="givExport" runat="server" AutoGenerateColumns="False" DataKeyNames="RecordNum" >
+            <asp:GridView ID="givExport" runat="server" AutoGenerateColumns="False" DataKeyNames="RecordNum" AllowPaging="true" PageSize="10" OnPageIndexChanging="givExport_PageIndexChanging">
                 <Columns>
                     <asp:BoundField HeaderText="#" DataField="RecordNum"/>
                     <asp:BoundField HeaderText="姓名" DataField="AnsName" />
                     <asp:BoundField HeaderText="填寫時間" DataField="AnsTime" DataFormatString="{0:yyyy-MM-dd HH:mm:ss}"/>
                     <asp:HyperLinkField DataNavigateUrlFields="QuestionnaireID,RecordNum" DataNavigateUrlFormatString="USDetail.aspx?ID={0}&amp;RN={1}" HeaderText="觀看細節" Text="前往" />
                 </Columns>
+                <PagerSettings FirstPageText="第一頁" LastPageText="最後一頁" Mode="NumericFirstLast" NextPageText="下一頁" PreviousPageText="上一頁" />
             </asp:GridView>
-            <uc1:ucPager runat="server" ID="ucPager" PageSize ="10" Url="/UserSide/USDetail.aspx"/>
+
             </asp:PlaceHolder>
 
             <%--分頁--%>
