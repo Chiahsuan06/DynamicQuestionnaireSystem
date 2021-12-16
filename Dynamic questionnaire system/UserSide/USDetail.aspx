@@ -43,11 +43,12 @@
         </style>
 
         <div class="tab">
-          <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'Questionnaire')" id="defaultOpen">問卷</button>
-          <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'Question')">問題</button>
-          <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'WriteInformation')">填寫資料</button>
-          <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'Statistics')">統計</button>
+          <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'Questionnaire')" id="tab_Questionnaire">問卷</button>
+          <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'Question')" id="tab_Question">問題</button>
+          <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'WriteInformation')" id="tab_WriteInformation">填寫資料</button>
+          <button type="button" class="tablinks" onclick="openQuestionnaire(event, 'Statistics')" id="tab_Statistics">統計</button>
         </div>
+        <asp:HiddenField ID="tab_id" runat="server" />
 
         <div id="Questionnaire" class="tabcontent">  <%--問卷--%>
             <asp:Label ID="lblQuestaireName" runat="server" Text="問卷名稱"></asp:Label>&nbsp;&nbsp;
@@ -87,8 +88,8 @@
             <br />
             <asp:Label ID="lblOptions" runat="server" Text="回答"></asp:Label>&nbsp;&nbsp;
             <asp:TextBox ID="txtOptions" runat="server"></asp:TextBox>(多個答案以；分隔)&nbsp;&nbsp;
-            <asp:Button ID="btnAddIn" runat="server" Text="加入" />
-            <asp:HiddenField ID="HiddenField1" runat="server" />
+            <asp:Button ID="btnAddIn" runat="server" Text="加入" OnClick="btnAddIn_Click"/>
+            
             <br /><br />
             <asp:ImageButton ID="ImgbtnBin" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" />&nbsp;&nbsp;<asp:Label ID="lblAddMessage" runat="server" ForeColor="Red"></asp:Label>
             <asp:GridView ID="givQuestion" runat="server" AutoGenerateColumns="False" OnRowDataBound="givQuestion_RowDataBound" OnRowUpdating="givQuestion_RowUpdating">
@@ -114,7 +115,6 @@
                 <asp:Button ID="btngivCancel" runat="server" Text="取消" />&nbsp;&nbsp;&nbsp;&nbsp;
                 <asp:Button ID="btngivSent" runat="server" Text="送出" />
             </div>
-
         </div>
 
         <div id="WriteInformation" class="tabcontent">  <%--填寫資料--%>
@@ -187,9 +187,10 @@
 
                 document.getElementById(idName).style.display = "block";
                 evt.currentTarget.className += " active";
+                document.getElementById("ContentPlaceHolder1_tab_id").value = "tab_" + idName;
             }
 
-            document.getElementById("defaultOpen").click();
+            document.getElementById("<%=this.tab_id.Value == ""?"tab_Questionnaire":this.tab_id.Value%>").click();
         </script>          
 
 </asp:Content>

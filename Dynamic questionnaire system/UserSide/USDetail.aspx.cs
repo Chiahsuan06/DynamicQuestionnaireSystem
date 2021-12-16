@@ -26,6 +26,7 @@ namespace Dynamic_questionnaire_system.UserSide
         private int M_ID = 0;
         private int D1_ID = 0;
         private string D1_TITLE, D1_MustKeyIn, D1_SUMMARY;
+        protected DataTable dt = null;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -60,8 +61,14 @@ namespace Dynamic_questionnaire_system.UserSide
                 }
 
                 // 詢問 後台內頁2-問題
-                this.givQuestion.DataSource = GetGivDBData(IDNumber);
-                this.givQuestion.DataBind();
+                if (!IsPostBack)
+                {
+                    this.dt = GetGivDBData(IDNumber);
+                    ViewState["CurrentTable"] = this.dt;
+                    this.givQuestion.DataSource = this.dt;
+                    this.givQuestion.DataBind();
+                    
+                }
 
                 //詢問 後台內頁2-問題
                 if (ddlType.SelectedIndex == 1)   //常用問題1 =>常用問題設定要去常用問題管理，要記得處理
@@ -73,7 +80,7 @@ namespace Dynamic_questionnaire_system.UserSide
 
             #region 後台內頁3 填寫資料+顯示詳細資料
             //後台內頁3-填寫資料
-            this.givExport.DataSource = ContextManager.GetRecordData(IDNumber);  //做方法
+            this.givExport.DataSource = ContextManager.GetRecordData(IDNumber);
             this.givExport.DataBind();
             var dt = ContextManager.GetRecordData(IDNumber);
             DataSearch(dt);
@@ -82,6 +89,10 @@ namespace Dynamic_questionnaire_system.UserSide
             if (!IsPostBack)
             {
                 this.PlaceHolderDetail.Visible = true;
+                if (Request.QueryString["tab"] == "3" || Request.QueryString["RN"] != null)
+                {
+                    this.tab_id.Value = "tab_WriteInformation";
+                }
 
                 if (Request.QueryString["ID"] != null && Request.QueryString["RN"] != null)
                 {
@@ -188,12 +199,15 @@ namespace Dynamic_questionnaire_system.UserSide
                             dict[TopicNum].answer6Value += 1;
                         }
                     }
-                    double percentageA1 = Convert.ToDouble(dict[TopicNum].answer1Value) / Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value) * 100;
-                    double percentageA2 = Convert.ToDouble(dict[TopicNum].answer2Value) / Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value) * 100;
-                    double percentageA3 = Convert.ToDouble(dict[TopicNum].answer3Value) / Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value) * 100;
-                    double percentageA4 = Convert.ToDouble(dict[TopicNum].answer4Value) / Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value) * 100;
-                    double percentageA5 = Convert.ToDouble(dict[TopicNum].answer5Value) / Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value) * 100;
-                    double percentageA6 = Convert.ToDouble(dict[TopicNum].answer6Value) / Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value) * 100;
+
+                    double totalValue = Convert.ToDouble(dict[TopicNum].answer1Value + dict[TopicNum].answer2Value + dict[TopicNum].answer3Value + dict[TopicNum].answer4Value + dict[TopicNum].answer5Value + dict[TopicNum].answer6Value);
+
+                    double percentageA1 = Convert.ToDouble(dict[TopicNum].answer1Value) / totalValue * 100;
+                    double percentageA2 = Convert.ToDouble(dict[TopicNum].answer2Value) / totalValue * 100;
+                    double percentageA3 = Convert.ToDouble(dict[TopicNum].answer3Value) / totalValue * 100;
+                    double percentageA4 = Convert.ToDouble(dict[TopicNum].answer4Value) / totalValue * 100;
+                    double percentageA5 = Convert.ToDouble(dict[TopicNum].answer5Value) / totalValue * 100;
+                    double percentageA6 = Convert.ToDouble(dict[TopicNum].answer6Value) / totalValue * 100;
                     
                     dict[TopicNum].answer1percentage = $"{percentageA1}%";
                     dict[TopicNum].answer2percentage = $"{percentageA2}%";
@@ -521,7 +535,13 @@ namespace Dynamic_questionnaire_system.UserSide
         /// <param name="sender"></param>
         /// <param name="e"></param>
 
-
+        protected void btnAddIn_Click(object sender, EventArgs e)
+        {
+            this.dt = (DataTable)ViewState["CurrentTable"];
+            this.dt.Rows.Add(new object[] { });
+            this.givQuestion.DataSource = this.dt;
+            this.givQuestion.DataBind();
+        }
 
 
 
@@ -622,6 +642,7 @@ namespace Dynamic_questionnaire_system.UserSide
         /// <param name="e"></param>
         protected void btnExport_Click(object sender, EventArgs e)
         {
+            this.tab_id.Value = "tab_WriteInformation";
             DataTable dt = ContextManager.GetAnsRecordDetailsData();//獲取datatable資料源
             string title = "問卷資料" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";//匯出的檔案名
             EstablishCSV(dt, title);//將dt資料源和檔案名title代入匯出方法中
@@ -671,10 +692,13 @@ namespace Dynamic_questionnaire_system.UserSide
         #region 填寫資料 - 顯示問卷填寫細節
         protected void btnreturn_Click(object sender, EventArgs e)
         {
-            Response.Redirect($"USDetail.aspx?ID={Request.QueryString["ID"]}");
+            //為判斷是第一或第三頁籤，因此url裡加上一個判斷用變數為 tab=3
+            Response.Redirect($"USDetail.aspx?ID={Request.QueryString["ID"]}&tab=3");
             this.PlaceHolderExport.Visible = true;
             this.PlaceHolderDetail.Visible = false;
         }
+
+
         public void Generate_Page(int IDNumber, int RecordNum)
         {
             var tb = ContextManager.USGetStatisticsDBSourceTB(IDNumber, RecordNum);
