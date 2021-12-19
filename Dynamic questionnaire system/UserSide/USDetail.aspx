@@ -89,9 +89,9 @@
             <asp:Label ID="lblOptions" runat="server" Text="回答"></asp:Label>&nbsp;&nbsp;
             <asp:TextBox ID="txtOptions" runat="server"></asp:TextBox>(多個答案以；分隔)&nbsp;&nbsp;
             <asp:Button ID="btnAddIn" runat="server" Text="加入" OnClick="btnAddIn_Click"/>
-            
+            <asp:HiddenField ID="hidTopicNum" runat="server" />
             <br /><br />
-            <asp:ImageButton ID="ImgbtnBin" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" />&nbsp;&nbsp;<asp:Label ID="lblAddMessage" runat="server" ForeColor="Red"></asp:Label>
+            <asp:ImageButton ID="ImgbtnDel" runat="server" ImageUrl="~/Images/bin.png" Height="29px" Width="34px" OnClick="ImgbtnDel_Click"/>&nbsp;&nbsp;<asp:Label ID="lblAddMessage" runat="server" ForeColor="Red"></asp:Label>
             <asp:GridView ID="givQuestion" runat="server" AutoGenerateColumns="False" OnRowDataBound="givQuestion_RowDataBound" OnRowUpdating="givQuestion_RowUpdating">
                 <Columns>
                     <asp:TemplateField>
@@ -113,7 +113,7 @@
             </asp:GridView>
             <div>
                 <asp:Button ID="btngivCancel" runat="server" Text="取消" />&nbsp;&nbsp;&nbsp;&nbsp;
-                <asp:Button ID="btngivSent" runat="server" Text="送出" />
+                <asp:Button ID="btngivSent" runat="server" Text="送出" OnClick="btngivSent_Click"/>
             </div>
         </div>
 

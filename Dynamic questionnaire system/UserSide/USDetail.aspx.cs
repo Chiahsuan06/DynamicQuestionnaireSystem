@@ -64,10 +64,13 @@ namespace Dynamic_questionnaire_system.UserSide
                 if (!IsPostBack)
                 {
                     this.dt = GetGivDBData(IDNumber);
+                    //新增Status欄位: 預設為空白, 可有3種值
+                    // "insert"、"update"、"delete"
+                    this.dt.Columns.Add("Status", typeof(string));
                     ViewState["CurrentTable"] = this.dt;
                     this.givQuestion.DataSource = this.dt;
                     this.givQuestion.DataBind();
-                    
+
                 }
 
                 //詢問 後台內頁2-問題
@@ -365,6 +368,14 @@ namespace Dynamic_questionnaire_system.UserSide
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
+                string st = (string)DataBinder.Eval(e.Row.DataItem, "Status").ToString();
+                if (st == "insert") e.Row.Attributes["style"] = "background-color: LightGreen";
+                else if (st == "update") e.Row.BackColor = System.Drawing.Color.LightYellow;
+                else if (st == "delete") e.Row.BackColor = System.Drawing.Color.Gray;
+
+                int num = (int)DataBinder.Eval(e.Row.DataItem, "TopicNum");
+                if (num == 0) e.Row.Cells[1].Text = "*";
+
                 string tt = (string)DataBinder.Eval(e.Row.DataItem, "TopicType");
                 if (tt == "CB")
                 {
@@ -401,13 +412,16 @@ namespace Dynamic_questionnaire_system.UserSide
         /// <param name="e"></param>
         protected void givQuestion_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
-            this.txtQuestion.Text = givQuestion.Rows[e.RowIndex].Cells[2].Text;
+            this.dt = (DataTable)ViewState["CurrentTable"];
+            this.txtQuestion.Text = dt.Rows[e.RowIndex]["TopicDescription"].ToString();
+            this.btnAddIn.Text = "更新";
+            this.btnAddIn.ToolTip = e.RowIndex.ToString();
 
-            if (givQuestion.Rows[e.RowIndex].Cells[3].Text == "單選方塊")
+            if (dt.Rows[e.RowIndex]["TopicType"].ToString() == "RB")
             {
                 this.ddlChoose.SelectedIndex = 0;
             }
-            else if (givQuestion.Rows[e.RowIndex].Cells[3].Text == "複選方塊")
+            else if (dt.Rows[e.RowIndex]["TopicType"].ToString() == "CB")
             {
                 this.ddlChoose.SelectedIndex = 1;
             }
@@ -416,7 +430,7 @@ namespace Dynamic_questionnaire_system.UserSide
                 this.ddlChoose.SelectedIndex = 2;
             }
 
-            if (givQuestion.Rows[e.RowIndex].Cells[5].Text == "Y")
+            if (dt.Rows[e.RowIndex]["TopicMustKeyIn"].ToString() == "Y")
             {
                 this.ckbRequired.Checked = true;
             }
@@ -425,40 +439,14 @@ namespace Dynamic_questionnaire_system.UserSide
                 this.ckbRequired.Checked = false;
             }
 
-            int IDNumber = Convert.ToInt32(this.Request.QueryString["ID"]);
-            int TopicNum = Convert.ToInt32(givQuestion.Rows[e.RowIndex].Cells[1].Text);
-            var dr = GetGivAnsDBDataRow(IDNumber, TopicNum);
-            string a1 = dr["answer1"].ToString();
-            string a2 = dr["answer2"].ToString();
-            string a3 = dr["answer3"].ToString();
-            string a4 = dr["answer4"].ToString();
-            string a5 = dr["answer5"].ToString();
-            string a6 = dr["answer6"].ToString();
-            int noq = Convert.ToInt32(dr["OptionsAll"].ToString());
-            if (noq == 6)
+            this.txtOptions.Text = "";
+            for (int i = 0; i < 6; i++)
             {
-                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4 + ";" + a5 + ";" + a6;
+                this.txtOptions.Text += dt.Rows[e.RowIndex]["answer" + (i + 1)].ToString() + ";";
             }
-            if (noq == 5)
-            {
-                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4 + ";" + a5;
-            }
-            if (noq == 4)
-            {
-                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3 + ";" + a4;
-            }
-            if (noq == 3)
-            {
-                this.txtOptions.Text = a1 + ";" + a2 + ";" + a3;
-            }
-            if (noq == 2)
-            {
-                this.txtOptions.Text = a1 + ";" + a2;
-            }
-            if (noq == 1)
-            {
-                this.txtOptions.Text = a1;
-            }
+            int noq = Convert.ToInt32(dt.Rows[e.RowIndex]["OptionsAll"].ToString());
+
+           
         }
 
         /// <summary>
@@ -469,13 +457,75 @@ namespace Dynamic_questionnaire_system.UserSide
 
         protected void btnAddIn_Click(object sender, EventArgs e)
         {
+            string allanswers = txtOptions.Text;
+            string[] answers = allanswers.Split(';');
+            int optionsall = answers.Length;
+
+            string answer1 = optionsall > 0 ? answers[0] : "";
+            string answer2 = optionsall > 1 ? answers[1] : "";
+            string answer3 = optionsall > 2 ? answers[2] : "";
+            string answer4 = optionsall > 3 ? answers[3] : "";
+            string answer5 = optionsall > 4 ? answers[4] : "";
+            string answer6 = optionsall > 5 ? answers[5] : "";
+
+            string mustKeyIn = "";
+            if(ckbRequired.Checked) mustKeyIn = "Y";
+            else mustKeyIn = "N";
+
+            string topicType = "";
+            if (ddlChoose.SelectedIndex == 0){ topicType = "RB"; }
+            else if (ddlChoose.SelectedIndex == 0){ topicType = "RB"; }
+            else topicType = "TB";
+
             this.dt = (DataTable)ViewState["CurrentTable"];
-            this.dt.Rows.Add(new object[] { "12", txtQuestion.Text, ddlChoose.SelectedValue, ckbRequired.Checked });
+            if (this.btnAddIn.Text == "更新")
+            {
+                int rowindex = Convert.ToInt32(this.btnAddIn.ToolTip);
+                this.dt.Rows[rowindex]["TopicDescription"] = txtQuestion.Text;
+                this.dt.Rows[rowindex]["TopicType"] = topicType;
+                this.dt.Rows[rowindex]["TopicMustKeyIn"] = mustKeyIn;
+                this.dt.Rows[rowindex]["answer1"] = answer1;
+                this.dt.Rows[rowindex]["answer2"] = answer2;
+                this.dt.Rows[rowindex]["answer3"] = answer3;
+                this.dt.Rows[rowindex]["answer4"] = answer4;
+                this.dt.Rows[rowindex]["answer5"] = answer5;
+                this.dt.Rows[rowindex]["answer6"] = answer6;
+                this.dt.Rows[rowindex]["OptionsAll"] = optionsall;
+                this.dt.Rows[rowindex]["Status"] = "update";
+                this.btnAddIn.Text = "加入";
+                this.btnAddIn.ToolTip = "";
+            }
+            else 
+            {
+                this.dt.Rows.Add(new object[] { 0, txtQuestion.Text, "", ddlChoose.SelectedValue, mustKeyIn, answer1, answer2, answer3, answer4, answer5, answer6, optionsall });
+            }
+
+            this.txtQuestion.Text = "";
+            this.ddlChoose.SelectedIndex = 0;
+            this.txtOptions.Text = "";
+            this.ckbRequired.Checked = false;
             this.givQuestion.DataSource = this.dt;
             this.givQuestion.DataBind();
         }
 
+        protected void ImgbtnDel_Click(object sender, ImageClickEventArgs e)
+        {
+            this.dt = (DataTable)ViewState["CurrentTable"];
+            foreach (GridViewRow row in givQuestion.Rows) 
+            {
+                if (((CheckBox)row.Cells[0].FindControl("CheckBox1")).Checked) 
+                {
+                    this.dt.Rows[row.RowIndex]["Status"] = "delete";
+                }
+            }
+            this.givQuestion.DataSource = this.dt;
+            this.givQuestion.DataBind();
+        }
 
+        protected void btngivSent_Click(object sender, EventArgs e)
+        {
+
+        }
 
         /// <summary>
         /// 取得已有問卷資料
@@ -502,61 +552,6 @@ namespace Dynamic_questionnaire_system.UserSide
             try
             {
                 return DBHelper.ReadDataTable(connStr, dbcommand, list);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog(ex);
-                return null;
-            }
-        }
-        public static DataRow GetGivDBDataRow(int IDNumber)
-        {
-            string connStr = DBHelper.GetConnectionString();
-            string dbcommand =
-                $@"SELECT [Questionnaires].[TopicNum],[TopicDescription],[TopicSummary],[TopicType],[TopicMustKeyIn]
-                   	     ,[Question].[answer1],[Question].[answer2],[Question].[answer3],[Question].[answer4],[Question].[answer5]
-                         ,[Question].[answer6]
-                   	     ,[Question].[OptionsAll]
-                     FROM [Questionnaire].[dbo].[Questionnaires]
-                     RIGHT JOIN [Question] ON [Questionnaires].[TopicNum] = [Question].[TopicNum]
-                     WHERE [Questionnaires].[QuestionnaireID] = @QuestionnaireID
-                     ORDER BY [Questionnaires].[TopicNum]
-                ";
-
-            List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
-
-            try
-            {
-                return DBHelper.ReadDataRow(connStr, dbcommand, list);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog(ex);
-                return null;
-            }
-        }
-        public static DataRow GetGivAnsDBDataRow(int IDNumber, int TopicNum)
-        {
-            string connStr = DBHelper.GetConnectionString();
-            string dbcommand =
-                $@"SELECT [Questionnaires].[TopicNum],[TopicDescription],[TopicSummary],[TopicType],[TopicMustKeyIn]
-                   	     ,[Question].[answer1],[Question].[answer2],[Question].[answer3],[Question].[answer4],[Question].[answer5]
-                         ,[Question].[answer6]
-                   	     ,[Question].[OptionsAll]
-                     FROM [Questionnaire].[dbo].[Questionnaires]
-                     RIGHT JOIN [Question] ON [Questionnaires].[TopicNum] = [Question].[TopicNum]
-                     WHERE [Questionnaires].[QuestionnaireID] = @QuestionnaireID
-                     AND [Questionnaires].[TopicNum] = @TopicNum
-                ";
-
-            List<SqlParameter> list = new List<SqlParameter>();
-            list.Add(new SqlParameter("@QuestionnaireID", IDNumber));
-            list.Add(new SqlParameter("@TopicNum", TopicNum));
-
-            try
-            {
-                return DBHelper.ReadDataRow(connStr, dbcommand, list);
             }
             catch (Exception ex)
             {
