@@ -556,7 +556,7 @@ namespace Dynamic_questionnaire_system.UserSide
                     else 
                     {
                         dbcommand = 
-                            $@" INSERT INTO [Questionnaires] ([QuestionnaireID],[TopicDescription],[TopicSummary],[TopicType],                          [TopicMustKeyIn]) 
+                            $@" INSERT INTO [Questionnaires] ([QuestionnaireID],[TopicDescription],[TopicSummary],[TopicType],[TopicMustKeyIn]) 
                                 VALUES (@QuestionnaireID,@TopicDescription,@TopicSummary,@TopicType,@TopicMustKeyIn);
                             
                                 INSERT INTO [Question] ([QuestionnaireID],[TopicNum],[answer1],[answer2],[answer3],[answer4],
