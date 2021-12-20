@@ -469,13 +469,10 @@ namespace Dynamic_questionnaire_system.UserSide
             string answer6 = optionsall > 5 ? answers[5] : "";
 
             string mustKeyIn = "";
-            if(ckbRequired.Checked) mustKeyIn = "Y";
+            if (ckbRequired.Checked) mustKeyIn = "Y";
             else mustKeyIn = "N";
 
-            string topicType = "";
-            if (ddlChoose.SelectedIndex == 0){ topicType = "RB"; }
-            else if (ddlChoose.SelectedIndex == 0){ topicType = "RB"; }
-            else topicType = "TB";
+            string topicType = ddlChoose.SelectedValue;
 
             this.dt = (DataTable)ViewState["CurrentTable"];
             if (this.btnAddIn.Text == "更新")
@@ -544,8 +541,9 @@ namespace Dynamic_questionnaire_system.UserSide
             string connStr = DBHelper.GetConnectionString();
             string dbcommand = "";
             List<SqlParameter> list = new List<SqlParameter>();
-
+            this.IDNumber = Convert.ToInt32(this.Request.QueryString["ID"]);
             this.dt = (DataTable)ViewState["CurrentTable"];
+
             foreach (DataRow dr in dt.Rows)
             {
                 dbcommand = "";
@@ -583,7 +581,7 @@ namespace Dynamic_questionnaire_system.UserSide
                     dbcommand =
                         $@"
                             UPDATE [Questionnaires] 
-                            SET [TopicDescription] = @TopicDescription 
+                            SET [TopicDescription] = @TopicDescription, [TopicMustKeyIn] = @TopicMustKeyIn
                             WHERE [QuestionnaireID] = QuestionnaireID AND [TopicNum] = @TopicNum; 
 
                             UPDATE [Question] 
