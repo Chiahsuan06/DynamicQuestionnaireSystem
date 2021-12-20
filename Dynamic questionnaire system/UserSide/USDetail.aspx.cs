@@ -441,13 +441,11 @@ namespace Dynamic_questionnaire_system.UserSide
             }
 
             this.txtOptions.Text = "";
-            for (int i = 0; i < 6; i++)
+            int OptionsAll = Convert.ToInt32(dt.Rows[e.RowIndex]["OptionsAll"]);
+            for (int i = 0; i < OptionsAll; i++)
             {
                 this.txtOptions.Text += dt.Rows[e.RowIndex]["answer" + (i + 1)].ToString() + ";";
-            }
-            int noq = Convert.ToInt32(dt.Rows[e.RowIndex]["OptionsAll"].ToString());
-
-           
+            }           
         }
 
         /// <summary>
