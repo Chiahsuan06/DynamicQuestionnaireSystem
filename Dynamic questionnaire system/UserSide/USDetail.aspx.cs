@@ -27,6 +27,7 @@ namespace Dynamic_questionnaire_system.UserSide
         private int D1_ID = 0;
         private string D1_TITLE, D1_MustKeyIn, D1_SUMMARY;
         protected DataTable dt = null;
+        protected int IDNumber;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -454,7 +455,6 @@ namespace Dynamic_questionnaire_system.UserSide
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-
         protected void btnAddIn_Click(object sender, EventArgs e)
         {
             string allanswers = txtOptions.Text;
@@ -507,13 +507,12 @@ namespace Dynamic_questionnaire_system.UserSide
             this.givQuestion.DataSource = this.dt;
             this.givQuestion.DataBind();
         }
-
         protected void ImgbtnDel_Click(object sender, ImageClickEventArgs e)
         {
             this.dt = (DataTable)ViewState["CurrentTable"];
-            foreach (GridViewRow row in givQuestion.Rows) 
+            foreach (GridViewRow row in givQuestion.Rows)
             {
-                if (((CheckBox)row.Cells[0].FindControl("CheckBox1")).Checked) 
+                if (((CheckBox)row.Cells[0].FindControl("CheckBox1")).Checked)
                 {
                     this.dt.Rows[row.RowIndex]["Status"] = "delete";
                 }
@@ -521,10 +520,115 @@ namespace Dynamic_questionnaire_system.UserSide
             this.givQuestion.DataSource = this.dt;
             this.givQuestion.DataBind();
         }
+        protected void btngivCancel_Click(object sender, EventArgs e)
+        {
+            this.btnAddIn.Text = "加入";
+            this.btnAddIn.ToolTip = "";
+            this.txtQuestion.Text = "";
+            this.ddlChoose.SelectedIndex = 0;
+            this.txtOptions.Text = "";
+            this.ckbRequired.Checked = false;
+            this.givQuestion.DataSource = this.dt;
+            this.givQuestion.DataBind();
 
+            this.dt = GetGivDBData(IDNumber);
+            this.dt.Columns.Add("Status", typeof(string));
+            ViewState["CurrentTable"] = this.dt;
+            this.givQuestion.DataSource = this.dt;
+            this.givQuestion.DataBind();
+
+        }
         protected void btngivSent_Click(object sender, EventArgs e)
         {
+            // "insert"、"update"、"delete"
+            string connStr = DBHelper.GetConnectionString();
+            string dbcommand = "";
+            List<SqlParameter> list = new List<SqlParameter>();
 
+            this.dt = (DataTable)ViewState["CurrentTable"];
+            foreach (DataRow dr in dt.Rows)
+            {
+                dbcommand = "";
+                list.Clear();
+                if (dr["TopicNum"].ToString() == "0")
+                {
+                    if (dr["Status"].ToString() == "delete") { dbcommand = ""; }
+                    else 
+                    {
+                        dbcommand = 
+                            $@" INSERT INTO [Questionnaires] ([QuestionnaireID],[TopicDescription],[TopicSummary],[TopicType],                          [TopicMustKeyIn]) 
+                                VALUES (@QuestionnaireID,@TopicDescription,@TopicSummary,@TopicType,@TopicMustKeyIn);
+                            
+                                INSERT INTO [Question] ([QuestionnaireID],[TopicNum],[answer1],[answer2],[answer3],[answer4],
+                                            [answer5],[answer6],[OptionsAll]) 
+                                VALUES (@QuestionnaireID,SCOPE_IDENTITY(),@answer1,@answer2,@answer3,@answer4,@answer5,@answer6,@OptionsAll)
+                            ";
+
+                        list.Add(new SqlParameter("@QuestionnaireID", this.IDNumber));
+                        list.Add(new SqlParameter("@TopicDescription", dr["TopicDescription"].ToString()));
+                        list.Add(new SqlParameter("@TopicSummary", dr["TopicSummary"].ToString()));
+                        list.Add(new SqlParameter("@TopicType", dr["TopicType"].ToString()));
+                        list.Add(new SqlParameter("@TopicMustKeyIn", dr["TopicMustKeyIn"].ToString()));
+                        list.Add(new SqlParameter("@answer1", dr["answer1"].ToString()));
+                        list.Add(new SqlParameter("@answer2", dr["answer2"].ToString()));
+                        list.Add(new SqlParameter("@answer3", dr["answer3"].ToString()));
+                        list.Add(new SqlParameter("@answer4", dr["answer4"].ToString()));
+                        list.Add(new SqlParameter("@answer5", dr["answer5"].ToString()));
+                        list.Add(new SqlParameter("@answer6", dr["answer6"].ToString()));
+                        list.Add(new SqlParameter("@OptionsAll", dr["OptionsAll"].ToString()));
+                    }
+                }
+                else if (dr["Status"].ToString() == "update")
+                {
+                    dbcommand =
+                        $@"
+                            UPDATE [Questionnaires] 
+                            SET [TopicDescription] = @TopicDescription 
+                            WHERE [QuestionnaireID] = QuestionnaireID AND [TopicNum] = @TopicNum; 
+
+                            UPDATE [Question] 
+                            SET answer1 = @answer1, answer2 = @answer2, answer3 = @answer3, answer4 = @answer4, answer5 = @answer5, answer6 = @answer6, OptionsAll = @OptionsAll 
+                            WHERE [QuestionnaireID] = @QuestionnaireID AND [TopicNum] = @TopicNum
+                        ";
+                    list.Add(new SqlParameter("@QuestionnaireID", this.IDNumber));
+                    list.Add(new SqlParameter("@TopicNum", Convert.ToInt32(dr["TopicNum"].ToString())));
+                    list.Add(new SqlParameter("@TopicDescription", dr["TopicDescription"].ToString()));
+                    list.Add(new SqlParameter("@TopicSummary", dr["TopicSummary"].ToString()));
+                    list.Add(new SqlParameter("@TopicType", dr["TopicType"].ToString()));
+                    list.Add(new SqlParameter("@TopicMustKeyIn", dr["TopicMustKeyIn"].ToString()));
+                    list.Add(new SqlParameter("@answer1", dr["answer1"].ToString()));
+                    list.Add(new SqlParameter("@answer2", dr["answer2"].ToString()));
+                    list.Add(new SqlParameter("@answer3", dr["answer3"].ToString()));
+                    list.Add(new SqlParameter("@answer4", dr["answer4"].ToString()));
+                    list.Add(new SqlParameter("@answer5", dr["answer5"].ToString()));
+                    list.Add(new SqlParameter("@answer6", dr["answer6"].ToString()));
+                    list.Add(new SqlParameter("@OptionsAll", Convert.ToInt32(dr["OptionsAll"].ToString())));
+                }
+                else if (dr["Status"].ToString() == "delete")
+                {
+                    dbcommand =
+                        $@"DELETE  [Questionnaires] 
+                           WHERE [QuestionnaireID] = @QuestionnaireID 
+                           AND [TopicNum] = @TopicNum;
+                           DELETE [Question]
+                           WHERE [QuestionnaireID] = @QuestionnaireID AND [TopicNum] = @TopicNum
+                        ";
+                    list.Add(new SqlParameter("@QuestionnaireID", this.IDNumber));
+                    list.Add(new SqlParameter("@TopicNum", dr["TopicNum"].ToString()));
+                }
+                if (dbcommand != "")
+                {
+                    try
+                    {
+                        DBHelper.ReadDataTable(connStr, dbcommand, list);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.WriteLog(ex);
+                    }
+                }
+            }
+            btngivCancel_Click(sender, e);
         }
 
         /// <summary>

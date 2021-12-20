@@ -112,7 +112,7 @@
                 </Columns>
             </asp:GridView>
             <div>
-                <asp:Button ID="btngivCancel" runat="server" Text="取消" />&nbsp;&nbsp;&nbsp;&nbsp;
+                <asp:Button ID="btngivCancel" runat="server" Text="取消" OnClick="btngivCancel_Click"/>&nbsp;&nbsp;&nbsp;&nbsp;
                 <asp:Button ID="btngivSent" runat="server" Text="送出" OnClick="btngivSent_Click"/>
             </div>
         </div>
