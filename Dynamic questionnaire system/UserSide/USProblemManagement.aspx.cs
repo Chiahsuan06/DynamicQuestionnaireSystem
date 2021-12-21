@@ -21,5 +21,15 @@ namespace Dynamic_questionnaire_system.UserSide
 
             // todo: 這裡還沒完成
         }
+
+        protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+
+        }
+
+        protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
+        {
+
+        }
     }
 }
